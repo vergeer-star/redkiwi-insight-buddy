@@ -186,8 +186,8 @@ export const InterviewChat = () => {
     ? "Luisteren naar je antwoord..." 
     : "Klaar";
 
-  // Choose image based on state
-  const characterImage = isListening ? interviewerListening : interviewerNormal;
+  // Always use the same character image
+  const characterImage = interviewerNormal;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-primary/10 flex flex-col">
@@ -224,20 +224,14 @@ export const InterviewChat = () => {
         <div className="relative mb-8 w-full max-w-4xl">
           <div 
             className={`
-              relative transition-all duration-500 ease-in-out
-              ${isSpeaking ? 'animate-[speaking-bounce_0.8s_ease-in-out_infinite]' : ''}
-              ${!isSpeaking && !isListening ? 'animate-[gentle-sway_3s_ease-in-out_infinite]' : ''}
-              ${isListening ? 'animate-[subtle-nod_2s_ease-in-out_infinite]' : ''}
+              relative transition-opacity duration-300
               ${isPaused ? 'opacity-60' : 'opacity-100'}
             `}
-            style={{
-              transformOrigin: 'center bottom'
-            }}
           >
             <img
               src={characterImage}
               alt="AI Interviewer"
-              className="w-full h-auto rounded-2xl transition-all duration-500"
+              className="w-full h-auto rounded-2xl"
             />
             
             {/* Speaking Glow Effect */}
