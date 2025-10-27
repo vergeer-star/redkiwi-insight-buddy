@@ -40,6 +40,7 @@ All colors MUST be HSL.
     --radius: 0.75rem;
     
     --gradient-red: linear-gradient(135deg, hsl(0 85% 48%), hsl(0 75% 40%));
+    --gradient-bg: linear-gradient(135deg, hsl(0 0% 98%), hsl(0 30% 96%), hsl(0 50% 94%));
     --shadow-glow: 0 0 40px hsl(0 85% 48% / 0.3);
     --shadow-soft: 0 4px 20px hsl(0 0% 0% / 0.1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -101,6 +102,22 @@ All colors MUST be HSL.
   @keyframes breathe {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.02); }
+  }
+
+  @keyframes idle-sway {
+    0%, 100% { transform: translateX(0px) rotate(0deg); }
+    25% { transform: translateX(-3px) rotate(-0.5deg); }
+    75% { transform: translateX(3px) rotate(0.5deg); }
+  }
+
+  @keyframes subtle-bounce {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes speaking-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
   }
 }
 

@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Mic } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Mic, Pause, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { StartScreen } from "@/components/StartScreen";
-import interviewerImg from "@/assets/interviewer-clean.png";
+import interviewerImg from "@/assets/interviewer-with-logo.png";
+import interviewerListening from "@/assets/interviewer-listening.png";
+import redkiwiLogo from "@/assets/redkiwi-logo.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -14,6 +17,7 @@ interface Message {
 
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,25 +37,27 @@ export const InterviewChat = () => {
 
   // Handle voice recognition transcript - auto send when done
   useEffect(() => {
-    if (transcript && !isListening) {
+    if (transcript && !isListening && !isPaused) {
       handleSendMessage(transcript);
       resetTranscript();
     }
-  }, [transcript, isListening]);
+  }, [transcript, isListening, isPaused]);
 
   // Auto-listen after AI speaks
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.role === "assistant" && !isLoading && !isSpeaking && hasStarted) {
+    if (lastMessage?.role === "assistant" && !isLoading && !isSpeaking && hasStarted && !isPaused) {
       // Speak the message first, then auto-start listening
       speak(lastMessage.content, () => {
         // Small delay before starting to listen
         setTimeout(() => {
-          startListening();
+          if (!isPaused) {
+            startListening();
+          }
         }, 500);
       });
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isPaused]);
 
   const streamChat = async (userMessage: Message) => {
     const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/interview-chat`;
@@ -130,7 +136,7 @@ export const InterviewChat = () => {
 
   const handleSendMessage = async (messageText: string) => {
     const textToSend = messageText.trim();
-    if (!textToSend || isLoading) return;
+    if (!textToSend || isLoading || isPaused) return;
 
     stopSpeaking(); // Stop any current speech
     stopListening(); // Stop listening
@@ -149,11 +155,30 @@ export const InterviewChat = () => {
     await handleSendMessage("Hallo!");
   };
 
+  const togglePause = () => {
+    if (isPaused) {
+      // Resume
+      setIsPaused(false);
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.role === "assistant") {
+        // Resume by starting to listen
+        setTimeout(() => startListening(), 300);
+      }
+    } else {
+      // Pause
+      setIsPaused(true);
+      stopSpeaking();
+      stopListening();
+    }
+  };
+
   if (!hasStarted) {
     return <StartScreen onStart={handleStart} />;
   }
 
-  const currentStatus = isLoading 
+  const currentStatus = isPaused
+    ? "Gepauzeerd"
+    : isLoading 
     ? "Aan het denken..." 
     : isSpeaking 
     ? "Aan het praten..." 
@@ -161,26 +186,59 @@ export const InterviewChat = () => {
     ? "Luisteren naar je antwoord..." 
     : "Klaar";
 
+  // Choose image based on state
+  const characterImage = isListening ? interviewerListening : interviewerImg;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-primary/10 flex flex-col">
+      {/* Header with logo */}
+      <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <img src={redkiwiLogo} alt="Redkiwi" className="h-8" />
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={togglePause}
+              variant={isPaused ? "default" : "outline"}
+              size="sm"
+              className="gap-2"
+            >
+              {isPaused ? (
+                <>
+                  <Play className="h-4 w-4" />
+                  <span>Hervatten</span>
+                </>
+              ) : (
+                <>
+                  <Pause className="h-4 w-4" />
+                  <span>Pauzeren</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </header>
+
       {/* Main Character Display */}
-      <div className="flex-1 flex flex-col items-center justify-center max-w-4xl w-full">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-4xl w-full mx-auto p-4">
         {/* Character */}
         <div className="relative mb-8">
           <div 
             className={`
-              relative transition-all duration-300 
-              ${isSpeaking ? 'scale-105' : 'scale-100'}
+              relative transition-all duration-300
+              ${isSpeaking ? 'animate-[speaking-pulse_1s_ease-in-out_infinite]' : ''}
+              ${!isSpeaking && !isListening ? 'animate-[idle-sway_4s_ease-in-out_infinite]' : ''}
+              ${isListening ? 'animate-[subtle-bounce_2s_ease-in-out_infinite]' : ''}
+              ${isPaused ? 'opacity-60' : 'opacity-100'}
             `}
           >
             <img
-              src={interviewerImg}
+              src={characterImage}
               alt="AI Interviewer"
-              className="w-full max-w-2xl rounded-2xl"
+              className="w-full max-w-2xl rounded-2xl transition-all duration-500"
             />
             
             {/* Speaking Animation Overlay */}
-            {isSpeaking && (
+            {isSpeaking && !isPaused && (
               <>
                 <div className="absolute inset-0 rounded-2xl bg-primary/10 animate-pulse" />
                 <div className="absolute inset-0 rounded-2xl shadow-glow" />
@@ -188,11 +246,20 @@ export const InterviewChat = () => {
             )}
             
             {/* Listening Indicator */}
-            {isListening && (
+            {isListening && !isPaused && (
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
                 <div className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg animate-pulse">
                   <Mic className="h-4 w-4" />
                   <span className="text-sm font-medium">Aan het luisteren...</span>
+                </div>
+              </div>
+            )}
+
+            {/* Paused Overlay */}
+            {isPaused && (
+              <div className="absolute inset-0 rounded-2xl bg-background/60 backdrop-blur-sm flex items-center justify-center">
+                <div className="bg-card p-4 rounded-lg shadow-lg">
+                  <Pause className="h-12 w-12 text-muted-foreground" />
                 </div>
               </div>
             )}
@@ -207,7 +274,7 @@ export const InterviewChat = () => {
         </div>
 
         {/* Transcript Display */}
-        <Card className="w-full max-w-2xl p-4 bg-card/80 backdrop-blur">
+        <Card className="w-full max-w-2xl p-4 bg-card/90 backdrop-blur-sm shadow-soft">
           <div className="max-h-32 overflow-y-auto">
             {messages.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-2">
