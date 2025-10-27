@@ -6,8 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { StartScreen } from "@/components/StartScreen";
-import interviewerImg from "@/assets/interviewer-with-logo.png";
-import interviewerListening from "@/assets/interviewer-listening.png";
+import interviewerNormal from "@/assets/interviewer-office-normal.png";
+import interviewerListening from "@/assets/interviewer-office-listening.png";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 
 interface Message {
@@ -187,7 +187,7 @@ export const InterviewChat = () => {
     : "Klaar";
 
   // Choose image based on state
-  const characterImage = isListening ? interviewerListening : interviewerImg;
+  const characterImage = isListening ? interviewerListening : interviewerNormal;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-primary/10 flex flex-col">
@@ -219,35 +219,35 @@ export const InterviewChat = () => {
       </header>
 
       {/* Main Character Display */}
-      <div className="flex-1 flex flex-col items-center justify-center max-w-4xl w-full mx-auto p-4">
+      <div className="flex-1 flex flex-col items-center justify-center max-w-5xl w-full mx-auto p-4">
         {/* Character */}
-        <div className="relative mb-8">
+        <div className="relative mb-8 w-full max-w-4xl">
           <div 
             className={`
-              relative transition-all duration-300
-              ${isSpeaking ? 'animate-[speaking-pulse_1s_ease-in-out_infinite]' : ''}
-              ${!isSpeaking && !isListening ? 'animate-[idle-sway_4s_ease-in-out_infinite]' : ''}
-              ${isListening ? 'animate-[subtle-bounce_2s_ease-in-out_infinite]' : ''}
+              relative transition-all duration-500 ease-in-out
+              ${isSpeaking ? 'animate-[speaking-bounce_0.8s_ease-in-out_infinite]' : ''}
+              ${!isSpeaking && !isListening ? 'animate-[gentle-sway_3s_ease-in-out_infinite]' : ''}
+              ${isListening ? 'animate-[subtle-nod_2s_ease-in-out_infinite]' : ''}
               ${isPaused ? 'opacity-60' : 'opacity-100'}
             `}
+            style={{
+              transformOrigin: 'center bottom'
+            }}
           >
             <img
               src={characterImage}
               alt="AI Interviewer"
-              className="w-full max-w-2xl rounded-2xl transition-all duration-500"
+              className="w-full h-auto rounded-2xl transition-all duration-500"
             />
             
-            {/* Speaking Animation Overlay */}
+            {/* Speaking Glow Effect */}
             {isSpeaking && !isPaused && (
-              <>
-                <div className="absolute inset-0 rounded-2xl bg-primary/10 animate-pulse" />
-                <div className="absolute inset-0 rounded-2xl shadow-glow" />
-              </>
+              <div className="absolute inset-0 rounded-2xl bg-primary/5 animate-pulse pointer-events-none" />
             )}
             
             {/* Listening Indicator */}
             {isListening && !isPaused && (
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-10">
                 <div className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg animate-pulse">
                   <Mic className="h-4 w-4" />
                   <span className="text-sm font-medium">Aan het luisteren...</span>
@@ -257,7 +257,7 @@ export const InterviewChat = () => {
 
             {/* Paused Overlay */}
             {isPaused && (
-              <div className="absolute inset-0 rounded-2xl bg-background/60 backdrop-blur-sm flex items-center justify-center">
+              <div className="absolute inset-0 rounded-2xl bg-background/60 backdrop-blur-sm flex items-center justify-center pointer-events-none">
                 <div className="bg-card p-4 rounded-lg shadow-lg">
                   <Pause className="h-12 w-12 text-muted-foreground" />
                 </div>

@@ -104,20 +104,24 @@ All colors MUST be HSL.
     50% { transform: scale(1.02); }
   }
 
-  @keyframes idle-sway {
-    0%, 100% { transform: translateX(0px) rotate(0deg); }
-    25% { transform: translateX(-3px) rotate(-0.5deg); }
-    75% { transform: translateX(3px) rotate(0.5deg); }
+  @keyframes gentle-sway {
+    0%, 100% { 
+      transform: translateX(0px) rotate(0deg) scale(1);
+    }
+    50% { 
+      transform: translateX(2px) rotate(0.3deg) scale(1.005);
+    }
   }
 
-  @keyframes subtle-bounce {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
+  @keyframes subtle-nod {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-3px) scale(1.01); }
   }
 
-  @keyframes speaking-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.03); }
+  @keyframes speaking-bounce {
+    0%, 100% { transform: scale(1) translateY(0px); }
+    25% { transform: scale(1.015) translateY(-2px); }
+    75% { transform: scale(1.015) translateY(-2px); }
   }
 }
 
