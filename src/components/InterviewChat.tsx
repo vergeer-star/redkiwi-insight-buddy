@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Send, Mic, MicOff } from "lucide-react";
+import { Mic } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
-import interviewerImg from "@/assets/interviewer-character.png";
-import redkiwiLogo from "@/assets/redkiwi-logo.png";
+import { StartScreen } from "@/components/StartScreen";
+import interviewerImg from "@/assets/interviewer-clean.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,8 +13,8 @@ interface Message {
 }
 
 export const InterviewChat = () => {
+  const [hasStarted, setHasStarted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -33,28 +31,27 @@ export const InterviewChat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Handle voice recognition transcript
+  // Handle voice recognition transcript - auto send when done
   useEffect(() => {
-    if (transcript) {
-      setInput(transcript);
+    if (transcript && !isListening) {
+      handleSendMessage(transcript);
       resetTranscript();
     }
-  }, [transcript, resetTranscript]);
+  }, [transcript, isListening]);
 
-  // Speak assistant messages
+  // Auto-listen after AI speaks
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.role === "assistant" && !isLoading) {
-      speak(lastMessage.content);
+    if (lastMessage?.role === "assistant" && !isLoading && !isSpeaking && hasStarted) {
+      // Speak the message first, then auto-start listening
+      speak(lastMessage.content, () => {
+        // Small delay before starting to listen
+        setTimeout(() => {
+          startListening();
+        }, 500);
+      });
     }
   }, [messages, isLoading]);
-
-  // Start conversation with introduction
-  useEffect(() => {
-    if (messages.length === 0) {
-      handleSendMessage("Hallo!");
-    }
-  }, []);
 
   const streamChat = async (userMessage: Message) => {
     const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/interview-chat`;
@@ -131,124 +128,113 @@ export const InterviewChat = () => {
     }
   };
 
-  const handleSendMessage = async (messageText?: string) => {
-    const textToSend = messageText || input.trim();
+  const handleSendMessage = async (messageText: string) => {
+    const textToSend = messageText.trim();
     if (!textToSend || isLoading) return;
+
+    stopSpeaking(); // Stop any current speech
+    stopListening(); // Stop listening
 
     const userMessage: Message = { role: "user", content: textToSend };
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
     setIsLoading(true);
 
     await streamChat(userMessage);
     setIsLoading(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
+  const handleStart = async () => {
+    setHasStarted(true);
+    // Start with initial greeting
+    await handleSendMessage("Hallo!");
   };
 
-  const toggleListening = () => {
-    if (isListening) {
-      stopListening();
-    } else {
-      stopSpeaking();
-      startListening();
-    }
-  };
+  if (!hasStarted) {
+    return <StartScreen onStart={handleStart} />;
+  }
+
+  const currentStatus = isLoading 
+    ? "Aan het denken..." 
+    : isSpeaking 
+    ? "Aan het praten..." 
+    : isListening 
+    ? "Luisteren naar je antwoord..." 
+    : "Klaar";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <img src={redkiwiLogo} alt="Redkiwi" className="h-8" />
-          <h1 className="text-xl font-semibold">Merkperceptie Interview</h1>
-        </div>
-      </header>
-
-      {/* Chat Container */}
-      <div className="flex-1 container mx-auto px-4 py-6 max-w-5xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-          {/* Interviewer Avatar */}
-          <Card className="lg:col-span-1 p-6 flex flex-col items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-            <div className="relative">
-              <img
-                src={interviewerImg}
-                alt="Interviewer"
-                className={`w-full max-w-xs rounded-lg transition-all duration-300 ${
-                  isSpeaking ? "scale-105 shadow-glow" : ""
-                }`}
-              />
-              {isSpeaking && (
-                <div className="absolute inset-0 rounded-lg bg-primary/20 animate-pulse" />
-              )}
-            </div>
-            <div className="mt-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                {isLoading ? "Aan het denken..." : isListening ? "Aan het luisteren..." : "Klaar voor je antwoord"}
-              </p>
-            </div>
-          </Card>
-
-          {/* Chat Messages */}
-          <Card className="lg:col-span-2 flex flex-col">
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area */}
-            <div className="border-t border-border p-4">
-              <div className="flex gap-2">
-                <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={isListening ? "Luisteren..." : "Typ je antwoord hier of gebruik de microfoon..."}
-                  className="min-h-[60px] resize-none"
-                  disabled={isLoading || isListening}
-                />
-                <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={toggleListening}
-                    disabled={isLoading}
-                    size="icon"
-                    variant={isListening ? "destructive" : "secondary"}
-                    className="h-[60px]"
-                  >
-                    {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                  </Button>
-                  <Button
-                    onClick={() => handleSendMessage()}
-                    disabled={isLoading || !input.trim()}
-                    size="icon"
-                  >
-                    <Send className="h-5 w-5" />
-                  </Button>
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex flex-col items-center justify-center p-4">
+      {/* Main Character Display */}
+      <div className="flex-1 flex flex-col items-center justify-center max-w-4xl w-full">
+        {/* Character */}
+        <div className="relative mb-8">
+          <div 
+            className={`
+              relative transition-all duration-300 
+              ${isSpeaking ? 'scale-105' : 'scale-100'}
+            `}
+          >
+            <img
+              src={interviewerImg}
+              alt="AI Interviewer"
+              className="w-full max-w-2xl rounded-2xl"
+            />
+            
+            {/* Speaking Animation Overlay */}
+            {isSpeaking && (
+              <>
+                <div className="absolute inset-0 rounded-2xl bg-primary/10 animate-pulse" />
+                <div className="absolute inset-0 rounded-2xl shadow-glow" />
+              </>
+            )}
+            
+            {/* Listening Indicator */}
+            {isListening && (
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
+                <div className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg animate-pulse">
+                  <Mic className="h-4 w-4" />
+                  <span className="text-sm font-medium">Aan het luisteren...</span>
                 </div>
               </div>
-            </div>
-          </Card>
+            )}
+          </div>
+
+          {/* Status */}
+          <div className="text-center mt-6">
+            <p className="text-lg font-medium text-muted-foreground">
+              {currentStatus}
+            </p>
+          </div>
         </div>
+
+        {/* Transcript Display */}
+        <Card className="w-full max-w-2xl p-4 bg-card/80 backdrop-blur">
+          <div className="max-h-32 overflow-y-auto">
+            {messages.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-2">
+                Het gesprek begint zo...
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {messages.slice(-3).map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`text-sm ${
+                      msg.role === "user" 
+                        ? "text-right text-foreground" 
+                        : "text-left text-muted-foreground"
+                    }`}
+                  >
+                    <span className="font-semibold">
+                      {msg.role === "user" ? "Jij: " : "Interviewer: "}
+                    </span>
+                    <span>{msg.content}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </Card>
       </div>
     </div>
   );
