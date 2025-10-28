@@ -16,6 +16,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [quietEnvironmentConfirmed, setQuietEnvironmentConfirmed] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
 
   const handleStart = () => {
     setIsStarting(true);
@@ -187,25 +188,42 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   </div>
                 </div>
 
-                {/* Other checklist items - Non-interactive */}
-                {[
-                  { icon: Globe, text: "Kies eerst je taal in de avatar" }
-                ].map((item, index) => (
-                  <div 
-                    key={index}
-                    className="flex items-start gap-4 animate-fade-in"
-                    style={{ animationDelay: `${(index + 2) * 150}ms` }}
-                  >
-                    <div className="mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-primary/20">
-                      <item.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                {/* Language Selection - Interactive */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
+                    <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
+                      selectedLanguage 
+                        ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40' 
+                        : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'
+                    }`}>
+                      {selectedLanguage ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
+                      ) : (
+                        <Globe className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                      )}
                     </div>
                     <div className="flex-1 text-left pt-2">
-                      <p className="text-base text-white/90 font-medium leading-relaxed">
-                        {item.text}
+                      <p className="text-base text-white/90 font-medium leading-relaxed mb-3">
+                        {selectedLanguage ? `Taal geselecteerd: ${selectedLanguage}` : 'Kies je voorkeurstaal voor het interview'}
                       </p>
+                      <div className="flex flex-wrap gap-2">
+                        {['Nederlands', 'English', 'Français', 'Deutsch'].map((lang) => (
+                          <button
+                            key={lang}
+                            onClick={() => setSelectedLanguage(lang)}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                              selectedLanguage === lang
+                                ? 'bg-primary text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]'
+                                : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'
+                            }`}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
 
               {/* Privacy Consent - Interactive */}
