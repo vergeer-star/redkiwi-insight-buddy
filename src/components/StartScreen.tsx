@@ -128,7 +128,7 @@ export const StartScreen = ({
         <div className="relative max-w-4xl w-full space-y-8 text-center animate-fade-in">
           {/* Header Section */}
           <div className="space-y-4">
-            <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-6xl md:text-7xl font-bold text-white tracking-tight leading-tight">
               LET'S GET <span className="text-[#FF2B2B]">STARTED</span>
             </h2>
             
