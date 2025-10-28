@@ -19,8 +19,8 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             WELCOME TO AN <span className="text-primary">AI-DRIVEN</span> INTERVIEW<br />
             <span className="text-lg md:text-2xl font-normal lowercase flex items-center justify-center gap-2 mt-4">
               powered by 
-              <span className="inline-flex items-center bg-black px-3 py-1 rounded">
-                <img src={redkiwiLogo} alt="Redkiwi" className="h-5" />
+              <span className="inline-flex items-center bg-black px-4 py-2 rounded-md">
+                <img src={redkiwiLogo} alt="Redkiwi" className="h-6" />
               </span>
             </span>
           </h1>
