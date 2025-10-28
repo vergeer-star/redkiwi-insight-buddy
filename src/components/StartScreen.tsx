@@ -49,9 +49,10 @@ export const StartScreen = ({
   // Step 1: Hero with GIF
   if (step === 1) {
     return <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        {/* Background pattern - behind everything */}
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
         
-        <div className="relative max-w-5xl w-full space-y-8 text-center -mt-20">
+        <div className="relative max-w-5xl w-full space-y-8 text-center -mt-20 z-10">
           <div className="relative cursor-pointer" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
               <img src={heroAnimation} alt="AI Animation" className="h-96 md:h-[32rem] mx-auto transition-all duration-500" style={{
@@ -83,8 +84,8 @@ export const StartScreen = ({
             </div>
           </div>
           
-          <div className="space-y-4">
-            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-wide leading-tight">
+          <div className="space-y-4 relative z-20">
+            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-wide leading-tight" style={{ textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)' }}>
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW
             </h1>
@@ -92,17 +93,17 @@ export const StartScreen = ({
         </div>
         
         {/* Powered by section at bottom */}
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6">
-          <div className="relative flex flex-col items-center gap-4">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-20">
+          <div className="relative flex flex-col items-center gap-8">
             {/* Subtle separator line with fade */}
             <div className="w-48 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
             
             {/* Content */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
-              <p className="text-sm md:text-base text-[#9C9C9C] font-medium tracking-widest uppercase">Powered by</p>
+              <p className="text-base text-[#9C9C9C] font-medium tracking-widest uppercase">Powered by</p>
               <div className="flex items-center gap-6 md:gap-8">
                 <img src={redkiwiLogoNew} alt="Redkiwi" className="h-6 md:h-7" />
-                <span className="text-white/60 text-base">&</span>
+                <span className="text-[#9C9C9C] text-base">&</span>
                 <img src={heygenLogoNew} alt="HeyGen" className="h-6 md:h-7" />
               </div>
             </div>
