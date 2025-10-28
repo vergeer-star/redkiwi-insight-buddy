@@ -37,7 +37,7 @@ export const InterviewChat = () => {
             height: min(680px, 75vh);
             border-radius: 16px;
             border: none !important;
-            box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
             opacity: 0;
             visibility: hidden;
             outline: none !important;
