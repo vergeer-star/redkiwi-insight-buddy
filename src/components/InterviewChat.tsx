@@ -15,11 +15,10 @@ export const InterviewChat = () => {
     script.innerHTML = `
       !function(window){
         const host="https://labs.heygen.com",
-        url=host+"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9&inIFrame=1",
+        url=host+"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJCcnlhbl9JVF9TaXR0aW5nX3B1YmxpYyIs%0D%0AInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzMzYzlhYzRh%0D%0AZWFkNDRkZmM4YmMwMDgyYTM1MDYyYTcwXzQ1NTgwL3ByZXZpZXdfdGFsa18zLndlYnAiLCJuZWVk%0D%0AUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIyNDQw%0D%0AYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4Y2Ey%0D%0AYTE4ODY4NiJ9&inIFrame=1",
         clientWidth=document.body.clientWidth,
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
-        wrapDiv.setAttribute("data-started", "true");
         
         const container=document.createElement("div");
         container.id="heygen-streaming-container";
@@ -29,57 +28,35 @@ export const InterviewChat = () => {
           #heygen-streaming-embed {
             z-index: 9999;
             position: fixed;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            left: 40px;
+            bottom: 40px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.12);
+            transition: all linear 0.1s;
             overflow: hidden;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(900px, 90vw);
-            height: min(680px, 75vh);
-            border-radius: 16px;
-            border: none !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
             opacity: 0;
             visibility: hidden;
-            outline: none !important;
-            pointer-events: auto;
-            -webkit-tap-highlight-color: transparent !important;
           }
-          
-          #heygen-streaming-embed *,
-          #heygen-streaming-embed *:focus,
-          #heygen-streaming-embed *:active,
-          #heygen-streaming-embed *:focus-visible {
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-          }
-          
-          #heygen-streaming-embed:focus,
-          #heygen-streaming-embed:active,
-          #heygen-streaming-embed:focus-visible {
-            outline: none !important;
-            border: none !important;
-          }
-          
           #heygen-streaming-embed.show {
             opacity: 1;
             visibility: visible;
           }
-          
+          #heygen-streaming-embed.expand {
+            \${clientWidth<540?"height: 266px; width: 96%; left: 50%; transform: translateX(-50%);":"height: 366px; width: calc(366px * 16 / 9);"}
+            border: 0;
+            border-radius: 8px;
+          }
           #heygen-streaming-container {
             width: 100%;
             height: 100%;
-            outline: none !important;
-            border: none !important;
           }
-          
           #heygen-streaming-container iframe {
             width: 100%;
             height: 100%;
-            border: 0 !important;
-            border-radius: inherit;
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent !important;
+            border: 0;
           }
         \`;
         
@@ -99,8 +76,10 @@ export const InterviewChat = () => {
               wrapDiv.classList.toggle("show",initial);
             } else if("show"===e.data.action){
               visible=true;
+              wrapDiv.classList.toggle("expand",visible);
             } else if("hide"===e.data.action){
               visible=false;
+              wrapDiv.classList.toggle("expand",visible);
             }
           }
         }));
