@@ -34,7 +34,7 @@ export const InterviewChat = () => {
             width: min(900px, 90vw);
             height: min(680px, 75vh);
             border-radius: 16px;
-            border: 2px solid hsl(356 85% 53% / 0.4) !important;
+            border: none !important;
             box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
             opacity: 0;
             visibility: hidden;
@@ -48,7 +48,6 @@ export const InterviewChat = () => {
           #heygen-streaming-embed *:active,
           #heygen-streaming-embed *:focus-visible {
             outline: none !important;
-            border: none !important;
             -webkit-tap-highlight-color: transparent !important;
           }
           
@@ -56,7 +55,7 @@ export const InterviewChat = () => {
           #heygen-streaming-embed:active,
           #heygen-streaming-embed:focus-visible {
             outline: none !important;
-            border: 2px solid hsl(356 85% 53% / 0.4) !important;
+            border: none !important;
           }
           
           #heygen-streaming-embed.show {
@@ -69,15 +68,6 @@ export const InterviewChat = () => {
             height: 100%;
             outline: none !important;
             border: none !important;
-          }
-          
-          #heygen-streaming-container *,
-          #heygen-streaming-container *:focus,
-          #heygen-streaming-container *:active,
-          #heygen-streaming-container *:focus-visible {
-            outline: none !important;
-            border: none !important;
-            -webkit-tap-highlight-color: transparent !important;
           }
           
           #heygen-streaming-container iframe {
