@@ -15,6 +15,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [micPermissionGranted, setMicPermissionGranted] = useState(false);
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [quietEnvironmentConfirmed, setQuietEnvironmentConfirmed] = useState(false);
 
   const handleStart = () => {
     setIsStarting(true);
@@ -162,15 +163,38 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   </div>
                 </div>
 
+                {/* Quiet Environment - Interactive */}
+                <div 
+                  onClick={() => setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed)}
+                  className="flex items-start gap-4 group cursor-pointer animate-fade-in hover:bg-white/5 p-3 -m-3 rounded-lg transition-all duration-300"
+                  style={{ animationDelay: '150ms' }}
+                >
+                  <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
+                    quietEnvironmentConfirmed 
+                      ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40 group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]' 
+                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
+                  }`}>
+                    {quietEnvironmentConfirmed ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
+                    ) : (
+                      <Volume2 className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                    )}
+                  </div>
+                  <div className="flex-1 text-left pt-2">
+                    <p className="text-base text-white/90 font-medium leading-relaxed">
+                      {quietEnvironmentConfirmed ? 'Rustige omgeving bevestigd ✓' : 'Ja, ik zit op een rustige omgeving zonder achtergrondgeluiden'}
+                    </p>
+                  </div>
+                </div>
+
                 {/* Other checklist items - Non-interactive */}
                 {[
-                  { icon: Volume2, text: "Kies een rustige omgeving" },
                   { icon: Globe, text: "Kies eerst je taal in de avatar" }
                 ].map((item, index) => (
                   <div 
                     key={index}
                     className="flex items-start gap-4 animate-fade-in"
-                    style={{ animationDelay: `${(index + 1) * 150}ms` }}
+                    style={{ animationDelay: `${(index + 2) * 150}ms` }}
                   >
                     <div className="mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-primary/20">
                       <item.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
