@@ -118,14 +118,14 @@ export const StartScreen = ({
               <img 
                 src={redkiwiLogoNew} 
                 alt="Redkiwi" 
-                className="h-6 w-auto object-contain" 
+                className="h-24 w-auto object-contain" 
                 style={{ imageRendering: 'crisp-edges' }}
               />
               <span className="text-[#9C9C9C] text-base font-light hidden md:inline">&</span>
               <img 
                 src={heygenLogoNew} 
                 alt="HeyGen" 
-                className="h-6 w-auto object-contain" 
+                className="h-24 w-auto object-contain" 
                 style={{ imageRendering: 'crisp-edges' }}
               />
             </div>
