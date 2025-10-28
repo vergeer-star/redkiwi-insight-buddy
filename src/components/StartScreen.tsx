@@ -13,6 +13,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [step, setStep] = useState(1);
   const [isStarting, setIsStarting] = useState(false);
   const [micPermissionGranted, setMicPermissionGranted] = useState(false);
+  const [micStream, setMicStream] = useState<MediaStream | null>(null);
 
   const handleStart = () => {
     setIsStarting(true);
@@ -21,13 +22,22 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
     }, 1500);
   };
 
-  const requestMicPermission = async () => {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      setMicPermissionGranted(true);
-    } catch (error) {
-      console.error('Microphone permission denied:', error);
-      alert('Microfoon toegang is nodig voor het interview. Klik op "Toestaan" wanneer je browser erom vraagt.');
+  const toggleMicPermission = async () => {
+    if (micPermissionGranted && micStream) {
+      // Turn off microphone
+      micStream.getTracks().forEach(track => track.stop());
+      setMicStream(null);
+      setMicPermissionGranted(false);
+    } else {
+      // Request microphone permission
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setMicStream(stream);
+        setMicPermissionGranted(true);
+      } catch (error) {
+        console.error('Microphone permission denied:', error);
+        alert('Microfoon toegang is nodig voor het interview. Klik op "Toestaan" wanneer je browser erom vraagt.');
+      }
     }
   };
 
@@ -129,7 +139,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               <div className="space-y-6">
                 {/* Mic Permission - Interactive */}
                 <div 
-                  onClick={requestMicPermission}
+                  onClick={toggleMicPermission}
                   className="flex items-start gap-4 group cursor-pointer animate-fade-in"
                   style={{ animationDelay: '0ms' }}
                 >
@@ -146,7 +156,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   </div>
                   <div className="flex-1 text-left pt-2">
                     <p className="text-base text-white/90 font-medium leading-relaxed">
-                      {micPermissionGranted ? 'Microfoon toegang verleend ✓' : 'Klik om microfoon toegang te geven'}
+                      {micPermissionGranted ? 'Microfoon toegang verleend ✓ (klik om uit te schakelen)' : 'Klik om microfoon toegang te geven'}
                     </p>
                   </div>
                 </div>
