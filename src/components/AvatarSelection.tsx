@@ -24,35 +24,45 @@ export const AvatarSelection = ({ onSelect }: AvatarSelectionProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center p-8">
-      <div className="max-w-4xl w-full">
-        <h2 className="text-4xl font-bold text-white text-center mb-4">
-          Kies je interviewer
+    <div className="min-h-screen bg-[#0B0B0B] flex items-center justify-center p-8 relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      
+      <div className="relative max-w-6xl w-full">
+        <h2 className="text-5xl md:text-6xl font-bold text-white text-center mb-4">
+          KIES JE <span className="text-[#FF2B2B]">INTERVIEWER</span>
         </h2>
-        <p className="text-gray-400 text-center mb-12">
+        <p className="text-gray-400 text-center mb-16">
           Klik op de persoon om het gesprek te starten
         </p>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
           {avatars.map((avatar) => (
-            <button
-              key={avatar.name}
-              onClick={() => handleAvatarClick(avatar)}
-              className="relative rounded-2xl overflow-hidden transition-all duration-300 ring-2 ring-gray-700 hover:ring-4 hover:ring-primary hover:scale-105"
-            >
-              <div className="aspect-[3/4] bg-gray-800">
-                <img
-                  src={avatar.preview}
-                  alt={avatar.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-                <h3 className="text-2xl font-bold text-white mb-1">{avatar.name}</h3>
-                <p className="text-sm text-gray-400">Klik om te starten</p>
-              </div>
-            </button>
+            <div key={avatar.name} className="flex flex-col items-center gap-4 animate-fade-in">
+              <button
+                onClick={() => handleAvatarClick(avatar)}
+                className="relative group"
+              >
+                <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-[#FF2B2B] hover:shadow-[0_20px_80px_rgba(237,28,36,0.5)] hover:scale-110">
+                  <img
+                    src={avatar.preview}
+                    alt={avatar.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-[#FF2B2B]/0 rounded-full transition-all duration-300 group-hover:bg-[#FF2B2B]/10" />
+              </button>
+              <h3 className="text-2xl font-bold text-white">{avatar.name}</h3>
+            </div>
           ))}
+          
+          {/* Lege bubble voor toekomstige avatar */}
+          <div className="flex flex-col items-center gap-4 animate-fade-in opacity-40">
+            <div className="w-48 h-48 rounded-full border-4 border-dashed border-white/20 flex items-center justify-center">
+              <div className="text-white/40 text-5xl">+</div>
+            </div>
+            <h3 className="text-2xl font-bold text-white/40">Binnenkort</h3>
+          </div>
         </div>
       </div>
     </div>
