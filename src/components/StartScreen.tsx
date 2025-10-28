@@ -203,11 +203,14 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                     )}
                   </div>
                   <div className="flex-1 text-left pt-2">
-                    <p className="text-base text-white/90 font-medium leading-relaxed mb-1">
+                    <p className="text-base text-white/90 font-medium leading-relaxed mb-2">
                       {privacyConsent ? 'Toestemming verleend ✓' : 'Klik om toestemming te geven'}
                     </p>
-                    <p className="text-xs text-white/60 leading-relaxed">
+                    <p className="text-xs text-white/60 leading-relaxed mb-2">
                       Er worden <strong>geen stem- of beeldopnames</strong> gemaakt. Alleen transcriptie van het interview wordt anoniem verwerkt.
+                    </p>
+                    <p className="text-xs text-white/50 leading-relaxed">
+                      Jouw privacy is belangrijk. Je antwoorden blijven volledig vertrouwelijk en worden alleen gebruikt voor dit onderzoek.
                     </p>
                   </div>
                 </div>
