@@ -101,7 +101,7 @@ export const StartScreen = ({
           {/* Powered by section - perfectly centered */}
           <div className="w-full flex flex-col items-center gap-0">
             {/* Powered by text - 16px uppercase */}
-            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase mt-5">
+            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
               Powered by
             </p>
             
