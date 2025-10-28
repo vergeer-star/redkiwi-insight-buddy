@@ -18,33 +18,26 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
-        <div className="relative max-w-4xl w-full space-y-12 text-center">
+        <div className="relative max-w-5xl w-full space-y-8 text-center">
           <img 
             src={heroAnimation} 
             alt="AI Animation" 
-            className="h-64 md:h-80 mx-auto"
+            className="h-96 md:h-[32rem] mx-auto cursor-pointer hover:scale-105 transition-transform duration-300"
+            onClick={() => setStep(2)}
           />
           
-          <div className="space-y-6">
-            <h1 className="text-6xl md:text-8xl font-bold text-white tracking-wide leading-[0.95]">
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide leading-tight">
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW<br />
-              <span className="text-lg md:text-2xl font-normal lowercase flex items-center justify-center gap-2 mt-6">
+              <span className="text-sm md:text-lg font-normal lowercase flex items-center justify-center gap-2 mt-4">
                 powered by 
-                <span className="inline-flex items-center bg-black px-4 py-2 rounded-md">
-                  <img src={redkiwiLogo} alt="Redkiwi" className="h-6" />
+                <span className="inline-flex items-center bg-black px-3 py-1.5 rounded-md">
+                  <img src={redkiwiLogo} alt="Redkiwi" className="h-4 md:h-5" />
                 </span>
               </span>
             </h1>
           </div>
-
-          <Button 
-            onClick={() => setStep(2)}
-            className="px-16 py-6 bg-secondary hover:bg-secondary/90 text-black text-xs font-black tracking-[0.15em] uppercase shadow-[0_0_40px_rgba(197,255,0,0.4)] hover:shadow-[0_0_60px_rgba(197,255,0,0.6)] hover:scale-105 transition-all duration-300 border-none rounded group"
-          >
-            Volgende
-            <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
         </div>
       </div>
     );
