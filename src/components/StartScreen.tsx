@@ -118,7 +118,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <div className="relative max-w-4xl w-full space-y-10 text-center">
           {/* Header Section */}
           <div className="space-y-6 animate-fade-in">
-            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight">
               LET'S GET <span className="text-primary">STARTED</span>
             </h2>
             
