@@ -101,24 +101,26 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW
             </h1>
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <p className="text-sm md:text-base text-secondary font-normal">
-                Powered by
-              </p>
-              <div className="flex items-center gap-3">
-                <img 
-                  src={redkiwiLogoNew} 
-                  alt="Redkiwi" 
-                  className="h-5 md:h-6"
-                />
-                <span className="text-secondary text-sm md:text-base">&</span>
-                <img 
-                  src={heygenLogoNew} 
-                  alt="HeyGen" 
-                  className="h-5 md:h-6"
-                />
-              </div>
-            </div>
+          </div>
+        </div>
+        
+        {/* Powered by section at bottom */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center gap-3">
+          <p className="text-sm md:text-base text-secondary font-normal">
+            Powered by
+          </p>
+          <div className="flex items-center gap-3">
+            <img 
+              src={redkiwiLogoNew} 
+              alt="Redkiwi" 
+              className="h-5 md:h-6"
+            />
+            <span className="text-secondary text-sm md:text-base">&</span>
+            <img 
+              src={heygenLogoNew} 
+              alt="HeyGen" 
+              className="h-5 md:h-6"
+            />
           </div>
         </div>
       </div>
