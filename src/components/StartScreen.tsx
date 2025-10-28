@@ -92,11 +92,21 @@ export const StartScreen = ({
         </div>
         
         {/* Powered by section at bottom */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center gap-0.5">
-          <p className="text-xs text-secondary/60 font-normal mr-0.5">Powered by:</p>
-          <img src={redkiwiLogoNew} alt="Redkiwi" className="h-10" />
-          <span className="text-secondary/60 text-xs">&</span>
-          <img src={heygenLogoNew} alt="HeyGen" className="h-10" />
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-6">
+          <div className="relative">
+            {/* Subtle glow line above */}
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            
+            {/* Content */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
+              <p className="text-xs text-white/70 font-normal tracking-wide">Powered by</p>
+              <div className="flex items-center gap-2">
+                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-5 md:h-6" />
+                <span className="text-white/70 text-sm">&</span>
+                <img src={heygenLogoNew} alt="HeyGen" className="h-5 md:h-6" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>;
   }
