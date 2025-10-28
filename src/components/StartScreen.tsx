@@ -107,24 +107,26 @@ export const StartScreen = ({
           </div>
           
           {/* Powered by section - perfectly centered */}
-          <div className="w-full flex flex-col items-center justify-center gap-4 mt-16">
+          <div className="w-full flex flex-col items-center gap-6">
             {/* Powered by text - 16px uppercase */}
-            <p className="text-base text-[#9C9C9C] tracking-[0.15em] uppercase">
+            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
               Powered by
             </p>
             
-            {/* Logos - 26px height, 32px spacing */}
-            <div className="flex items-center justify-center gap-8">
+            {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
               <img 
                 src={redkiwiLogoNew} 
                 alt="Redkiwi" 
-                className="h-[26px] aspect-auto object-contain" 
+                className="h-24 w-auto object-contain" 
+                style={{ imageRendering: 'crisp-edges' }}
               />
-              <span className="text-[#9C9C9C] text-base font-light">&</span>
+              <span className="text-[#9C9C9C] text-base font-light hidden md:inline">&</span>
               <img 
                 src={heygenLogoNew} 
                 alt="HeyGen" 
-                className="h-[26px] aspect-auto object-contain" 
+                className="h-24 w-auto object-contain" 
+                style={{ imageRendering: 'crisp-edges' }}
               />
             </div>
           </div>
