@@ -104,10 +104,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             </h2>
             
             <div className="max-w-2xl mx-auto space-y-3">
-              <p className="text-lg text-white/70 leading-relaxed">
+              <p className="text-lg text-white leading-relaxed">
                 Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> om je ervaring te delen.
               </p>
-              <p className="text-base text-white/60">
+              <p className="text-base text-white">
                 Jouw antwoorden helpen ons beter te begrijpen hoe je ons merk beleeft.
               </p>
             </div>
