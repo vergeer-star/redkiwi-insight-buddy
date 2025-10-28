@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import heroAnimation from "@/assets/hero-animation.gif";
-import { ChevronRight, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
 
 interface StartScreenProps {
   onStart: () => void;
@@ -174,8 +174,9 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             
             <button
               onClick={() => setStep(1)}
-              className="text-sm text-white/40 hover:text-white/70 transition-colors underline"
+              className="text-sm text-white/40 hover:text-white/70 transition-colors flex items-center gap-1 mx-auto"
             >
+              <ChevronLeft className="w-4 h-4" />
               Terug
             </button>
           </div>
