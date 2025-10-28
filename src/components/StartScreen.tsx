@@ -18,7 +18,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <img 
           src={heroAnimation} 
           alt="AI Animation" 
-          className="h-32 md:h-40 mx-auto"
+          className="h-48 md:h-64 mx-auto"
         />
         
         {/* Hero Title */}
