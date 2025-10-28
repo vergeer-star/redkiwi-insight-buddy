@@ -49,10 +49,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   // Step 1: Hero with GIF
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden pt-20">
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
-        <div className="relative max-w-5xl w-full space-y-8 text-center">
+        <div className="relative max-w-5xl w-full space-y-8 text-center -mt-20">
           <div 
             className="relative cursor-pointer"
             onClick={() => setStep(2)}
