@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { StartScreen } from "@/components/StartScreen";
+import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
@@ -165,6 +166,11 @@ export const InterviewChat = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      
+      {/* Redkiwi Logo */}
+      <div className="fixed top-8 left-8 z-[10000]">
+        <img src={redkiwiLogo} alt="Redkiwi" className="h-12 w-auto object-contain" />
+      </div>
       
       {/* Language reminder overlay */}
       <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white text-sm animate-fade-in">
