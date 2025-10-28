@@ -48,30 +48,38 @@ export const StartScreen = ({
 
   // Step 1: Hero with GIF
   if (step === 1) {
-    return <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden pt-20">
+    return <div className="min-h-screen bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
         
-        <div className="relative max-w-5xl w-full space-y-8 text-center -mt-20 z-10">
-          <div className="relative cursor-pointer" onClick={() => setStep(2)}>
+        <div className="relative max-w-6xl w-full flex flex-col items-center justify-center space-y-12 md:space-y-16 z-10 animate-fade-in">
+          {/* Main Logo / Animation */}
+          <div className="relative cursor-pointer w-full max-w-3xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
-              <img src={heroAnimation} alt="AI Animation" className="h-96 md:h-[32rem] mx-auto transition-all duration-500" style={{
-              animationPlayState: 'running'
-            }} />
+              <img 
+                src={heroAnimation} 
+                alt="AI Animation" 
+                className="w-full h-auto mx-auto transition-all duration-500" 
+                style={{ animationPlayState: 'running' }} 
+              />
               {/* Hover zone in het midden */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" onMouseEnter={e => {
-              const img = e.currentTarget.parentElement?.querySelector('img');
-              if (img) {
-                img.style.animationPlayState = 'paused';
-                img.style.transform = 'scale(1.05)';
-              }
-            }} onMouseLeave={e => {
-              const img = e.currentTarget.parentElement?.querySelector('img');
-              if (img) {
-                img.style.animationPlayState = 'running';
-                img.style.transform = 'scale(1)';
-              }
-            }}>
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" 
+                onMouseEnter={e => {
+                  const img = e.currentTarget.parentElement?.querySelector('img');
+                  if (img) {
+                    img.style.animationPlayState = 'paused';
+                    img.style.transform = 'scale(1.05)';
+                  }
+                }} 
+                onMouseLeave={e => {
+                  const img = e.currentTarget.parentElement?.querySelector('img');
+                  if (img) {
+                    img.style.animationPlayState = 'running';
+                    img.style.transform = 'scale(1)';
+                  }
+                }}
+              >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
                     <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
@@ -84,28 +92,42 @@ export const StartScreen = ({
             </div>
           </div>
           
-          <div className="space-y-4 relative z-20">
-            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-wide leading-tight" style={{ textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)' }}>
+          {/* Headline */}
+          <div className="w-full max-w-4xl text-center space-y-2">
+            <h1 
+              className="text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-wide leading-tight px-4" 
+              style={{ textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)' }}
+            >
               WELCOME TO AN<br />
-              <span className="text-primary">AI-DRIVEN</span> INTERVIEW
+              <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
             </h1>
           </div>
-        </div>
-        
-        {/* Powered by section at bottom */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-20">
-          <div className="relative flex flex-col items-center gap-8">
-            {/* Subtle separator line with fade */}
-            <div className="w-48 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          
+          {/* Powered by section */}
+          <div className="w-full flex flex-col items-center gap-6 mt-20">
+            {/* Subtle separator line */}
+            <div className="w-32 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
             
-            {/* Content */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
-              <p className="text-base text-[#9C9C9C] font-medium tracking-widest uppercase">Powered by</p>
-              <div className="flex items-center gap-6 md:gap-8">
-                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-6 md:h-7" />
-                <span className="text-[#9C9C9C] text-base">&</span>
-                <img src={heygenLogoNew} alt="HeyGen" className="h-6 md:h-7" />
-              </div>
+            {/* Powered by text */}
+            <p className="text-base text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
+              Powered by
+            </p>
+            
+            {/* Logos - horizontaal op desktop, verticaal op mobiel */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+              <img 
+                src={redkiwiLogoNew} 
+                alt="Redkiwi" 
+                className="h-7 md:h-8 w-auto object-contain" 
+                style={{ imageRendering: 'crisp-edges' }}
+              />
+              <span className="text-[#9C9C9C] text-lg font-light hidden md:inline">&</span>
+              <img 
+                src={heygenLogoNew} 
+                alt="HeyGen" 
+                className="h-7 md:h-8 w-auto object-contain" 
+                style={{ imageRendering: 'crisp-edges' }}
+              />
             </div>
           </div>
         </div>
