@@ -39,6 +39,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
+              <span><strong>Kies eerst je taal</strong> in de avatar (rechtsonder) voordat je begint</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary mt-0.5">•</span>
               <span>Het gesprek verloopt automatisch - gewoon praten!</span>
             </li>
           </ul>

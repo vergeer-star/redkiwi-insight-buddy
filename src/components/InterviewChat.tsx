@@ -6,9 +6,7 @@ export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (!hasStarted) return;
-
-    // Load HeyGen streaming embed script
+    // Load HeyGen streaming embed script immediately
     const script = document.createElement("script");
     script.innerHTML = `
       !function(window){
@@ -96,7 +94,7 @@ export const InterviewChat = () => {
       if (widget) widget.remove();
       if (script.parentNode) script.parentNode.removeChild(script);
     };
-  }, [hasStarted]);
+  }, []); // Empty dependency array - load once on mount
 
   const handleStart = () => {
     setHasStarted(true);
