@@ -99,8 +99,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             </div>
             
             <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
-              LET'S GET<br />
-              <span className="text-primary">STARTED</span>
+              LET'S GET <span className="text-primary">STARTED</span>
             </h2>
             
             <div className="max-w-2xl mx-auto space-y-3">
