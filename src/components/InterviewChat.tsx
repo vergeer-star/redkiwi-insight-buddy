@@ -25,34 +25,32 @@ export const InterviewChat = () => {
           #heygen-streaming-embed {
             z-index: 9999;
             position: fixed;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             opacity: 0;
             visibility: hidden;
           }
           
-          /* Before start: small floating widget bottom left */
           #heygen-streaming-embed[data-started="false"] {
-            left: 40px;
-            bottom: 40px;
-            width: 200px;
-            height: 200px;
+            right: 24px;
+            bottom: 24px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            border: 3px solid hsl(0 85% 55%);
-            box-shadow: 0 0 30px hsl(0 85% 55% / 0.5), 0 0 60px hsl(195 85% 50% / 0.3);
+            border: 2px solid hsl(356 85% 53%);
+            box-shadow: 0 0 24px hsl(356 85% 53% / 0.6);
+            cursor: pointer;
           }
           
-          /* After start: centered and larger */
           #heygen-streaming-embed[data-started="true"] {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: min(800px, 90vw);
-            height: min(600px, 70vh);
-            border-radius: 24px;
-            border: 2px solid hsl(0 85% 55% / 0.5);
-            box-shadow: 0 0 60px hsl(0 85% 55% / 0.6), 0 0 120px hsl(195 85% 50% / 0.4);
-            backdrop-filter: blur(10px);
+            width: min(900px, 90vw);
+            height: min(680px, 75vh);
+            border-radius: 16px;
+            border: 2px solid hsl(356 85% 53% / 0.4);
+            box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
           }
           
           #heygen-streaming-embed.show {
