@@ -92,12 +92,12 @@ export const StartScreen = ({
         </div>
         
         {/* Powered by section at bottom */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1">
-          <p className="text-sm md:text-base text-secondary font-normal mt-2">Powered by:</p>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-0.5">
+          <p className="text-xs text-secondary/60 font-normal">Powered by:</p>
           <div className="flex items-center gap-0.5">
-            <img src={redkiwiLogoNew} alt="Redkiwi" className="h-14 md:h-16" />
-            <span className="text-secondary text-sm md:text-base">&</span>
-            <img src={heygenLogoNew} alt="HeyGen" className="h-14 md:h-16" />
+            <img src={redkiwiLogoNew} alt="Redkiwi" className="h-12" />
+            <span className="text-secondary/60 text-xs mx-0.5">&</span>
+            <img src={heygenLogoNew} alt="HeyGen" className="h-12" />
           </div>
         </div>
       </div>;
