@@ -20,33 +20,44 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         
         <div className="relative max-w-5xl w-full space-y-8 text-center">
           <div 
-            className="relative group cursor-pointer"
+            className="relative cursor-pointer"
             onClick={() => setStep(2)}
           >
             <div className="relative overflow-hidden rounded-lg">
               <img 
                 src={heroAnimation} 
                 alt="AI Animation" 
-                className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500"
+                className="h-96 md:h-[32rem] mx-auto transition-all duration-500"
                 style={{
                   animationPlayState: 'running'
                 }}
+              />
+              {/* Hover zone in het midden */}
+              <div 
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group"
                 onMouseEnter={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.animationPlayState = 'paused';
+                  const img = e.currentTarget.parentElement?.querySelector('img');
+                  if (img) {
+                    img.style.animationPlayState = 'paused';
+                    img.style.transform = 'scale(1.05)';
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.animationPlayState = 'running';
+                  const img = e.currentTarget.parentElement?.querySelector('img');
+                  if (img) {
+                    img.style.animationPlayState = 'running';
+                    img.style.transform = 'scale(1)';
+                  }
                 }}
-              />
-            </div>
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
-                <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
-                  Klik om te beginnen
-                  <ChevronRight className="w-4 h-4" />
-                </span>
+              >
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
+                    <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
+                      Klik om te beginnen
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
