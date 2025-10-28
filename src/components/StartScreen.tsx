@@ -182,8 +182,20 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                     </div>
                   </div>
                 ))}
+              </div>
 
-                {/* Privacy Consent - Interactive */}
+              {/* Privacy Notice */}
+              <div className="pt-6 border-t border-white/10">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-white/40 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-white/50 text-left leading-relaxed">
+                    <strong className="text-white/70">Jouw privacy is belangrijk.</strong> Je antwoorden blijven volledig vertrouwelijk en worden alleen gebruikt voor dit onderzoek.
+                  </p>
+                </div>
+              </div>
+
+              {/* Privacy Consent - Interactive */}
+              <div className="pt-6 border-t border-white/10">
                 <div 
                   onClick={() => setPrivacyConsent(!privacyConsent)}
                   className="flex items-start gap-4 group cursor-pointer animate-fade-in hover:bg-white/5 p-3 -m-3 rounded-lg transition-all duration-300"
@@ -208,16 +220,6 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                       Er worden <strong>geen stem- of beeldopnames</strong> gemaakt. Alleen transcriptie van het interview wordt anoniem verwerkt.
                     </p>
                   </div>
-                </div>
-              </div>
-
-              {/* Privacy Notice */}
-              <div className="pt-6 border-t border-white/10">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-white/40 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-white/50 text-left leading-relaxed">
-                    <strong className="text-white/70">Jouw privacy is belangrijk.</strong> Je antwoorden blijven volledig vertrouwelijk en worden alleen gebruikt voor dit onderzoek.
-                  </p>
                 </div>
               </div>
             </div>
