@@ -95,7 +95,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-white tracking-wide leading-tight">
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW
             </h1>
