@@ -114,7 +114,7 @@ export const StartScreen = ({
             </p>
             
             {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
               <img 
                 src={redkiwiLogoNew} 
                 alt="Redkiwi" 
