@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
-import redkiwiLogoHorizontal from "@/assets/redkiwi-logo-horizontal.png";
-import heygenLogo from "@/assets/heygen-logo.svg";
+import redkiwiLogoNew from "@/assets/redkiwi-logo-new.png";
+import heygenLogoNew from "@/assets/heygen-logo-new.png";
 import heroAnimation from "@/assets/hero-animation.gif";
 import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
 
@@ -107,15 +107,15 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               </p>
               <div className="flex items-center gap-3">
                 <img 
-                  src={redkiwiLogoHorizontal} 
+                  src={redkiwiLogoNew} 
                   alt="Redkiwi" 
-                  className="h-5 md:h-6"
+                  className="h-6 md:h-8"
                 />
                 <span className="text-secondary text-sm md:text-base">&</span>
                 <img 
-                  src={heygenLogo} 
+                  src={heygenLogoNew} 
                   alt="HeyGen" 
-                  className="h-5 md:h-6"
+                  className="h-6 md:h-8"
                 />
               </div>
             </div>
