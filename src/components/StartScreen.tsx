@@ -118,10 +118,6 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <div className="relative max-w-4xl w-full space-y-10 text-center">
           {/* Header Section */}
           <div className="space-y-6 animate-fade-in">
-            <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/30 rounded-md backdrop-blur-sm">
-              <span className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Stap 2 van 3</span>
-            </div>
-            
             <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
               LET'S GET <span className="text-primary">STARTED</span>
             </h2>
