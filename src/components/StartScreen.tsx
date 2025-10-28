@@ -146,12 +146,12 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     micPermissionGranted 
                       ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40 group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]' 
-                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
+                      : 'bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20 group-hover:from-blue-500/20 group-hover:to-blue-600/10 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]'
                   }`}>
                     {micPermissionGranted ? (
                       <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
                     ) : (
-                      <Mic className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                      <Mic className="w-5 h-5 text-blue-400" strokeWidth={2.5} />
                     )}
                   </div>
                   <div className="flex-1 text-left pt-2">
@@ -163,16 +163,16 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
 
                 {/* Other checklist items - Non-interactive */}
                 {[
-                  { icon: Volume2, text: "Kies een rustige omgeving", color: "text-primary" },
-                  { icon: Globe, text: "Kies eerst je taal in de avatar", color: "text-white" }
+                  { icon: Volume2, text: "Kies een rustige omgeving" },
+                  { icon: Globe, text: "Kies eerst je taal in de avatar" }
                 ].map((item, index) => (
                   <div 
                     key={index}
                     className="flex items-start gap-4 animate-fade-in"
                     style={{ animationDelay: `${(index + 1) * 150}ms` }}
                   >
-                    <div className={`mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-primary/20`}>
-                      <item.icon className={`w-5 h-5 ${item.color}`} strokeWidth={2.5} />
+                    <div className="mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-primary/20">
+                      <item.icon className="w-5 h-5 text-primary" strokeWidth={2.5} />
                     </div>
                     <div className="flex-1 text-left pt-2">
                       <p className="text-base text-white/90 font-medium leading-relaxed">
