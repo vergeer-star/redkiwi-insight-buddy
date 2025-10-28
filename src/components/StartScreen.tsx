@@ -18,11 +18,10 @@ export const StartScreen = ({
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [quietEnvironmentConfirmed, setQuietEnvironmentConfirmed] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const handleStart = () => {
     setIsStarting(true);
     setTimeout(() => {
-      onStart(selectedLanguage);
+      onStart('Nederlands');
     }, 1500);
   };
   const scrollDown = () => {
@@ -181,28 +180,6 @@ export const StartScreen = ({
               {/* Divider */}
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-              {/* Language Selection - Interactive */}
-              <div className={`p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${selectedLanguage ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : ''}`}>
-                <div className="flex items-start gap-5">
-                  <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${selectedLanguage ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5'}`}>
-                    {selectedLanguage ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Globe className="w-6 h-6 text-white" strokeWidth={2.5} />}
-                  </div>
-                  <div className="flex-1 text-left pt-2">
-                    <p className="text-base text-white font-medium leading-relaxed mb-4">
-                      {selectedLanguage ? `Taal geselecteerd: ${selectedLanguage}` : 'Kies je voorkeurstaal voor het interview'}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Nederlands', 'English', 'Français', 'Deutsch'].map(lang => <button key={lang} onClick={() => { setSelectedLanguage(lang); scrollDown(); }} className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${selectedLanguage === lang ? 'bg-[#FF2B2B] text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]' : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'}`}>
-                          {lang}
-                        </button>)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
               {/* Privacy Consent - Interactive */}
               <div onClick={() => { setPrivacyConsent(!privacyConsent); scrollDown(); }} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
                 <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
@@ -222,7 +199,7 @@ export const StartScreen = ({
 
           {/* CTA Button */}
           <div className="space-y-4">
-            <Button onClick={handleStart} disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage} className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden">
+            <Button onClick={handleStart} disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed} className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden">
               {isStarting ? <span className="flex items-center gap-3">
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Even instellen...
@@ -232,7 +209,7 @@ export const StartScreen = ({
                 </span>}
             </Button>
             
-            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage) && <p className="text-xs text-[#9C9C9C]">
+            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed) && <p className="text-xs text-[#9C9C9C]">
                 Vul eerst alle stappen in de checklist in
               </p>}
             
