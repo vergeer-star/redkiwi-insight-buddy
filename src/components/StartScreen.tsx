@@ -206,11 +206,8 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                     <p className="text-base text-white/90 font-medium leading-relaxed mb-2">
                       {privacyConsent ? 'Toestemming verleend ✓' : 'Klik om toestemming te geven'}
                     </p>
-                    <p className="text-xs text-white/60 leading-relaxed mb-2">
-                      Er worden <strong>geen stem- of beeldopnames</strong> gemaakt. Alleen transcriptie van het interview wordt anoniem verwerkt.
-                    </p>
-                    <p className="text-xs text-white/50 leading-relaxed">
-                      Jouw privacy is belangrijk. Je antwoorden blijven volledig vertrouwelijk en worden alleen gebruikt voor dit onderzoek.
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      Jouw privacy is belangrijk. Er worden <strong>geen stem- of beeldopnames</strong> gemaakt; alleen de transcriptie van het interview wordt anoniem verwerkt. Alle antwoorden blijven volledig vertrouwelijk en worden uitsluitend gebruikt voor dit onderzoek.
                     </p>
                   </div>
                 </div>
