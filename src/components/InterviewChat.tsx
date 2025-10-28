@@ -108,22 +108,11 @@ export const InterviewChat = () => {
     setSelectedAvatarUrl(avatarUrl);
     setSelectedAvatarName(avatarName);
     setShowAvatarSelection(false);
+    setHasStarted(true); // Start interview direct bij avatar selectie
   };
 
-  const handleStart = (language: string) => {
-    setSelectedLanguage(language);
-    setHasStarted(true);
-    
-    // Send language preference to HeyGen iframe after it loads
-    setTimeout(() => {
-      const iframe = document.querySelector('#heygen-streaming-container iframe') as HTMLIFrameElement;
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage({
-          type: 'set-language',
-          language: language
-        }, '*');
-      }
-    }, 2000);
+  const handleChecklistComplete = () => {
+    setShowAvatarSelection(true);
   };
 
   const handlePauseToggle = () => {
@@ -151,12 +140,8 @@ export const InterviewChat = () => {
     return <AvatarSelection onSelect={handleAvatarSelect} />;
   }
 
-  if (!selectedAvatarUrl) {
-    return <StartScreen onStart={() => setShowAvatarSelection(true)} />;
-  }
-
   if (!hasStarted) {
-    return <StartScreen onStart={handleStart} />;
+    return <StartScreen onStart={handleChecklistComplete} />;
   }
 
   return (
