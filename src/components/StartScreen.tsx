@@ -116,9 +116,11 @@ export const StartScreen = ({
                 imageRendering: 'crisp-edges'
               }} />
               </a>
-              <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain" style={{
-              imageRendering: 'crisp-edges'
-            }} />
+              <a href="https://www.redkiwi.com/partners/heygen/" target="_blank" rel="noopener noreferrer">
+                <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
+                imageRendering: 'crisp-edges'
+              }} />
+              </a>
             </div>
           </div>
         </div>
