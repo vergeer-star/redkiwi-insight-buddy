@@ -54,7 +54,7 @@ export const StartScreen = ({
         
         <div className="relative max-w-6xl w-full flex flex-col items-center justify-center space-y-12 md:space-y-16 z-10 animate-fade-in">
           {/* Main Logo / Animation */}
-          <div className="relative cursor-pointer w-full max-w-3xl" onClick={() => setStep(2)}>
+          <div className="relative cursor-pointer w-full max-w-2xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
               <img 
                 src={heroAnimation} 
