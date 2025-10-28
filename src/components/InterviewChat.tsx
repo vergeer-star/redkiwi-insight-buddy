@@ -169,7 +169,9 @@ export const InterviewChat = () => {
       
       {/* Redkiwi Logo */}
       <div className="fixed top-8 left-8 z-[10000]">
-        <img src={redkiwiLogo} alt="Redkiwi" className="h-20 w-auto object-contain" />
+        <a href="https://www.redkiwi.com/" target="_blank" rel="noopener noreferrer">
+          <img src={redkiwiLogo} alt="Redkiwi" className="h-20 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" />
+        </a>
       </div>
       
       {/* Language reminder overlay */}

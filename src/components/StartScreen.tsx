@@ -111,9 +111,11 @@ export const StartScreen = ({
             
             {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-0.5">
-              <img src={redkiwiLogoNew} alt="Redkiwi" className="h-24 w-auto object-contain" style={{
-              imageRendering: 'crisp-edges'
-            }} />
+              <a href="https://www.redkiwi.com/" target="_blank" rel="noopener noreferrer">
+                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
+                imageRendering: 'crisp-edges'
+              }} />
+              </a>
               <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain" style={{
               imageRendering: 'crisp-edges'
             }} />
