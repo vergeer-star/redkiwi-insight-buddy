@@ -18,14 +18,13 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             WELCOME TO AN <span className="text-primary">AI-DRIVEN</span> INTERVIEW<br />
             <span className="text-lg md:text-2xl font-normal lowercase block mt-4">powered by Redkiwi</span>
           </h1>
-          
-          <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed font-medium px-4">
-            Deel je ervaring met onze AI-interviewer. Een persoonlijk gesprek van 5-10 minuten via spraak.
-          </p>
         </div>
 
         {/* Checklist Card */}
         <Card className="max-w-xl mx-auto p-8 bg-white/[0.02] backdrop-blur-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_8px_48px_rgba(237,28,36,0.15)] transition-all duration-300">
+          <p className="text-base text-white/80 mb-6 leading-relaxed">
+            Deel je ervaring met onze AI-interviewer. Een persoonlijk gesprek van 5-10 minuten via spraak.
+          </p>
           <ul className="space-y-5 text-left">
             <li className="flex items-start gap-4 group">
               <div className="mt-0.5 w-5 h-5 rounded-sm bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
