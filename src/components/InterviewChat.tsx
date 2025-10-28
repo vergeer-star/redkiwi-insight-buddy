@@ -137,6 +137,13 @@ export const InterviewChat = () => {
     }
   };
 
+  const handleBack = () => {
+    // Clean up interviewer widget
+    const widget = document.getElementById("heygen-streaming-embed");
+    if (widget) widget.remove();
+    setHasStarted(false);
+  };
+
   if (!hasStarted) {
     return <StartScreen onStart={handleStart} />;
   }
@@ -166,6 +173,17 @@ export const InterviewChat = () => {
             Pauze
           </>
         )}
+      </button>
+      
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 text-sm text-white/40 hover:text-white/70 transition-colors flex items-center gap-1"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Terug
       </button>
     </div>
   );
