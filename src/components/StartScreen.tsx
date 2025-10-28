@@ -15,7 +15,8 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         {/* Hero Title */}
         <div className="space-y-6">
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-[0.95]">
-            WELCOME TO AN <span className="text-primary">AI-DRIVEN</span> INTERVIEW <span className="text-sm font-normal lowercase">powered by Redkiwi</span>
+            WELCOME TO AN <span className="text-primary">AI-DRIVEN</span> INTERVIEW<br />
+            <span className="text-lg md:text-2xl font-normal lowercase block mt-4">powered by Redkiwi</span>
           </h1>
           
           <p className="text-lg text-white/60 max-w-2xl mx-auto leading-relaxed font-medium px-4">
