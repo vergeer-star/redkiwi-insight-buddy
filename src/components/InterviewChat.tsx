@@ -38,6 +38,14 @@ export const InterviewChat = () => {
             box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
             opacity: 0;
             visibility: hidden;
+            outline: none;
+            pointer-events: auto;
+          }
+          
+          #heygen-streaming-embed:focus,
+          #heygen-streaming-embed:active {
+            outline: none;
+            border: 2px solid hsl(356 85% 53% / 0.4);
           }
           
           #heygen-streaming-embed.show {
@@ -48,12 +56,14 @@ export const InterviewChat = () => {
           #heygen-streaming-container {
             width: 100%;
             height: 100%;
+            outline: none;
           }
           #heygen-streaming-container iframe {
             width: 100%;
             height: 100%;
             border: 0;
             border-radius: inherit;
+            outline: none;
           }
         \`;
         
