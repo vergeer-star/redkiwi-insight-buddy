@@ -132,52 +132,49 @@ export const InterviewChat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card relative overflow-hidden">
-      {/* Futuristic background grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,59,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,59,59,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
-      
-      {/* Animated gradient orbs */}
-      <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Subtle diagonal pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       {/* Header with logo */}
-      <header className="relative border-b border-primary/20 bg-card/50 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <img src={redkiwiLogo} alt="Redkiwi" className="h-10 drop-shadow-[0_0_15px_rgba(255,59,59,0.5)]" />
-          <div className="text-xs text-muted-foreground font-mono">
-            AI-DRIVEN INTERVIEW
+      <header className="relative border-b border-white/10 bg-black/90 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-5 flex items-center justify-between">
+          <img src={redkiwiLogo} alt="Redkiwi" className="h-10" />
+          <div className="text-xs text-white/50 font-bold tracking-widest uppercase">
+            AI Interview
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="relative flex-1 flex flex-col items-center justify-center max-w-5xl w-full mx-auto p-8 min-h-[calc(100vh-80px)]">
-        <div className="text-center space-y-6">
-          <div className="inline-block px-4 py-1 bg-primary/10 border border-primary/30 rounded-full text-xs font-mono text-primary mb-4">
-            MERKPERCEPTIE ONDERZOEK 2025
+      <div className="relative flex-1 flex flex-col items-center justify-center max-w-6xl w-full mx-auto p-8 min-h-[calc(100vh-80px)]">
+        <div className="text-center space-y-8">
+          <div className="inline-block px-5 py-2 bg-primary/10 border border-primary/40 rounded-sm text-xs font-bold tracking-widest text-primary uppercase">
+            Merkperceptie Onderzoek 2025
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground bg-gradient-to-r from-primary via-foreground to-secondary bg-clip-text text-transparent animate-pulse">
-            Redkiwi Interview
+          <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight leading-tight">
+            REDKIWI<br />
+            <span className="text-primary">INTERVIEW</span>
           </h2>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-white/70 max-w-2xl mx-auto leading-relaxed font-medium">
             De AI-interviewer staat klaar in het centrum van je scherm.
             <br />
             Praat natuurlijk via je microfoon.
           </p>
           
-          <div className="mt-8 p-6 bg-card/30 backdrop-blur-sm rounded-2xl border border-primary/20 max-w-xl mx-auto relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5" />
+          <div className="mt-12 p-8 bg-card/20 backdrop-blur-sm rounded-sm border border-white/10 max-w-xl mx-auto relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
             <div className="relative">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
-                <p className="text-sm font-mono text-secondary">SYSTEM READY</p>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-3 h-3 bg-secondary rounded-sm animate-pulse" />
+                <p className="text-sm font-black text-secondary tracking-widest uppercase">System Ready</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                ⚡ Zorg dat je microfoon toegang is ingeschakeld
+              <p className="text-sm text-white/60 font-medium leading-relaxed">
+                <strong className="text-white">✓</strong> Zorg dat je microfoon toegang is ingeschakeld
                 <br />
-                🎯 De interviewer wordt gecentreerd tijdens het gesprek
+                <strong className="text-white">✓</strong> De interviewer wordt gecentreerd tijdens het gesprek
               </p>
             </div>
           </div>

@@ -8,56 +8,52 @@ interface StartScreenProps {
 
 export const StartScreen = ({ onStart }: StartScreenProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Futuristic background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,59,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,59,59,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
-      <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Subtle diagonal lines pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
-      <Card className="relative max-w-2xl w-full p-8 md:p-12 text-center bg-card/50 backdrop-blur-xl border-primary/20 shadow-[0_0_60px_rgba(255,59,59,0.3)]">
+      <Card className="relative max-w-3xl w-full p-10 md:p-16 text-center bg-black border-2 border-primary/20 shadow-[0_0_80px_rgba(237,28,36,0.3)]">
         <img 
           src={redkiwiLogo} 
           alt="Redkiwi" 
-          className="h-14 mx-auto mb-8 drop-shadow-[0_0_15px_rgba(255,59,59,0.5)]"
+          className="h-12 mx-auto mb-12"
         />
         
-        <div className="inline-block px-4 py-1 bg-primary/10 border border-primary/30 rounded-full text-xs font-mono text-primary mb-6">
-          AI-DRIVEN MERKPERCEPTIE ONDERZOEK
+        <div className="inline-block px-5 py-2 bg-primary/10 border border-primary/40 rounded-sm text-xs font-bold tracking-widest text-primary mb-8 uppercase">
+          Merkperceptie Onderzoek
         </div>
         
-        <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-foreground to-secondary bg-clip-text text-transparent">
-          Merkperceptie Interview
+        <h1 className="text-4xl md:text-6xl font-black mb-6 text-white uppercase tracking-tight leading-tight">
+          WELCOME TO REDKIWI.<br />
+          <span className="text-primary">AI DRIVEN</span> DIGITAL AGENCY
         </h1>
         
-        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+        <p className="text-base md:text-lg text-white/80 mb-12 leading-relaxed max-w-2xl mx-auto font-medium">
           Welkom! Ik ben je AI-interviewer en ga met je in gesprek over 
           hoe jij Redkiwi ervaart. Het gesprek duurt ongeveer 5-10 minuten 
           en verloopt volledig via spraak.
         </p>
 
-        <div className="bg-card/30 backdrop-blur-sm rounded-2xl p-6 mb-8 text-left border border-primary/20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5" />
+        <div className="bg-card/50 backdrop-blur-sm rounded-sm p-8 mb-12 text-left border border-white/10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
           <div className="relative">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
-              <h2 className="font-mono text-sm text-secondary">SETUP CHECKLIST</h2>
-            </div>
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-3 group">
-                <span className="text-primary mt-0.5 group-hover:scale-110 transition-transform">⚡</span>
-                <span>Zorg dat je microfoon aanstaat</span>
+            <h2 className="font-black text-sm text-white mb-6 uppercase tracking-widest">Setup Checklist</h2>
+            <ul className="space-y-4 text-sm text-white/70">
+              <li className="flex items-start gap-4 group">
+                <span className="text-primary text-xl font-bold mt-0 group-hover:scale-110 transition-transform">✓</span>
+                <span className="font-medium">Zorg dat je microfoon aanstaat</span>
               </li>
-              <li className="flex items-start gap-3 group">
-                <span className="text-primary mt-0.5 group-hover:scale-110 transition-transform">🎯</span>
-                <span>Zoek een rustige plek zonder achtergrondgeluid</span>
+              <li className="flex items-start gap-4 group">
+                <span className="text-primary text-xl font-bold mt-0 group-hover:scale-110 transition-transform">✓</span>
+                <span className="font-medium">Zoek een rustige plek zonder achtergrondgeluid</span>
               </li>
-              <li className="flex items-start gap-3 group">
-                <span className="text-secondary mt-0.5 group-hover:scale-110 transition-transform">🌐</span>
-                <span><strong className="text-secondary">Kies eerst je taal</strong> in de avatar (rechtsonder) voordat je begint</span>
+              <li className="flex items-start gap-4 group">
+                <span className="text-secondary text-xl font-bold mt-0 group-hover:scale-110 transition-transform">✓</span>
+                <span className="font-medium"><strong className="text-secondary">Kies eerst je taal</strong> in de avatar (rechtsonder) voordat je begint</span>
               </li>
-              <li className="flex items-start gap-3 group">
-                <span className="text-primary mt-0.5 group-hover:scale-110 transition-transform">💬</span>
-                <span>Het gesprek verloopt automatisch - gewoon praten!</span>
+              <li className="flex items-start gap-4 group">
+                <span className="text-primary text-xl font-bold mt-0 group-hover:scale-110 transition-transform">✓</span>
+                <span className="font-medium">Het gesprek verloopt automatisch - gewoon praten!</span>
               </li>
             </ul>
           </div>
@@ -66,9 +62,9 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <Button 
           onClick={onStart}
           size="lg"
-          className="text-lg px-12 py-7 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-[0_0_40px_rgba(255,59,59,0.4)] hover:shadow-[0_0_60px_rgba(255,59,59,0.6)] transition-all duration-300 border border-primary/30 font-semibold"
+          className="text-sm px-14 py-7 bg-secondary hover:bg-secondary/90 text-black font-black tracking-widest uppercase shadow-[0_0_40px_rgba(197,255,0,0.5)] hover:shadow-[0_0_60px_rgba(197,255,0,0.7)] transition-all duration-300 border-none rounded-sm"
         >
-          <span className="mr-2">▶</span> Start Interview
+          Start Interview
         </Button>
       </Card>
     </div>
