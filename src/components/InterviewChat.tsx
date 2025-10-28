@@ -3,6 +3,7 @@ import { StartScreen } from "@/components/StartScreen";
 
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
@@ -122,6 +123,20 @@ export const InterviewChat = () => {
     setHasStarted(true);
   };
 
+  const handlePauseToggle = () => {
+    const widget = document.getElementById("heygen-streaming-embed");
+    if (widget) {
+      if (isPaused) {
+        widget.style.visibility = "visible";
+        widget.style.opacity = "1";
+      } else {
+        widget.style.visibility = "hidden";
+        widget.style.opacity = "0";
+      }
+      setIsPaused(!isPaused);
+    }
+  };
+
   if (!hasStarted) {
     return <StartScreen onStart={handleStart} />;
   }
@@ -130,6 +145,28 @@ export const InterviewChat = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      
+      {/* Pause/Resume Button */}
+      <button
+        onClick={handlePauseToggle}
+        className="fixed top-8 right-8 z-[10000] px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2"
+      >
+        {isPaused ? (
+          <>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Resume
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+            Pauze
+          </>
+        )}
+      </button>
     </div>
   );
 };
