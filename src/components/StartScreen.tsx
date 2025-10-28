@@ -56,7 +56,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW
             </h1>
-            <p className="text-sm md:text-base text-secondary font-medium lowercase mt-3">
+            <p className="text-sm md:text-base text-secondary font-normal lowercase mt-3">
               powered by redkiwi
             </p>
           </div>
