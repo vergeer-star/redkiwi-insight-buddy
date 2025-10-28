@@ -149,12 +149,12 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     micPermissionGranted 
                       ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40 group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]' 
-                      : 'bg-gradient-to-br from-secondary/10 to-secondary/5 border-secondary/20 group-hover:from-secondary/20 group-hover:to-secondary/10 group-hover:shadow-[0_0_20px_rgba(197,255,0,0.3)]'
+                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
                   }`}>
                     {micPermissionGranted ? (
                       <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
                     ) : (
-                      <Mic className="w-5 h-5 text-secondary" strokeWidth={2.5} />
+                      <Mic className="w-5 h-5 text-primary" strokeWidth={2.5} />
                     )}
                   </div>
                   <div className="flex-1 text-left pt-2">
