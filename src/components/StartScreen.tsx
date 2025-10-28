@@ -86,7 +86,7 @@ export const StartScreen = ({
           </div>
           
           {/* Headline - 64px spacing from logo */}
-          <div className="w-full max-w-4xl text-center space-y-4 px-4">
+          <div className="w-full max-w-4xl text-center space-y-2 px-4">
             <h1 className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight" style={{
             textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)'
           }}>
