@@ -48,13 +48,13 @@ export const StartScreen = ({
 
   // Step 1: Hero with GIF
   if (step === 1) {
-    return <div className="min-h-screen bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    return <div className="min-h-[90vh] bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
         
-        <div className="relative max-w-6xl w-full flex flex-col items-center justify-center space-y-12 md:space-y-16 z-10 animate-fade-in">
-          {/* Main Logo / Animation */}
-          <div className="relative cursor-pointer w-full max-w-2xl" onClick={() => setStep(2)}>
+        <div className="relative w-full flex flex-col items-center justify-center space-y-16 z-10 animate-fade-in">
+          {/* Main Logo / Animation - 45% of viewport width max */}
+          <div className="relative cursor-pointer w-[60%] md:w-[45%] max-w-xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
               <img 
                 src={heroAnimation} 
@@ -92,40 +92,40 @@ export const StartScreen = ({
             </div>
           </div>
           
-          {/* Headline */}
-          <div className="w-full max-w-4xl text-center space-y-2">
+          {/* Headline - 64px spacing from logo */}
+          <div className="w-full max-w-4xl text-center space-y-8 px-4">
             <h1 
-              className="text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-wide leading-tight px-4" 
+              className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight" 
               style={{ textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)' }}
             >
               WELCOME TO AN<br />
               <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
             </h1>
+            
+            {/* Subtle grey line - 50px wide */}
+            <div className="w-[50px] h-px bg-[#222222] mx-auto" />
           </div>
           
-          {/* Powered by section */}
-          <div className="w-full flex flex-col items-center gap-6 mt-20">
-            {/* Subtle separator line */}
-            <div className="w-32 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-            
-            {/* Powered by text */}
-            <p className="text-base text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
+          {/* Powered by section - perfectly centered */}
+          <div className="w-full flex flex-col items-center gap-6">
+            {/* Powered by text - 16px uppercase */}
+            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
               Powered by
             </p>
             
-            {/* Logos - horizontaal op desktop, verticaal op mobiel */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+            {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
               <img 
                 src={redkiwiLogoNew} 
                 alt="Redkiwi" 
-                className="h-7 md:h-8 w-auto object-contain" 
+                className="h-6 w-auto object-contain" 
                 style={{ imageRendering: 'crisp-edges' }}
               />
-              <span className="text-[#9C9C9C] text-lg font-light hidden md:inline">&</span>
+              <span className="text-[#9C9C9C] text-base font-light hidden md:inline">&</span>
               <img 
                 src={heygenLogoNew} 
                 alt="HeyGen" 
-                className="h-7 md:h-8 w-auto object-contain" 
+                className="h-6 w-auto object-contain" 
                 style={{ imageRendering: 'crisp-edges' }}
               />
             </div>
