@@ -50,7 +50,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   }
                 }}
               >
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
                     <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
                       Klik om te beginnen
