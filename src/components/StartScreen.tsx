@@ -27,7 +27,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               <img 
                 src={heroAnimation} 
                 alt="AI Animation" 
-                className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500 group-hover:drop-shadow-[0_0_60px_rgba(237,28,36,0.6)]"
+                className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500"
                 style={{
                   animationPlayState: 'running'
                 }}
@@ -41,11 +41,11 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 }}
               />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-12 pointer-events-none">
-              <div className="bg-secondary/20 backdrop-blur-sm border-2 border-secondary px-8 py-4 rounded-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                <span className="text-secondary font-black text-xl tracking-wider uppercase flex items-center gap-3">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
+                <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
                   Klik om te beginnen
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-4 h-4" />
                 </span>
               </div>
             </div>
