@@ -52,7 +52,7 @@ export const StartScreen = ({
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
         
-        <div className="relative w-full flex flex-col items-center justify-center space-y-16 z-10 animate-fade-in">
+        <div className="relative w-full flex flex-col items-center justify-center space-y-8 z-10 animate-fade-in">
           {/* Main Logo / Animation - 45% of viewport width max */}
           <div className="relative cursor-pointer w-[60%] md:w-[45%] max-w-xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
