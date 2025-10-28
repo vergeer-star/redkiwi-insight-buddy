@@ -34,18 +34,29 @@ export const InterviewChat = () => {
             width: min(900px, 90vw);
             height: min(680px, 75vh);
             border-radius: 16px;
-            border: 2px solid hsl(356 85% 53% / 0.4);
+            border: 2px solid hsl(356 85% 53% / 0.4) !important;
             box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
             opacity: 0;
             visibility: hidden;
-            outline: none;
+            outline: none !important;
             pointer-events: auto;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+          
+          #heygen-streaming-embed *,
+          #heygen-streaming-embed *:focus,
+          #heygen-streaming-embed *:active,
+          #heygen-streaming-embed *:focus-visible {
+            outline: none !important;
+            border: none !important;
+            -webkit-tap-highlight-color: transparent !important;
           }
           
           #heygen-streaming-embed:focus,
-          #heygen-streaming-embed:active {
-            outline: none;
-            border: 2px solid hsl(356 85% 53% / 0.4);
+          #heygen-streaming-embed:active,
+          #heygen-streaming-embed:focus-visible {
+            outline: none !important;
+            border: 2px solid hsl(356 85% 53% / 0.4) !important;
           }
           
           #heygen-streaming-embed.show {
@@ -56,14 +67,26 @@ export const InterviewChat = () => {
           #heygen-streaming-container {
             width: 100%;
             height: 100%;
-            outline: none;
+            outline: none !important;
+            border: none !important;
           }
+          
+          #heygen-streaming-container *,
+          #heygen-streaming-container *:focus,
+          #heygen-streaming-container *:active,
+          #heygen-streaming-container *:focus-visible {
+            outline: none !important;
+            border: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+          
           #heygen-streaming-container iframe {
             width: 100%;
             height: 100%;
-            border: 0;
+            border: 0 !important;
             border-radius: inherit;
-            outline: none;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
           }
         \`;
         
