@@ -25,6 +25,10 @@ export const StartScreen = ({
       onStart(selectedLanguage);
     }, 1500);
   };
+  const scrollDown = () => {
+    window.scrollBy({ top: 100, behavior: 'smooth' });
+  };
+
   const toggleMicPermission = async () => {
     if (micPermissionGranted && micStream) {
       // Turn off microphone
@@ -39,6 +43,7 @@ export const StartScreen = ({
         });
         setMicStream(stream);
         setMicPermissionGranted(true);
+        scrollDown();
       } catch (error) {
         console.error('Microphone permission denied:', error);
         alert('Microfoon toegang is nodig voor het interview. Klik op "Toestaan" wanneer je browser erom vraagt.');
@@ -162,7 +167,7 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Quiet Environment - Interactive */}
-              <div onClick={() => setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed)} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
+              <div onClick={() => { setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed); scrollDown(); }} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
                 <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
                   {quietEnvironmentConfirmed ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Volume2 className="w-6 h-6 text-white" strokeWidth={2.5} />}
                 </div>
@@ -187,7 +192,7 @@ export const StartScreen = ({
                       {selectedLanguage ? `Taal geselecteerd: ${selectedLanguage}` : 'Kies je voorkeurstaal voor het interview'}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {['Nederlands', 'English', 'Français', 'Deutsch'].map(lang => <button key={lang} onClick={() => setSelectedLanguage(lang)} className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${selectedLanguage === lang ? 'bg-[#FF2B2B] text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]' : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'}`}>
+                      {['Nederlands', 'English', 'Français', 'Deutsch'].map(lang => <button key={lang} onClick={() => { setSelectedLanguage(lang); scrollDown(); }} className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${selectedLanguage === lang ? 'bg-[#FF2B2B] text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]' : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'}`}>
                           {lang}
                         </button>)}
                     </div>
@@ -199,7 +204,7 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Privacy Consent - Interactive */}
-              <div onClick={() => setPrivacyConsent(!privacyConsent)} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
+              <div onClick={() => { setPrivacyConsent(!privacyConsent); scrollDown(); }} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
                 <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
                   {privacyConsent ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />}
                 </div>
