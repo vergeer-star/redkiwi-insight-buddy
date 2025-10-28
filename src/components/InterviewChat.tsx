@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
 import { StartScreen } from "@/components/StartScreen";
+import { AvatarSelection } from "@/components/AvatarSelection";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string>("");
+  const [selectedAvatarName, setSelectedAvatarName] = useState<string>("");
+  const [showAvatarSelection, setShowAvatarSelection] = useState(false);
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
-    if (!hasStarted) return;
+    if (!hasStarted || !selectedAvatarUrl) return;
 
     const script = document.createElement("script");
     script.innerHTML = `
       !function(window){
         const host="https://labs.heygen.com",
-        url=host+"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJCcnlhbl9JVF9TaXR0aW5nX3B1YmxpYyIs%0D%0AInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzMzYzlhYzRh%0D%0AZWFkNDRkZmM4YmMwMDgyYTM1MDYyYTcwXzQ1NTgwL3ByZXZpZXdfdGFsa18zLndlYnAiLCJuZWVk%0D%0AUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIyNDQw%0D%0AYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4Y2Ey%0D%0AYTE4ODY4NiJ9&inIFrame=1",
+        url=host+"/guest/streaming-embed?share=${selectedAvatarUrl}&inIFrame=1",
         clientWidth=document.body.clientWidth,
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
@@ -98,7 +102,13 @@ export const InterviewChat = () => {
       if (widget) widget.remove();
       if (script.parentNode) script.parentNode.removeChild(script);
     };
-  }, [hasStarted]); // Load when hasStarted changes
+  }, [hasStarted, selectedAvatarUrl]); // Load when hasStarted or avatar changes
+
+  const handleAvatarSelect = (avatarUrl: string, avatarName: string) => {
+    setSelectedAvatarUrl(avatarUrl);
+    setSelectedAvatarName(avatarName);
+    setShowAvatarSelection(false);
+  };
 
   const handleStart = (language: string) => {
     setSelectedLanguage(language);
@@ -136,6 +146,14 @@ export const InterviewChat = () => {
     if (widget) widget.remove();
     setHasStarted(false);
   };
+
+  if (showAvatarSelection) {
+    return <AvatarSelection onSelect={handleAvatarSelect} />;
+  }
+
+  if (!selectedAvatarUrl) {
+    return <StartScreen onStart={() => setShowAvatarSelection(true)} />;
+  }
 
   if (!hasStarted) {
     return <StartScreen onStart={handleStart} />;
