@@ -19,12 +19,24 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
         <div className="relative max-w-5xl w-full space-y-8 text-center">
-          <img 
-            src={heroAnimation} 
-            alt="AI Animation" 
-            className="h-96 md:h-[32rem] mx-auto cursor-pointer hover:scale-105 transition-transform duration-300"
+          <div 
+            className="relative group cursor-pointer"
             onClick={() => setStep(2)}
-          />
+          >
+            <img 
+              src={heroAnimation} 
+              alt="AI Animation" 
+              className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500 group-hover:drop-shadow-[0_0_60px_rgba(237,28,36,0.6)]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-12">
+              <div className="bg-secondary/20 backdrop-blur-sm border-2 border-secondary px-8 py-4 rounded-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                <span className="text-secondary font-black text-xl tracking-wider uppercase flex items-center gap-3">
+                  Klik om te beginnen
+                  <ChevronRight className="w-6 h-6" />
+                </span>
+              </div>
+            </div>
+          </div>
           
           <div className="space-y-4">
             <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide leading-tight">
