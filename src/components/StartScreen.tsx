@@ -12,12 +12,23 @@ interface StartScreenProps {
 export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [step, setStep] = useState(1);
   const [isStarting, setIsStarting] = useState(false);
+  const [micPermissionGranted, setMicPermissionGranted] = useState(false);
 
   const handleStart = () => {
     setIsStarting(true);
     setTimeout(() => {
       onStart();
     }, 1500);
+  };
+
+  const requestMicPermission = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      setMicPermissionGranted(true);
+    } catch (error) {
+      console.error('Microphone permission denied:', error);
+      alert('Microfoon toegang is nodig voor het interview. Klik op "Toestaan" wanneer je browser erom vraagt.');
+    }
   };
 
   // Step 1: Hero with GIF
@@ -116,15 +127,39 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           <Card className="max-w-2xl mx-auto p-8 md:p-10 bg-white/[0.03] backdrop-blur-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_48px_rgba(237,28,36,0.15)] transition-all duration-500 animate-fade-in">
             <div className="space-y-8">
               <div className="space-y-6">
+                {/* Mic Permission - Interactive */}
+                <div 
+                  onClick={requestMicPermission}
+                  className="flex items-start gap-4 group cursor-pointer animate-fade-in"
+                  style={{ animationDelay: '0ms' }}
+                >
+                  <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
+                    micPermissionGranted 
+                      ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40' 
+                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10'
+                  }`}>
+                    {micPermissionGranted ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
+                    ) : (
+                      <Mic className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                    )}
+                  </div>
+                  <div className="flex-1 text-left pt-2">
+                    <p className="text-base text-white/90 font-medium leading-relaxed">
+                      {micPermissionGranted ? 'Microfoon toegang verleend ✓' : 'Klik om microfoon toegang te geven'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Other checklist items - Non-interactive */}
                 {[
-                  { icon: Mic, text: "Zorg dat je microfoon aanstaat", color: "text-primary" },
                   { icon: Volume2, text: "Kies een rustige omgeving", color: "text-primary" },
                   { icon: Globe, text: "Kies eerst je taal in de avatar", color: "text-white" }
                 ].map((item, index) => (
                   <div 
                     key={index}
                     className="flex items-start gap-4 group animate-fade-in"
-                    style={{ animationDelay: `${index * 150}ms` }}
+                    style={{ animationDelay: `${(index + 1) * 150}ms` }}
                   >
                     <div className={`mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300 border border-primary/20`}>
                       <item.icon className={`w-5 h-5 ${item.color}`} strokeWidth={2.5} />
