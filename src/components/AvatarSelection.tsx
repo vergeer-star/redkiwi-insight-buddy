@@ -15,6 +15,11 @@ const avatars = [
     name: "Katya",
     url: "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9",
     preview: "https://files2.heygen.ai/avatar/v3/b1ff5edbf96242e6ac9469227df40924_55360/preview_target.webp"
+  },
+  {
+    name: "Anastasia",
+    url: "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJBbmFzdGFzaWFfQ2hhaXJfU2l0dGluZ19w%0D%0AdWJsaWMiLCJwcmV2aWV3SW1nIjoiaHR0cHM6Ly9maWxlczIuaGV5Z2VuLmFpL2F2YXRhci92My9k%0D%0AMzM3MGQwZjg2Nzg0YmRlOGUyMTQ0ZDE2ZDU3M2RjY181NTI4MC9wcmV2aWV3X3RhcmdldC53ZWJw%0D%0AIiwibmVlZFJlbW92ZUJhY2tncm91bmQiOmZhbHNlLCJrbm93bGVkZ2VCYXNlSWQiOiIyMDFmZGQ3%0D%0AMTJiMjQ0MGI2YjZlYjQ3YmM1Zjk2MDZiMCIsInVzZXJuYW1lIjoiNjBkMTkxMWI0MWZjNGFiOWE5%0D%0AM2I2OGNhMmExODg2ODYifQ%3D%3D",
+    preview: "https://files2.heygen.ai/avatar/v3/d3370d0f86784bde8e2144d16d573dcc_55280/preview_target.webp"
   }
 ];
 
@@ -55,14 +60,6 @@ export const AvatarSelection = ({ onSelect }: AvatarSelectionProps) => {
               <h3 className="text-2xl font-bold text-white">{avatar.name}</h3>
             </div>
           ))}
-          
-          {/* Lege bubble voor toekomstige avatar */}
-          <div className="flex flex-col items-center gap-4 animate-fade-in opacity-40">
-            <div className="w-48 h-48 rounded-full border-4 border-dashed border-white/20 flex items-center justify-center">
-              <div className="text-white/40 text-5xl">+</div>
-            </div>
-            <h3 className="text-2xl font-bold text-white/40">Binnenkort</h3>
-          </div>
         </div>
       </div>
     </div>
