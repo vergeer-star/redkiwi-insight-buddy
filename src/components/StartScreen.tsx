@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
+import redkiwiLogoHorizontal from "@/assets/redkiwi-logo-horizontal.png";
+import heygenLogo from "@/assets/heygen-logo.svg";
 import heroAnimation from "@/assets/hero-animation.gif";
 import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
 
@@ -99,9 +101,24 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               WELCOME TO AN<br />
               <span className="text-primary">AI-DRIVEN</span> INTERVIEW
             </h1>
-            <p className="text-sm md:text-base text-secondary font-normal mt-3">
-              Powered by Redkiwi
-            </p>
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <p className="text-sm md:text-base text-secondary font-normal">
+                Powered by
+              </p>
+              <div className="flex items-center gap-3">
+                <img 
+                  src={redkiwiLogoHorizontal} 
+                  alt="Redkiwi" 
+                  className="h-5 md:h-6"
+                />
+                <span className="text-secondary text-sm md:text-base">&</span>
+                <img 
+                  src={heygenLogo} 
+                  alt="HeyGen" 
+                  className="h-5 md:h-6"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
