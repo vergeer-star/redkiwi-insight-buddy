@@ -43,21 +43,26 @@ export const AvatarSelection = ({ onSelect }: AvatarSelectionProps) => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
           {avatars.map((avatar) => (
-            <div key={avatar.name} className="flex flex-col items-center gap-4 animate-fade-in">
+            <div key={avatar.name} className="flex flex-col items-center gap-4 animate-fade-in group">
               <button
                 onClick={() => handleAvatarClick(avatar)}
-                className="relative group"
+                className="relative"
               >
-                <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-[#FF2B2B] hover:shadow-[0_20px_80px_rgba(237,28,36,0.5)] hover:scale-110">
+                {/* Glow effect behind */}
+                <div className="absolute inset-0 rounded-full bg-[#FF2B2B]/0 blur-xl transition-all duration-500 group-hover:bg-[#FF2B2B]/30 group-hover:scale-125" />
+                
+                {/* Main avatar bubble */}
+                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:border-[#FF2B2B] group-hover:shadow-[0_30px_100px_rgba(237,28,36,0.6)] group-hover:scale-110 group-hover:-translate-y-2">
                   <img
                     src={avatar.preview}
                     alt={avatar.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  {/* Overlay gradient on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#FF2B2B]/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 </div>
-                <div className="absolute inset-0 bg-[#FF2B2B]/0 rounded-full transition-all duration-300 group-hover:bg-[#FF2B2B]/10" />
               </button>
-              <h3 className="text-2xl font-bold text-white">{avatar.name}</h3>
+              <h3 className="text-2xl font-bold text-white transition-all duration-300 group-hover:text-[#FF2B2B]">{avatar.name}</h3>
             </div>
           ))}
         </div>
