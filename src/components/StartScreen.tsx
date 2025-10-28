@@ -23,12 +23,25 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             className="relative group cursor-pointer"
             onClick={() => setStep(2)}
           >
-            <img 
-              src={heroAnimation} 
-              alt="AI Animation" 
-              className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500 group-hover:drop-shadow-[0_0_60px_rgba(237,28,36,0.6)]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-12">
+            <div className="relative overflow-hidden rounded-lg">
+              <img 
+                src={heroAnimation} 
+                alt="AI Animation" 
+                className="h-96 md:h-[32rem] mx-auto group-hover:scale-105 transition-all duration-500 group-hover:drop-shadow-[0_0_60px_rgba(237,28,36,0.6)]"
+                style={{
+                  animationPlayState: 'running'
+                }}
+                onMouseEnter={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.animationPlayState = 'paused';
+                }}
+                onMouseLeave={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.animationPlayState = 'running';
+                }}
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-12 pointer-events-none">
               <div className="bg-secondary/20 backdrop-blur-sm border-2 border-secondary px-8 py-4 rounded-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                 <span className="text-secondary font-black text-xl tracking-wider uppercase flex items-center gap-3">
                   Klik om te beginnen
