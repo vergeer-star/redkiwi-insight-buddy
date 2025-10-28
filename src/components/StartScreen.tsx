@@ -14,6 +14,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [isStarting, setIsStarting] = useState(false);
   const [micPermissionGranted, setMicPermissionGranted] = useState(false);
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
 
   const handleStart = () => {
     setIsStarting(true);
@@ -181,6 +182,33 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                     </div>
                   </div>
                 ))}
+
+                {/* Privacy Consent - Interactive */}
+                <div 
+                  onClick={() => setPrivacyConsent(!privacyConsent)}
+                  className="flex items-start gap-4 group cursor-pointer animate-fade-in hover:bg-white/5 p-3 -m-3 rounded-lg transition-all duration-300"
+                  style={{ animationDelay: '450ms' }}
+                >
+                  <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
+                    privacyConsent
+                      ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40 group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]' 
+                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
+                  }`}>
+                    {privacyConsent ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
+                    ) : (
+                      <Shield className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                    )}
+                  </div>
+                  <div className="flex-1 text-left pt-2">
+                    <p className="text-base text-white/90 font-medium leading-relaxed mb-1">
+                      {privacyConsent ? 'Toestemming verleend ✓' : 'Klik om toestemming te geven'}
+                    </p>
+                    <p className="text-xs text-white/60 leading-relaxed">
+                      Er worden <strong>geen stem- of beeldopnames</strong> gemaakt. Alleen transcriptie van het interview wordt anoniem verwerkt.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Privacy Notice */}
@@ -199,7 +227,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           <div className="space-y-4 animate-fade-in" style={{ animationDelay: '600ms' }}>
             <Button 
               onClick={handleStart}
-              disabled={isStarting}
+              disabled={isStarting || !privacyConsent}
               className="px-12 md:px-16 py-6 bg-white hover:bg-white/90 text-black text-sm font-black tracking-[0.12em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(237,28,36,0.5)] hover:scale-105 transition-all duration-300 border-none rounded-lg disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
             >
               {isStarting ? (
@@ -214,6 +242,12 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 </span>
               )}
             </Button>
+            
+            {!privacyConsent && (
+              <p className="text-xs text-white/40">
+                Geef eerst toestemming voor gegevensverwerking
+              </p>
+            )}
             
             <button
               onClick={() => setStep(1)}
