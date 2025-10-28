@@ -140,13 +140,13 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 {/* Mic Permission - Interactive */}
                 <div 
                   onClick={toggleMicPermission}
-                  className="flex items-start gap-4 group cursor-pointer animate-fade-in"
+                  className="flex items-start gap-4 group cursor-pointer animate-fade-in hover:bg-white/5 p-3 -m-3 rounded-lg transition-all duration-300"
                   style={{ animationDelay: '0ms' }}
                 >
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     micPermissionGranted 
-                      ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40' 
-                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10'
+                      ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border-green-500/40 group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]' 
+                      : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
                   }`}>
                     {micPermissionGranted ? (
                       <CheckCircle2 className="w-5 h-5 text-green-500" strokeWidth={2.5} />
@@ -168,10 +168,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 ].map((item, index) => (
                   <div 
                     key={index}
-                    className="flex items-start gap-4 group animate-fade-in"
+                    className="flex items-start gap-4 animate-fade-in"
                     style={{ animationDelay: `${(index + 1) * 150}ms` }}
                   >
-                    <div className={`mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300 border border-primary/20`}>
+                    <div className={`mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 transition-all duration-300 border border-primary/20`}>
                       <item.icon className={`w-5 h-5 ${item.color}`} strokeWidth={2.5} />
                     </div>
                     <div className="flex-1 text-left pt-2">
@@ -179,7 +179,6 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                         {item.text}
                       </p>
                     </div>
-                    <CheckCircle2 className="w-6 h-6 text-white/20 mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 ))}
               </div>
