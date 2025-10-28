@@ -6,7 +6,9 @@ export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    // Load HeyGen streaming embed script immediately
+    // Only load HeyGen streaming embed script after interview has started
+    if (!hasStarted) return;
+
     const script = document.createElement("script");
     script.innerHTML = `
       !function(window){
@@ -15,7 +17,7 @@ export const InterviewChat = () => {
         clientWidth=document.body.clientWidth,
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
-        wrapDiv.setAttribute("data-started", "false");
+        wrapDiv.setAttribute("data-started", "true");
         
         const container=document.createElement("div");
         container.id="heygen-streaming-container";
@@ -27,22 +29,6 @@ export const InterviewChat = () => {
             position: fixed;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-            opacity: 0;
-            visibility: hidden;
-          }
-          
-          #heygen-streaming-embed[data-started="false"] {
-            right: 24px;
-            bottom: 24px;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 2px solid hsl(356 85% 53%);
-            box-shadow: 0 0 24px hsl(356 85% 53% / 0.6);
-            cursor: pointer;
-          }
-          
-          #heygen-streaming-embed[data-started="true"] {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -51,17 +37,13 @@ export const InterviewChat = () => {
             border-radius: 16px;
             border: 2px solid hsl(356 85% 53% / 0.4);
             box-shadow: 0 0 80px hsl(356 85% 53% / 0.5);
+            opacity: 0;
+            visibility: hidden;
           }
           
           #heygen-streaming-embed.show {
             opacity: 1;
             visibility: visible;
-          }
-          
-          #heygen-streaming-embed.expand {
-            \${clientWidth<540?"height: 266px; width: 96%;":"height: 366px; width: calc(366px * 16 / 9);"}
-            border: 0;
-            border-radius: 16px;
           }
           
           #heygen-streaming-container {
@@ -92,10 +74,8 @@ export const InterviewChat = () => {
               wrapDiv.classList.toggle("show",initial);
             } else if("show"===e.data.action){
               visible=true;
-              wrapDiv.classList.toggle("expand",visible);
             } else if("hide"===e.data.action){
               visible=false;
-              wrapDiv.classList.toggle("expand",visible);
             }
           }
         }));
@@ -114,15 +94,10 @@ export const InterviewChat = () => {
       if (widget) widget.remove();
       if (script.parentNode) script.parentNode.removeChild(script);
     };
-  }, []); // Empty dependency array - load once on mount
+  }, [hasStarted]); // Load when hasStarted changes
 
   const handleStart = () => {
     setHasStarted(true);
-    // Update avatar position to center
-    const widget = document.getElementById("heygen-streaming-embed");
-    if (widget) {
-      widget.setAttribute("data-started", "true");
-    }
   };
 
   if (!hasStarted) {
