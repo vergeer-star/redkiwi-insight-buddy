@@ -95,9 +95,9 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-primary tracking-wide leading-tight">
               WELCOME TO AN<br />
-              <span className="text-primary">AI-DRIVEN</span> INTERVIEW
+              AI-DRIVEN INTERVIEW
             </h1>
             <p className="text-sm md:text-base text-secondary font-normal mt-3">
               Powered by Redkiwi
@@ -122,8 +122,8 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               <span className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Stap 2 van 3</span>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
-              LET'S GET <span className="text-primary">STARTED</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-primary tracking-tight leading-tight">
+              LET'S GET STARTED
             </h2>
             
             <div className="max-w-2xl mx-auto space-y-3">
