@@ -15,6 +15,7 @@ export const InterviewChat = () => {
         clientWidth=document.body.clientWidth,
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
+        wrapDiv.setAttribute("data-started", "false");
         
         const container=document.createElement("div");
         container.id="heygen-streaming-container";
@@ -24,27 +25,47 @@ export const InterviewChat = () => {
           #heygen-streaming-embed {
             z-index: 9999;
             position: fixed;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+          }
+          
+          /* Before start: small floating widget bottom left */
+          #heygen-streaming-embed[data-started="false"] {
             left: 40px;
             bottom: 40px;
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.12);
-            transition: all linear 0.1s;
-            overflow: hidden;
-            opacity: 0;
-            visibility: hidden;
+            border: 3px solid hsl(0 85% 55%);
+            box-shadow: 0 0 30px hsl(0 85% 55% / 0.5), 0 0 60px hsl(195 85% 50% / 0.3);
           }
+          
+          /* After start: centered and larger */
+          #heygen-streaming-embed[data-started="true"] {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(800px, 90vw);
+            height: min(600px, 70vh);
+            border-radius: 24px;
+            border: 2px solid hsl(0 85% 55% / 0.5);
+            box-shadow: 0 0 60px hsl(0 85% 55% / 0.6), 0 0 120px hsl(195 85% 50% / 0.4);
+            backdrop-filter: blur(10px);
+          }
+          
           #heygen-streaming-embed.show {
             opacity: 1;
             visibility: visible;
           }
+          
           #heygen-streaming-embed.expand {
-            \${clientWidth<540?"height: 266px; width: 96%; left: 50%; transform: translateX(-50%);":"height: 366px; width: calc(366px * 16 / 9);"}
+            \${clientWidth<540?"height: 266px; width: 96%;":"height: 366px; width: calc(366px * 16 / 9);"}
             border: 0;
-            border-radius: 8px;
+            border-radius: 16px;
           }
+          
           #heygen-streaming-container {
             width: 100%;
             height: 100%;
@@ -53,6 +74,7 @@ export const InterviewChat = () => {
             width: 100%;
             height: 100%;
             border: 0;
+            border-radius: inherit;
           }
         \`;
         
@@ -98,6 +120,11 @@ export const InterviewChat = () => {
 
   const handleStart = () => {
     setHasStarted(true);
+    // Update avatar position to center
+    const widget = document.getElementById("heygen-streaming-embed");
+    if (widget) {
+      widget.setAttribute("data-started", "true");
+    }
   };
 
   if (!hasStarted) {
@@ -105,28 +132,54 @@ export const InterviewChat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-primary/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card relative overflow-hidden">
+      {/* Futuristic background grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,59,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,59,59,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
+      
+      {/* Animated gradient orbs */}
+      <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      
       {/* Header with logo */}
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <img src={redkiwiLogo} alt="Redkiwi" className="h-8" />
+      <header className="relative border-b border-primary/20 bg-card/50 backdrop-blur-xl">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <img src={redkiwiLogo} alt="Redkiwi" className="h-10 drop-shadow-[0_0_15px_rgba(255,59,59,0.5)]" />
+          <div className="text-xs text-muted-foreground font-mono">
+            AI-DRIVEN INTERVIEW
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center max-w-5xl w-full mx-auto p-8">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold text-foreground">
-            Redkiwi Merkperceptie Interview
+      <div className="relative flex-1 flex flex-col items-center justify-center max-w-5xl w-full mx-auto p-8 min-h-[calc(100vh-80px)]">
+        <div className="text-center space-y-6">
+          <div className="inline-block px-4 py-1 bg-primary/10 border border-primary/30 rounded-full text-xs font-mono text-primary mb-4">
+            MERKPERCEPTIE ONDERZOEK 2025
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground bg-gradient-to-r from-primary via-foreground to-secondary bg-clip-text text-transparent animate-pulse">
+            Redkiwi Interview
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Klik op de avatar rechtsonder om het interview te starten. 
-            Je kunt met de AI-interviewer praten via je microfoon.
+          
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            De AI-interviewer staat klaar in het centrum van je scherm.
+            <br />
+            Praat natuurlijk via je microfoon.
           </p>
-          <div className="mt-8 p-6 bg-card/50 rounded-lg border border-border/50 max-w-xl mx-auto">
-            <p className="text-sm text-muted-foreground">
-              💡 <strong>Tip:</strong> Zorg dat je microfoon toegang is ingeschakeld voor deze website.
-            </p>
+          
+          <div className="mt-8 p-6 bg-card/30 backdrop-blur-sm rounded-2xl border border-primary/20 max-w-xl mx-auto relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 bg-secondary rounded-full animate-pulse" />
+                <p className="text-sm font-mono text-secondary">SYSTEM READY</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                ⚡ Zorg dat je microfoon toegang is ingeschakeld
+                <br />
+                🎯 De interviewer wordt gecentreerd tijdens het gesprek
+              </p>
+            </div>
           </div>
         </div>
       </div>
