@@ -6,7 +6,7 @@ import heroAnimation from "@/assets/hero-animation.gif";
 import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
 
 interface StartScreenProps {
-  onStart: () => void;
+  onStart: (language: string) => void;
 }
 
 export const StartScreen = ({ onStart }: StartScreenProps) => {
@@ -21,7 +21,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   const handleStart = () => {
     setIsStarting(true);
     setTimeout(() => {
-      onStart();
+      onStart(selectedLanguage);
     }, 1500);
   };
 

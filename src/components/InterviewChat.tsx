@@ -4,6 +4,7 @@ import { StartScreen } from "@/components/StartScreen";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
@@ -119,8 +120,20 @@ export const InterviewChat = () => {
     };
   }, [hasStarted]); // Load when hasStarted changes
 
-  const handleStart = () => {
+  const handleStart = (language: string) => {
+    setSelectedLanguage(language);
     setHasStarted(true);
+    
+    // Send language preference to HeyGen iframe after it loads
+    setTimeout(() => {
+      const iframe = document.querySelector('#heygen-streaming-container iframe') as HTMLIFrameElement;
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({
+          type: 'set-language',
+          language: language
+        }, '*');
+      }
+    }, 2000);
   };
 
   const handlePauseToggle = () => {
@@ -148,10 +161,25 @@ export const InterviewChat = () => {
     return <StartScreen onStart={handleStart} />;
   }
 
+  // Language instruction mapping
+  const languageInstructions: Record<string, string> = {
+    'Nederlands': 'De interviewer zal nu in het Nederlands met je spreken.',
+    'English': 'The interviewer will now speak to you in English.',
+    'Français': "L'intervieweur vous parlera maintenant en français.",
+    'Deutsch': 'Der Interviewer wird jetzt auf Deutsch mit Ihnen sprechen.'
+  };
+
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      
+      {/* Language instruction overlay */}
+      {selectedLanguage && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white text-sm animate-fade-in">
+          {languageInstructions[selectedLanguage] || languageInstructions['Nederlands']}
+        </div>
+      )}
       
       {/* Pause/Resume Button */}
       <button
