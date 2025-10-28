@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import redkiwiLogo from "@/assets/redkiwi-logo.png";
 
 interface StartScreenProps {
   onStart: () => void;
@@ -16,7 +17,12 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         <div className="space-y-6">
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-[0.95]">
             WELCOME TO AN <span className="text-primary">AI-DRIVEN</span> INTERVIEW<br />
-            <span className="text-lg md:text-2xl font-normal lowercase block mt-4">powered by Redkiwi</span>
+            <span className="text-lg md:text-2xl font-normal lowercase flex items-center justify-center gap-2 mt-4">
+              powered by 
+              <span className="inline-flex items-center bg-black px-3 py-1 rounded">
+                <img src={redkiwiLogo} alt="Redkiwi" className="h-5" />
+              </span>
+            </span>
           </h1>
         </div>
 
