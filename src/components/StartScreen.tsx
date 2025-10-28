@@ -93,7 +93,7 @@ export const StartScreen = ({
         
         {/* Powered by section at bottom */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1">
-          <p className="text-sm md:text-base text-secondary font-normal">Powered by:</p>
+          <p className="text-sm md:text-base text-secondary font-normal mt-2">Powered by:</p>
           <div className="flex items-center gap-0.5">
             <img src={redkiwiLogoNew} alt="Redkiwi" className="h-14 md:h-16" />
             <span className="text-secondary text-sm md:text-base">&</span>
