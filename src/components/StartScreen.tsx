@@ -137,15 +137,12 @@ export const StartScreen = ({
               LET'S GET <span className="text-[#FF2B2B]">STARTED</span>
             </h2>
             
-            <div className="max-w-2xl mx-auto space-y-3">
+            <div className="max-w-2xl mx-auto space-y-2">
               <p className="text-base text-white/90 leading-relaxed">
-                Dit is een <strong className="text-white">merkperceptie interview</strong> over Redkiwi.
+                Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> om je ervaring te delen.
               </p>
-              <p className="text-base text-white/90 leading-relaxed">
-                Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> waarin je jouw ervaring en mening over Redkiwi kunt delen.
-              </p>
-              <p className="text-sm text-[#9C9C9C] leading-relaxed">
-                Jouw antwoorden helpen ons beter te begrijpen hoe je ons merk beleeft, wat je waardeert, en waar we kunnen verbeteren. Al jouw feedback blijft volledig vertrouwelijk.
+              <p className="text-sm text-[#9C9C9C]">
+                Jouw antwoorden helpen ons beter te begrijpen hoe je ons merk beleeft.
               </p>
             </div>
           </div>
