@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import heroAnimation from "@/assets/hero-animation.gif";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
 
 interface StartScreenProps {
   onStart: () => void;
@@ -11,6 +11,14 @@ interface StartScreenProps {
 
 export const StartScreen = ({ onStart }: StartScreenProps) => {
   const [step, setStep] = useState(1);
+  const [isStarting, setIsStarting] = useState(false);
+
+  const handleStart = () => {
+    setIsStarting(true);
+    setTimeout(() => {
+      onStart();
+    }, 1500);
+  };
 
   // Step 1: Hero with GIF
   if (step === 1) {
@@ -79,60 +87,98 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   // Step 2: Instructions with checklist
   if (step === 2) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      <div className="min-h-screen bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
         
-        <div className="relative max-w-3xl w-full space-y-12 text-center">
-          <div className="space-y-4">
-            <div className="inline-block px-4 py-1.5 bg-primary/10 border border-primary/30 rounded text-[10px] font-bold tracking-[0.2em] text-primary uppercase">
-              Instructies
+        <div className="relative max-w-4xl w-full space-y-10 text-center">
+          {/* Header Section */}
+          <div className="space-y-6 animate-fade-in">
+            <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/30 rounded-md backdrop-blur-sm">
+              <span className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Stap 2 van 3</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-wide">
-              VOOR WE BEGINNEN
+            
+            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+              VOOR WE<br />
+              <span className="text-primary">BEGINNEN</span>
             </h2>
+            
+            <div className="max-w-2xl mx-auto space-y-3">
+              <p className="text-lg text-white/70 leading-relaxed">
+                Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> om je ervaring te delen.
+              </p>
+              <p className="text-base text-white/60">
+                Jouw antwoorden helpen ons beter te begrijpen hoe je ons merk beleeft.
+              </p>
+            </div>
           </div>
 
-          <Card className="max-w-2xl mx-auto p-10 bg-white/[0.02] backdrop-blur-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-            <p className="text-lg text-white/90 mb-8 leading-relaxed">
-              Deel je ervaring met onze AI-interviewer. Een persoonlijk gesprek van 5-10 minuten via spraak.
-            </p>
-            <ul className="space-y-6 text-left">
-              <li className="flex items-start gap-4 group">
-                <div className="mt-0.5 w-6 h-6 rounded-sm bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
+          {/* Checklist Card */}
+          <Card className="max-w-2xl mx-auto p-8 md:p-10 bg-white/[0.03] backdrop-blur-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_48px_rgba(237,28,36,0.15)] transition-all duration-500 animate-fade-in">
+            <div className="space-y-8">
+              <div className="space-y-6">
+                {[
+                  { icon: Mic, text: "Zorg dat je microfoon aanstaat", color: "text-primary" },
+                  { icon: Volume2, text: "Kies een rustige omgeving", color: "text-primary" },
+                  { icon: Globe, text: "Kies eerst je taal in de avatar", color: "text-white" }
+                ].map((item, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-start gap-4 group animate-fade-in"
+                    style={{ animationDelay: `${index * 150}ms` }}
+                  >
+                    <div className={`mt-0.5 w-12 h-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300 border border-primary/20`}>
+                      <item.icon className={`w-5 h-5 ${item.color}`} strokeWidth={2.5} />
+                    </div>
+                    <div className="flex-1 text-left pt-2">
+                      <p className="text-base text-white/90 font-medium leading-relaxed">
+                        {item.text}
+                      </p>
+                    </div>
+                    <CheckCircle2 className="w-6 h-6 text-white/20 mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Privacy Notice */}
+              <div className="pt-6 border-t border-white/10">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-white/40 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-white/50 text-left leading-relaxed">
+                    <strong className="text-white/70">Jouw privacy is belangrijk.</strong> Je antwoorden blijven volledig vertrouwelijk en worden alleen gebruikt voor dit onderzoek.
+                  </p>
                 </div>
-                <span className="text-base text-white/90 font-medium leading-relaxed">Zorg dat je microfoon aanstaat</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-0.5 w-6 h-6 rounded-sm bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-base text-white/90 font-medium leading-relaxed">Kies een rustige omgeving</span>
-              </li>
-              <li className="flex items-start gap-4 group">
-                <div className="mt-0.5 w-6 h-6 rounded-sm bg-secondary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-secondary/20 transition-colors">
-                  <svg className="w-4 h-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-base text-white/90 font-medium leading-relaxed">
-                  <strong className="text-secondary">Kies eerst je taal</strong> in de avatar (rechtsonder)
-                </span>
-              </li>
-            </ul>
+              </div>
+            </div>
           </Card>
 
-          <Button 
-            onClick={onStart}
-            className="px-16 py-6 bg-secondary hover:bg-secondary/90 text-black text-xs font-black tracking-[0.15em] uppercase shadow-[0_0_40px_rgba(197,255,0,0.4)] hover:shadow-[0_0_60px_rgba(197,255,0,0.6)] hover:scale-105 transition-all duration-300 border-none rounded group"
-          >
-            Start Interview
-            <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          {/* CTA Button */}
+          <div className="space-y-4 animate-fade-in" style={{ animationDelay: '600ms' }}>
+            <Button 
+              onClick={handleStart}
+              disabled={isStarting}
+              className="px-12 md:px-16 py-6 bg-white hover:bg-white/90 text-black text-sm font-black tracking-[0.12em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(237,28,36,0.5)] hover:scale-105 transition-all duration-300 border-none rounded-lg disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+            >
+              {isStarting ? (
+                <span className="flex items-center gap-3">
+                  <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Even instellen...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Start Interview
+                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              )}
+            </Button>
+            
+            <button
+              onClick={() => setStep(1)}
+              className="text-sm text-white/40 hover:text-white/70 transition-colors underline"
+            >
+              Terug
+            </button>
+          </div>
         </div>
       </div>
     );
