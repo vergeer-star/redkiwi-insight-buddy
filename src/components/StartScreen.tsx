@@ -148,11 +148,11 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 >
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     micPermissionGranted 
-                      ? 'bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 border-yellow-400/40 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.4)]' 
+                      ? 'bg-gradient-to-br from-[#DFFF00]/30 to-[#DFFF00]/15 border-[#DFFF00]/60 group-hover:shadow-[0_0_25px_rgba(223,255,0,0.6)]' 
                       : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
                   }`}>
                     {micPermissionGranted ? (
-                      <CheckCircle2 className="w-5 h-5 text-yellow-400" strokeWidth={2.5} />
+                      <CheckCircle2 className="w-5 h-5 text-[#DFFF00] drop-shadow-[0_0_8px_rgba(223,255,0,0.8)]" strokeWidth={2.5} />
                     ) : (
                       <Mic className="w-5 h-5 text-primary" strokeWidth={2.5} />
                     )}
@@ -172,11 +172,11 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 >
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     quietEnvironmentConfirmed 
-                      ? 'bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 border-yellow-400/40 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.4)]' 
+                      ? 'bg-gradient-to-br from-[#DFFF00]/30 to-[#DFFF00]/15 border-[#DFFF00]/60 group-hover:shadow-[0_0_25px_rgba(223,255,0,0.6)]' 
                       : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
                   }`}>
                     {quietEnvironmentConfirmed ? (
-                      <CheckCircle2 className="w-5 h-5 text-yellow-400" strokeWidth={2.5} />
+                      <CheckCircle2 className="w-5 h-5 text-[#DFFF00] drop-shadow-[0_0_8px_rgba(223,255,0,0.8)]" strokeWidth={2.5} />
                     ) : (
                       <Volume2 className="w-5 h-5 text-primary" strokeWidth={2.5} />
                     )}
@@ -193,11 +193,11 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   <div className="flex items-start gap-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
                     <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                       selectedLanguage 
-                        ? 'bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 border-yellow-400/40' 
+                        ? 'bg-gradient-to-br from-[#DFFF00]/30 to-[#DFFF00]/15 border-[#DFFF00]/60 shadow-[0_0_20px_rgba(223,255,0,0.4)]' 
                         : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20'
                     }`}>
                       {selectedLanguage ? (
-                        <CheckCircle2 className="w-5 h-5 text-yellow-400" strokeWidth={2.5} />
+                        <CheckCircle2 className="w-5 h-5 text-[#DFFF00] drop-shadow-[0_0_8px_rgba(223,255,0,0.8)]" strokeWidth={2.5} />
                       ) : (
                         <Globe className="w-5 h-5 text-primary" strokeWidth={2.5} />
                       )}
@@ -235,11 +235,11 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 >
                   <div className={`mt-0.5 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 border ${
                     privacyConsent
-                      ? 'bg-gradient-to-br from-yellow-400/20 to-yellow-500/10 border-yellow-400/40 group-hover:shadow-[0_0_20px_rgba(250,204,21,0.4)]' 
+                      ? 'bg-gradient-to-br from-[#DFFF00]/30 to-[#DFFF00]/15 border-[#DFFF00]/60 group-hover:shadow-[0_0_25px_rgba(223,255,0,0.6)]' 
                       : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 group-hover:from-primary/20 group-hover:to-primary/10 group-hover:shadow-[0_0_20px_rgba(237,28,36,0.3)]'
                   }`}>
                     {privacyConsent ? (
-                      <CheckCircle2 className="w-5 h-5 text-yellow-400" strokeWidth={2.5} />
+                      <CheckCircle2 className="w-5 h-5 text-[#DFFF00] drop-shadow-[0_0_8px_rgba(223,255,0,0.8)]" strokeWidth={2.5} />
                     ) : (
                       <Shield className="w-5 h-5 text-primary" strokeWidth={2.5} />
                     )}
