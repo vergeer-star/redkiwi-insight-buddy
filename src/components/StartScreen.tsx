@@ -56,30 +56,23 @@ export const StartScreen = ({
           {/* Main Logo / Animation - 45% of viewport width max */}
           <div className="relative cursor-pointer w-[60%] md:w-[45%] max-w-xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
-              <img 
-                src={heroAnimation} 
-                alt="AI Animation" 
-                className="w-full h-auto mx-auto transition-all duration-500" 
-                style={{ animationPlayState: 'running' }} 
-              />
+              <img src={heroAnimation} alt="AI Animation" className="w-full h-auto mx-auto transition-all duration-500" style={{
+              animationPlayState: 'running'
+            }} />
               {/* Hover zone in het midden */}
-              <div 
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" 
-                onMouseEnter={e => {
-                  const img = e.currentTarget.parentElement?.querySelector('img');
-                  if (img) {
-                    img.style.animationPlayState = 'paused';
-                    img.style.transform = 'scale(1.05)';
-                  }
-                }} 
-                onMouseLeave={e => {
-                  const img = e.currentTarget.parentElement?.querySelector('img');
-                  if (img) {
-                    img.style.animationPlayState = 'running';
-                    img.style.transform = 'scale(1)';
-                  }
-                }}
-              >
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" onMouseEnter={e => {
+              const img = e.currentTarget.parentElement?.querySelector('img');
+              if (img) {
+                img.style.animationPlayState = 'paused';
+                img.style.transform = 'scale(1.05)';
+              }
+            }} onMouseLeave={e => {
+              const img = e.currentTarget.parentElement?.querySelector('img');
+              if (img) {
+                img.style.animationPlayState = 'running';
+                img.style.transform = 'scale(1)';
+              }
+            }}>
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
                     <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
@@ -94,10 +87,9 @@ export const StartScreen = ({
           
           {/* Headline - 64px spacing from logo */}
           <div className="w-full max-w-4xl text-center space-y-8 px-4">
-            <h1 
-              className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight" 
-              style={{ textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)' }}
-            >
+            <h1 className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight" style={{
+            textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)'
+          }}>
               WELCOME TO AN<br />
               <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
             </h1>
@@ -115,19 +107,13 @@ export const StartScreen = ({
             
             {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-0.5">
-              <img 
-                src={redkiwiLogoNew} 
-                alt="Redkiwi" 
-                className="h-24 w-auto object-contain" 
-                style={{ imageRendering: 'crisp-edges' }}
-              />
-              <span className="text-[#9C9C9C] text-base font-light hidden md:inline">&</span>
-              <img 
-                src={heygenLogoNew} 
-                alt="HeyGen" 
-                className="h-24 w-auto object-contain" 
-                style={{ imageRendering: 'crisp-edges' }}
-              />
+              <img src={redkiwiLogoNew} alt="Redkiwi" className="h-24 w-auto object-contain" style={{
+              imageRendering: 'crisp-edges'
+            }} />
+              <span className="text-[#9C9C9C] font-light hidden md:inline text-lg">&</span>
+              <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain" style={{
+              imageRendering: 'crisp-edges'
+            }} />
             </div>
           </div>
         </div>
@@ -161,32 +147,15 @@ export const StartScreen = ({
           <Card className="max-w-2xl mx-auto p-8 md:p-10 bg-white/[0.03] backdrop-blur-sm border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] rounded-2xl transition-all duration-500">
             <div className="space-y-6">
               {/* Mic Permission - Interactive */}
-              <div 
-                onClick={toggleMicPermission} 
-                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${
-                  micPermissionGranted 
-                    ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' 
-                    : 'hover:bg-white/[0.02] hover:border-white/10'
-                }`}
-              >
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                  micPermissionGranted 
-                    ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' 
-                    : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-                }`}>
-                  {micPermissionGranted ? (
-                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  ) : (
-                    <Mic className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  )}
+              <div onClick={toggleMicPermission} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${micPermissionGranted ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
+                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${micPermissionGranted ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
+                  {micPermissionGranted ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Mic className="w-6 h-6 text-white" strokeWidth={2.5} />}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed">
                     {micPermissionGranted ? 'Microfoon toegang verleend' : 'Klik om microfoon toegang te geven'}
                   </p>
-                  {micPermissionGranted && (
-                    <p className="text-xs text-[#9C9C9C] mt-1">(klik om uit te schakelen)</p>
-                  )}
+                  {micPermissionGranted && <p className="text-xs text-[#9C9C9C] mt-1">(klik om uit te schakelen)</p>}
                 </div>
               </div>
 
@@ -194,24 +163,9 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Quiet Environment - Interactive */}
-              <div 
-                onClick={() => setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed)} 
-                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${
-                  quietEnvironmentConfirmed 
-                    ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' 
-                    : 'hover:bg-white/[0.02] hover:border-white/10'
-                }`}
-              >
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                  quietEnvironmentConfirmed 
-                    ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' 
-                    : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-                }`}>
-                  {quietEnvironmentConfirmed ? (
-                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  ) : (
-                    <Volume2 className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  )}
+              <div onClick={() => setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed)} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
+                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
+                  {quietEnvironmentConfirmed ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Volume2 className="w-6 h-6 text-white" strokeWidth={2.5} />}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed">
@@ -224,41 +178,19 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Language Selection - Interactive */}
-              <div className={`p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${
-                selectedLanguage 
-                  ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' 
-                  : ''
-              }`}>
+              <div className={`p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${selectedLanguage ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : ''}`}>
                 <div className="flex items-start gap-5">
-                  <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                    selectedLanguage 
-                      ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' 
-                      : 'bg-white/5'
-                  }`}>
-                    {selectedLanguage ? (
-                      <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
-                    ) : (
-                      <Globe className="w-6 h-6 text-white" strokeWidth={2.5} />
-                    )}
+                  <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${selectedLanguage ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5'}`}>
+                    {selectedLanguage ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Globe className="w-6 h-6 text-white" strokeWidth={2.5} />}
                   </div>
                   <div className="flex-1 text-left pt-2">
                     <p className="text-base text-white font-medium leading-relaxed mb-4">
                       {selectedLanguage ? `Taal geselecteerd: ${selectedLanguage}` : 'Kies je voorkeurstaal voor het interview'}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {['Nederlands', 'English', 'Français', 'Deutsch'].map(lang => (
-                        <button
-                          key={lang}
-                          onClick={() => setSelectedLanguage(lang)}
-                          className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                            selectedLanguage === lang 
-                              ? 'bg-[#FF2B2B] text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]' 
-                              : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'
-                          }`}
-                        >
+                      {['Nederlands', 'English', 'Français', 'Deutsch'].map(lang => <button key={lang} onClick={() => setSelectedLanguage(lang)} className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${selectedLanguage === lang ? 'bg-[#FF2B2B] text-white shadow-[0_0_20px_rgba(237,28,36,0.4)]' : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'}`}>
                           {lang}
-                        </button>
-                      ))}
+                        </button>)}
                     </div>
                   </div>
                 </div>
@@ -268,24 +200,9 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Privacy Consent - Interactive */}
-              <div 
-                onClick={() => setPrivacyConsent(!privacyConsent)} 
-                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${
-                  privacyConsent 
-                    ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' 
-                    : 'hover:bg-white/[0.02] hover:border-white/10'
-                }`}
-              >
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                  privacyConsent 
-                    ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' 
-                    : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-                }`}>
-                  {privacyConsent ? (
-                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  ) : (
-                    <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />
-                  )}
+              <div onClick={() => setPrivacyConsent(!privacyConsent)} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
+                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
+                  {privacyConsent ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed mb-2">
@@ -301,34 +218,21 @@ export const StartScreen = ({
 
           {/* CTA Button */}
           <div className="space-y-4">
-            <Button 
-              onClick={handleStart} 
-              disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage} 
-              className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden"
-            >
-              {isStarting ? (
-                <span className="flex items-center gap-3">
+            <Button onClick={handleStart} disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage} className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden">
+              {isStarting ? <span className="flex items-center gap-3">
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Even instellen...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
+                </span> : <span className="flex items-center gap-2">
                   Start Interview
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              )}
+                </span>}
             </Button>
             
-            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage) && (
-              <p className="text-xs text-[#9C9C9C]">
+            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage) && <p className="text-xs text-[#9C9C9C]">
                 Vul eerst alle stappen in de checklist in
-              </p>
-            )}
+              </p>}
             
-            <button 
-              onClick={() => setStep(1)} 
-              className="text-sm text-[#9C9C9C] hover:text-white transition-colors flex items-center gap-1 mx-auto"
-            >
+            <button onClick={() => setStep(1)} className="text-sm text-[#9C9C9C] hover:text-white transition-colors flex items-center gap-1 mx-auto">
               <ChevronLeft className="w-4 h-4" />
               Terug
             </button>
