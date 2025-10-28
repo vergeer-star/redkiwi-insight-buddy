@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
+import heroAnimation from "@/assets/hero-animation.gif";
 
 interface StartScreenProps {
   onStart: () => void;
@@ -13,6 +14,13 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       <div className="relative max-w-4xl w-full space-y-16 text-center">
+        {/* Hero Animation */}
+        <img 
+          src={heroAnimation} 
+          alt="AI Animation" 
+          className="h-32 md:h-40 mx-auto"
+        />
+        
         {/* Hero Title */}
         <div className="space-y-6">
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-[0.95]">
