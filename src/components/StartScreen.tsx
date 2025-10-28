@@ -261,7 +261,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           <div className="space-y-4 animate-fade-in" style={{ animationDelay: '600ms' }}>
             <Button 
               onClick={handleStart}
-              disabled={isStarting || !privacyConsent}
+              disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage}
               className="px-12 md:px-16 py-6 bg-white hover:bg-white/90 text-black text-sm font-black tracking-[0.12em] uppercase shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(237,28,36,0.5)] hover:scale-105 transition-all duration-300 border-none rounded-lg disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
             >
               {isStarting ? (
@@ -277,9 +277,9 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               )}
             </Button>
             
-            {!privacyConsent && (
+            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed || !selectedLanguage) && (
               <p className="text-xs text-white/40">
-                Geef eerst toestemming voor gegevensverwerking
+                Vul eerst alle stappen in de checklist in
               </p>
             )}
             
