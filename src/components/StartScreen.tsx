@@ -113,13 +113,13 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             <img 
               src={redkiwiLogoNew} 
               alt="Redkiwi" 
-              className="h-5 md:h-6"
+              className="h-10 md:h-12"
             />
             <span className="text-secondary text-sm md:text-base">&</span>
             <img 
               src={heygenLogoNew} 
               alt="HeyGen" 
-              className="h-5 md:h-6"
+              className="h-10 md:h-12"
             />
           </div>
         </div>
