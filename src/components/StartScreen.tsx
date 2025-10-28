@@ -95,7 +95,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-primary tracking-wide leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide leading-tight">
               WELCOME TO AN<br />
               AI-DRIVEN INTERVIEW
             </h1>
@@ -122,7 +122,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               <span className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Stap 2 van 3</span>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold text-primary tracking-tight leading-tight">
+            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
               LET'S GET STARTED
             </h2>
             
