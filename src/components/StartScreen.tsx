@@ -92,18 +92,18 @@ export const StartScreen = ({
         </div>
         
         {/* Powered by section at bottom */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-6">
-          <div className="relative">
-            {/* Subtle glow line above */}
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6">
+          <div className="relative flex flex-col items-center gap-4">
+            {/* Subtle separator line with fade */}
+            <div className="w-48 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
             
             {/* Content */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
-              <p className="text-xs text-white/70 font-normal tracking-wide">Powered by</p>
-              <div className="flex items-center gap-2">
-                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-5 md:h-6" />
-                <span className="text-white/70 text-sm">&</span>
-                <img src={heygenLogoNew} alt="HeyGen" className="h-5 md:h-6" />
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+              <p className="text-sm md:text-base text-[#9C9C9C] font-medium tracking-widest uppercase">Powered by</p>
+              <div className="flex items-center gap-6 md:gap-8">
+                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-6 md:h-7" />
+                <span className="text-white/60 text-base">&</span>
+                <img src={heygenLogoNew} alt="HeyGen" className="h-6 md:h-7" />
               </div>
             </div>
           </div>
