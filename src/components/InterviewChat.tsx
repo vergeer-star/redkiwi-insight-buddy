@@ -123,8 +123,12 @@ export const InterviewChat = () => {
     setShowAvatarSelection(true);
   };
 
+  const handleAvatarSelectionBack = () => {
+    setShowAvatarSelection(false);
+  };
+
   if (showAvatarSelection) {
-    return <AvatarSelection onSelect={handleAvatarSelect} />;
+    return <AvatarSelection onSelect={handleAvatarSelect} onBack={handleAvatarSelectionBack} />;
   }
 
   if (!hasStarted) {

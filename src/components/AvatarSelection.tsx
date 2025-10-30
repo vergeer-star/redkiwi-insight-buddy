@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 
 interface AvatarSelectionProps {
   onSelect: (avatarUrl: string, avatarName: string) => void;
+  onBack?: () => void;
 }
 
 const avatars = [
@@ -23,7 +24,7 @@ const avatars = [
   }
 ];
 
-export const AvatarSelection = ({ onSelect }: AvatarSelectionProps) => {
+export const AvatarSelection = ({ onSelect, onBack }: AvatarSelectionProps) => {
   const handleAvatarClick = (avatar: typeof avatars[0]) => {
     onSelect(avatar.url, avatar.name);
   };
@@ -66,6 +67,18 @@ export const AvatarSelection = ({ onSelect }: AvatarSelectionProps) => {
             </div>
           ))}
         </div>
+        
+        {onBack && (
+          <div className="flex justify-center mt-12">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
+            >
+              Terug
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
