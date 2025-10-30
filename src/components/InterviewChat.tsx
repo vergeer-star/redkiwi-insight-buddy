@@ -125,7 +125,6 @@ export const InterviewChat = () => {
 
   const handleAvatarSelectionBack = () => {
     setShowAvatarSelection(false);
-    setHasStarted(false);
   };
 
   if (showAvatarSelection) {
