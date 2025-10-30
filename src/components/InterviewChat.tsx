@@ -141,51 +141,38 @@ export const InterviewChat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] relative overflow-hidden flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-[#0B0B0B] relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
-      {/* Back Button - keer terug naar avatar selectie */}
-      <button
-        onClick={handleBack}
-        className="fixed top-8 left-8 z-[10000] px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        Terug naar keuze
-      </button>
-
-      {/* Language Selection Reminder */}
-      <div className="relative z-10 max-w-2xl w-full mb-8 text-center animate-fade-in">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Interview met <span className="text-[#FF2B2B]">{selectedAvatarName}</span>
-        </h2>
-        <p className="text-white/70 text-sm mb-6">
-          Kies de taal waarin je het interview wilt voeren
-        </p>
-        
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Button
-            onClick={() => setSelectedLanguage('Nederlands')}
-            variant={selectedLanguage === 'Nederlands' ? 'default' : 'outline'}
-            className={selectedLanguage === 'Nederlands' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
+      {/* Header Section */}
+      <div className="fixed top-0 left-0 right-0 z-[10000] bg-[#0B0B0B]/80 backdrop-blur-sm border-b border-white/10 py-6">
+        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
+          <button
+            onClick={handleBack}
+            className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2"
           >
-            Nederlands
-          </Button>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Terug
+          </button>
+          
+          <div className="text-center flex-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              Interview met <span className="text-[#FF2B2B]">{selectedAvatarName}</span>
+            </h2>
+            <p className="text-white/70 text-sm mt-1">
+              Kies de taal waarin je het interview wilt voeren
+            </p>
+          </div>
+          
           <Button
-            onClick={() => setSelectedLanguage('English')}
-            variant={selectedLanguage === 'English' ? 'default' : 'outline'}
-            className={selectedLanguage === 'English' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
+            onClick={handlePauseToggle}
+            variant="outline"
+            className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
           >
-            English
-          </Button>
-          <Button
-            onClick={() => setSelectedLanguage('Français')}
-            variant={selectedLanguage === 'Français' ? 'default' : 'outline'}
-            className={selectedLanguage === 'Français' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
-          >
-            Français
+            {isPaused ? 'Hervat' : 'Pauze'}
           </Button>
         </div>
       </div>
