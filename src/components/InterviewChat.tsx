@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { StartScreen } from "@/components/StartScreen";
 import { AvatarSelection } from "@/components/AvatarSelection";
+import { Button } from "@/components/ui/button";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 
 export const InterviewChat = () => {
@@ -31,13 +32,17 @@ export const InterviewChat = () => {
           #heygen-streaming-embed {
             z-index: 1;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(600px, 90vw);
+            height: min(600px, 90vh);
+            border-radius: 16px;
+            overflow: hidden;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
           }
           #heygen-streaming-embed.show {
             opacity: 1;
@@ -136,7 +141,7 @@ export const InterviewChat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-[#0B0B0B] relative overflow-hidden flex flex-col items-center justify-center p-8">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
@@ -150,6 +155,40 @@ export const InterviewChat = () => {
         </svg>
         Terug naar keuze
       </button>
+
+      {/* Language Selection Reminder */}
+      <div className="relative z-10 max-w-2xl w-full mb-8 text-center animate-fade-in">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          Interview met <span className="text-[#FF2B2B]">{selectedAvatarName}</span>
+        </h2>
+        <p className="text-white/70 text-sm mb-6">
+          Kies de taal waarin je het interview wilt voeren
+        </p>
+        
+        <div className="flex gap-4 justify-center flex-wrap">
+          <Button
+            onClick={() => setSelectedLanguage('Nederlands')}
+            variant={selectedLanguage === 'Nederlands' ? 'default' : 'outline'}
+            className={selectedLanguage === 'Nederlands' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
+          >
+            Nederlands
+          </Button>
+          <Button
+            onClick={() => setSelectedLanguage('English')}
+            variant={selectedLanguage === 'English' ? 'default' : 'outline'}
+            className={selectedLanguage === 'English' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
+          >
+            English
+          </Button>
+          <Button
+            onClick={() => setSelectedLanguage('Français')}
+            variant={selectedLanguage === 'Français' ? 'default' : 'outline'}
+            className={selectedLanguage === 'Français' ? 'bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 border-none' : 'border-white/20 text-white hover:bg-white/10'}
+          >
+            Français
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
