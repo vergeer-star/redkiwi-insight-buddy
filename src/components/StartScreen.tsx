@@ -91,15 +91,29 @@ export const StartScreen = ({
           
           {/* Headline - 64px spacing from logo */}
           <div className="w-full max-w-4xl text-center space-y-2 px-4">
-            <h1 className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight" style={{
-            textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)'
-          }}>
-              WELCOME TO AN<br />
-              <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
-            </h1>
+            <div className="flex justify-center">
+              <div className="group cursor-pointer relative" onClick={() => setStep(2)}>
+                <h1 className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight transition-all duration-300 group-hover:text-white/90" style={{
+                textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)'
+              }}>
+                  WELCOME TO AN<br />
+                  <span className="text-[#FF2B2B] group-hover:text-[#FF2B2B]/90 transition-colors duration-300">AI-DRIVEN</span> INTERVIEW
+                </h1>
+                
+                {/* Hover text */}
+                <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                  <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-md whitespace-nowrap">
+                    <span className="text-white/80 font-medium text-sm tracking-wide flex items-center gap-2">
+                      Klik om te beginnen
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             {/* Subtle grey line - 50px wide */}
-            <div className="w-[50px] h-px bg-[#222222] mx-auto" />
+            <div className="w-[50px] h-px bg-[#222222] mx-auto mt-4" />
           </div>
           
           {/* Powered by section - perfectly centered */}
