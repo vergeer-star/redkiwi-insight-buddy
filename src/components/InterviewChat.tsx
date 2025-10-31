@@ -141,12 +141,12 @@ export const InterviewChat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       {/* Header Section */}
-      <div className="fixed top-0 left-0 right-0 z-[10000] bg-[#0B0B0B]/80 backdrop-blur-sm border-b border-white/10 py-6">
+      <div className="fixed top-0 left-0 right-0 z-[10000] bg-black/80 backdrop-blur-sm border-b border-white/10 py-6">
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
           <button
             onClick={handleBack}
