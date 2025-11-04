@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      interviews: {
+        Row: {
+          avatar_name: string
+          avatar_url: string
+          created_at: string
+          ended_at: string | null
+          id: string
+          language: string | null
+          session_id: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          avatar_name: string
+          avatar_url: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          language?: string | null
+          session_id?: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          avatar_name?: string
+          avatar_url?: string
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          language?: string | null
+          session_id?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

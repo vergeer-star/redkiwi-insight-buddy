@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { StartScreen } from "@/components/StartScreen";
 import { AvatarSelection } from "@/components/AvatarSelection";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 
 export const InterviewChat = () => {
@@ -11,6 +13,9 @@ export const InterviewChat = () => {
   const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string>("");
   const [selectedAvatarName, setSelectedAvatarName] = useState<string>("");
   const [showAvatarSelection, setShowAvatarSelection] = useState(false);
+  const [sessionId, setSessionId] = useState<string>("");
+  const [interviewId, setInterviewId] = useState<string>("");
+  const { toast } = useToast();
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
@@ -93,11 +98,38 @@ export const InterviewChat = () => {
     };
   }, [hasStarted, selectedAvatarUrl]); // Load when hasStarted or avatar changes
 
-  const handleAvatarSelect = (avatarUrl: string, avatarName: string) => {
+  const handleAvatarSelect = async (avatarUrl: string, avatarName: string) => {
     setSelectedAvatarUrl(avatarUrl);
     setSelectedAvatarName(avatarName);
     setShowAvatarSelection(false);
-    setHasStarted(true); // Start interview direct bij avatar selectie
+    setHasStarted(true);
+    
+    // Save interview session to Supabase
+    try {
+      const { data, error } = await supabase
+        .from('interviews')
+        .insert({
+          avatar_name: avatarName,
+          avatar_url: avatarUrl,
+          status: 'started'
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        setSessionId(data.session_id);
+        setInterviewId(data.id);
+      }
+    } catch (error) {
+      console.error('Error saving interview:', error);
+      toast({
+        title: "Fout",
+        description: "Kon interview sessie niet opslaan",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleChecklistComplete = () => {
@@ -118,7 +150,22 @@ export const InterviewChat = () => {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = async () => {
+    // Update interview status to completed
+    if (interviewId) {
+      try {
+        await supabase
+          .from('interviews')
+          .update({
+            status: 'completed',
+            ended_at: new Date().toISOString()
+          })
+          .eq('id', interviewId);
+      } catch (error) {
+        console.error('Error updating interview:', error);
+      }
+    }
+    
     // Clean up interviewer widget
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
@@ -126,6 +173,8 @@ export const InterviewChat = () => {
     setSelectedAvatarUrl("");
     setSelectedAvatarName("");
     setShowAvatarSelection(true);
+    setSessionId("");
+    setInterviewId("");
   };
 
   const handleAvatarSelectionBack = () => {
