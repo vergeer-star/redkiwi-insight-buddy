@@ -35,13 +35,13 @@ export const InterviewChat = () => {
         const stylesheet=document.createElement("style");
         stylesheet.innerHTML=\`
           #heygen-streaming-embed {
-            z-index: 1;
+            z-index: 9999;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: min(600px, 90vw);
-            height: min(600px, 90vh);
+            width: min(700px, 85vw);
+            height: min(700px, 75vh);
             border-radius: 16px;
             overflow: hidden;
             opacity: 0;
@@ -177,7 +177,7 @@ export const InterviewChat = () => {
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       {/* Header Section */}
-      <div className="fixed top-0 left-0 right-0 z-[10000] bg-black/80 backdrop-blur-sm border-b border-white/10 py-6">
+      <div className="fixed top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10 py-4">
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
           <button
             onClick={handleBack}
