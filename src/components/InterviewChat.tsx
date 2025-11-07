@@ -11,6 +11,7 @@ export const InterviewChat = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [sessionId, setSessionId] = useState<string>("");
   const [interviewId, setInterviewId] = useState<string>("");
+  const [showThankYou, setShowThankYou] = useState(false);
   const { toast } = useToast();
   
   // Fixed avatar - Katya
@@ -163,9 +164,48 @@ export const InterviewChat = () => {
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
     setHasStarted(false);
+    setShowThankYou(true);
+  };
+
+  const handleReturnToStart = () => {
+    setShowThankYou(false);
     setSessionId("");
     setInterviewId("");
   };
+
+  if (showThankYou) {
+    return (
+      <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
+        {/* Subtle diagonal pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        
+        <div className="relative z-10 text-center px-8 max-w-2xl">
+          <div className="mb-8">
+            <img 
+              src={redkiwiLogo} 
+              alt="RedKiwi Logo" 
+              className="h-16 mx-auto mb-8"
+            />
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Bedankt voor je deelname!
+          </h1>
+          
+          <p className="text-xl text-white/80 mb-8">
+            Je hebt succesvol deelgenomen aan dit AI-Interview. Je antwoorden zijn opgeslagen.
+          </p>
+          
+          <Button
+            onClick={handleReturnToStart}
+            className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
+          >
+            Terug naar start
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!hasStarted) {
     return <StartScreen onStart={handleChecklistComplete} />;
