@@ -208,13 +208,22 @@ export const InterviewChat = () => {
             </div>
           </div>
           
-          <Button
-            onClick={handlePauseToggle}
-            variant="outline"
-            className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
-          >
-            {isPaused ? 'Hervat' : 'Pauze'}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={handlePauseToggle}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
+            >
+              {isPaused ? 'Hervat' : 'Pauze'}
+            </Button>
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300"
+            >
+              Eindig interview
+            </Button>
+          </div>
         </div>
       </div>
     </div>
