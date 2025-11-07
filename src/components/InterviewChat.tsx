@@ -189,13 +189,23 @@ export const InterviewChat = () => {
             Terug
           </button>
           
-          <div className="text-center flex-1">
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
-              Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
-            </h2>
-            <p className="text-white/70 text-sm mt-1">
-              Kies de taal waarin je het interview wilt voeren
-            </p>
+          <div className="flex-1 flex gap-8 items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white">
+                Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
+              </h2>
+            </div>
+            
+            <div className="border-l border-white/20 pl-8">
+              <h3 className="text-lg font-bold text-white mb-3">
+                Tips voor een soepel AI-interview
+              </h3>
+              <ul className="text-white/70 text-sm space-y-2 text-left">
+                <li>• Zorg dat er geen achtergrondgeluiden zijn.</li>
+                <li>• Spreek duidelijk en articuleer goed.</li>
+                <li>• Vergeet niet de juiste taal te selecteren.</li>
+              </ul>
+            </div>
           </div>
           
           <Button
