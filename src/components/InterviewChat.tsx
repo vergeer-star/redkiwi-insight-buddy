@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { StartScreen } from "@/components/StartScreen";
-import { AvatarSelection } from "@/components/AvatarSelection";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -10,22 +9,23 @@ export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
-  const [selectedAvatarUrl, setSelectedAvatarUrl] = useState<string>("");
-  const [selectedAvatarName, setSelectedAvatarName] = useState<string>("");
-  const [showAvatarSelection, setShowAvatarSelection] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [interviewId, setInterviewId] = useState<string>("");
   const { toast } = useToast();
+  
+  // Fixed avatar - Katya
+  const AVATAR_URL = "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9";
+  const AVATAR_NAME = "Katya";
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
-    if (!hasStarted || !selectedAvatarUrl) return;
+    if (!hasStarted) return;
 
     const script = document.createElement("script");
     script.innerHTML = `
       !function(window){
         const host="https://labs.heygen.com",
-        url=host+"/guest/streaming-embed?share=${selectedAvatarUrl}&inIFrame=1",
+        url=host+"/guest/streaming-embed?share=${AVATAR_URL}&inIFrame=1",
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
         
@@ -96,12 +96,9 @@ export const InterviewChat = () => {
       if (widget) widget.remove();
       if (script.parentNode) script.parentNode.removeChild(script);
     };
-  }, [hasStarted, selectedAvatarUrl]); // Load when hasStarted or avatar changes
+  }, [hasStarted]); // Load when hasStarted
 
-  const handleAvatarSelect = async (avatarUrl: string, avatarName: string) => {
-    setSelectedAvatarUrl(avatarUrl);
-    setSelectedAvatarName(avatarName);
-    setShowAvatarSelection(false);
+  const handleChecklistComplete = async () => {
     setHasStarted(true);
     
     // Save interview session to Supabase
@@ -109,8 +106,8 @@ export const InterviewChat = () => {
       const { data, error } = await supabase
         .from('interviews')
         .insert({
-          avatar_name: avatarName,
-          avatar_url: avatarUrl,
+          avatar_name: AVATAR_NAME,
+          avatar_url: AVATAR_URL,
           status: 'started'
         })
         .select()
@@ -130,10 +127,6 @@ export const InterviewChat = () => {
         variant: "destructive"
       });
     }
-  };
-
-  const handleChecklistComplete = () => {
-    setShowAvatarSelection(true);
   };
 
   const handlePauseToggle = () => {
@@ -170,20 +163,9 @@ export const InterviewChat = () => {
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
     setHasStarted(false);
-    setSelectedAvatarUrl("");
-    setSelectedAvatarName("");
-    setShowAvatarSelection(true);
     setSessionId("");
     setInterviewId("");
   };
-
-  const handleAvatarSelectionBack = () => {
-    setShowAvatarSelection(false);
-  };
-
-  if (showAvatarSelection) {
-    return <AvatarSelection onSelect={handleAvatarSelect} onBack={handleAvatarSelectionBack} />;
-  }
 
   if (!hasStarted) {
     return <StartScreen onStart={handleChecklistComplete} />;
@@ -209,7 +191,7 @@ export const InterviewChat = () => {
           
           <div className="text-center flex-1">
             <h2 className="text-2xl md:text-3xl font-bold text-white">
-              Interview met <span className="text-[#FF2B2B]">{selectedAvatarName}</span>
+              Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
             </h2>
             <p className="text-white/70 text-sm mt-1">
               Kies de taal waarin je het interview wilt voeren
