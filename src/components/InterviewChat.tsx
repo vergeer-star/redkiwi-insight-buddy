@@ -35,13 +35,13 @@ export const InterviewChat = () => {
         const stylesheet=document.createElement("style");
         stylesheet.innerHTML=\`
           #heygen-streaming-embed {
-            z-index: 9999;
+            z-index: 1;
             position: fixed;
-            top: 50%;
+            top: 140px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(700px, 85vw);
-            height: min(700px, 75vh);
+            transform: translateX(-50%);
+            width: min(650px, 85vw);
+            height: min(650px, calc(100vh - 180px));
             border-radius: 16px;
             overflow: hidden;
             opacity: 0;
