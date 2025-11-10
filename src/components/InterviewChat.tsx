@@ -20,7 +20,33 @@ export const InterviewChat = () => {
 
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
-    if (!hasStarted) return;
+    if (!hasStarted || !interviewId) return;
+
+    // Store interviewId in localStorage for fetch interceptor
+    localStorage.setItem('currentInterviewId', interviewId);
+
+    // Create fetch interceptor to add interviewId to requests
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const [resource, config] = args;
+      
+      // Check if this is a request to our interview-chat edge function
+      if (typeof resource === 'string' && resource.includes('/functions/v1/interview-chat')) {
+        const interviewId = localStorage.getItem('currentInterviewId');
+        if (interviewId && config) {
+          // Parse existing body and add interviewId
+          try {
+            const body = JSON.parse(config.body as string);
+            body.interviewId = interviewId;
+            config.body = JSON.stringify(body);
+          } catch (e) {
+            console.error('Failed to add interviewId to request:', e);
+          }
+        }
+      }
+      
+      return originalFetch(resource, config);
+    };
 
     const script = document.createElement("script");
     script.innerHTML = `
@@ -96,8 +122,11 @@ export const InterviewChat = () => {
       const widget = document.getElementById("heygen-streaming-embed");
       if (widget) widget.remove();
       if (script.parentNode) script.parentNode.removeChild(script);
+      localStorage.removeItem('currentInterviewId');
+      // Restore original fetch
+      window.fetch = originalFetch;
     };
-  }, [hasStarted]); // Load when hasStarted
+  }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
 
   const handleChecklistComplete = async () => {
     setHasStarted(true);

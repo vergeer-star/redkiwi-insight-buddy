@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,14 +40,36 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages, interviewId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Processing interview chat with", messages.length, "messages");
+    console.log("Processing interview chat with", messages.length, "messages", interviewId ? `for interview ${interviewId}` : "");
+    
+    // Initialize Supabase client if we have an interviewId
+    let supabase = null;
+    if (interviewId) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      supabase = createClient(supabaseUrl, supabaseKey);
+      
+      // Save user message if it's the last one
+      if (messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === 'user') {
+          console.log("Saving user message to database");
+          await supabase.from('interview_messages').insert({
+            interview_id: interviewId,
+            role: 'user',
+            content: lastMessage.content,
+            timestamp: new Date().toISOString()
+          });
+        }
+      }
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -97,6 +120,68 @@ serve(async (req) => {
       );
     }
 
+    // If we have an interviewId, we need to save the assistant's response
+    // We'll stream the response and collect it at the same time
+    if (interviewId && supabase && response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantMessage = "";
+      
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              
+              // Forward the chunk to the client
+              controller.enqueue(value);
+              
+              // Also decode and collect for database storage
+              const chunk = decoder.decode(value, { stream: true });
+              const lines = chunk.split('\n');
+              
+              for (const line of lines) {
+                if (line.startsWith('data: ') && !line.includes('[DONE]')) {
+                  try {
+                    const jsonStr = line.slice(6).trim();
+                    const parsed = JSON.parse(jsonStr);
+                    const content = parsed.choices?.[0]?.delta?.content;
+                    if (content) {
+                      assistantMessage += content;
+                    }
+                  } catch (e) {
+                    // Ignore parsing errors for partial chunks
+                  }
+                }
+              }
+            }
+            
+            // Save assistant message to database
+            if (assistantMessage && supabase) {
+              console.log("Saving assistant message to database");
+              await supabase.from('interview_messages').insert({
+                interview_id: interviewId,
+                role: 'assistant',
+                content: assistantMessage,
+                timestamp: new Date().toISOString()
+              });
+            }
+            
+            controller.close();
+          } catch (error) {
+            console.error("Stream error:", error);
+            controller.error(error);
+          }
+        }
+      });
+      
+      return new Response(stream, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      });
+    }
+    
+    // No interviewId, just pass through the stream
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
