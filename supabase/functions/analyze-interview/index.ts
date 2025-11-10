@@ -37,7 +37,31 @@ serve(async (req) => {
     }
 
     if (!messages || messages.length === 0) {
-      throw new Error('No messages found for this interview');
+      console.warn('No messages found for this interview - storing neutral analysis');
+      const fallback = {
+        sentiment: 'neutral',
+        themes: [] as string[],
+        summary: 'Geen transcript gevonden; automatische analyse niet mogelijk. Interview gemarkeerd als neutraal.'
+      };
+
+      const { error: updateEmptyErr } = await supabase
+        .from('interviews')
+        .update({
+          sentiment: fallback.sentiment,
+          themes: fallback.themes,
+          summary: fallback.summary,
+          analyzed_at: new Date().toISOString()
+        })
+        .eq('id', interviewId);
+
+      if (updateEmptyErr) {
+        console.error('Error updating empty analysis:', updateEmptyErr);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, analysis: fallback, warning: 'no_messages' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
     }
 
     // Prepare conversation text for analysis
