@@ -51,37 +51,49 @@ export type Database = {
       }
       interviews: {
         Row: {
+          analyzed_at: string | null
           avatar_name: string
           avatar_url: string
           created_at: string
           ended_at: string | null
           id: string
           language: string | null
+          sentiment: string | null
           session_id: string
           started_at: string
           status: string
+          summary: string | null
+          themes: string[] | null
         }
         Insert: {
+          analyzed_at?: string | null
           avatar_name: string
           avatar_url: string
           created_at?: string
           ended_at?: string | null
           id?: string
           language?: string | null
+          sentiment?: string | null
           session_id?: string
           started_at?: string
           status?: string
+          summary?: string | null
+          themes?: string[] | null
         }
         Update: {
+          analyzed_at?: string | null
           avatar_name?: string
           avatar_url?: string
           created_at?: string
           ended_at?: string | null
           id?: string
           language?: string | null
+          sentiment?: string | null
           session_id?: string
           started_at?: string
           status?: string
+          summary?: string | null
+          themes?: string[] | null
         }
         Relationships: []
       }

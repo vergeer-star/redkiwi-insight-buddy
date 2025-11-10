@@ -155,6 +155,29 @@ export const InterviewChat = () => {
             ended_at: new Date().toISOString()
           })
           .eq('id', interviewId);
+
+        // Trigger AI analysis of the interview
+        toast({
+          title: "Interview beëindigd",
+          description: "Je antwoorden worden nu geanalyseerd...",
+        });
+
+        // Call edge function to analyze the interview
+        supabase.functions.invoke('analyze-interview', {
+          body: { interviewId }
+        }).then(({ data, error }) => {
+          if (error) {
+            console.error('Error analyzing interview:', error);
+            toast({
+              title: "Analyse fout",
+              description: "Er is een fout opgetreden bij het analyseren",
+              variant: "destructive"
+            });
+          } else {
+            console.log('Interview analysis completed:', data);
+          }
+        });
+
       } catch (error) {
         console.error('Error updating interview:', error);
       }
@@ -193,15 +216,24 @@ export const InterviewChat = () => {
           </h1>
           
           <p className="text-xl text-white/80 mb-8">
-            Je hebt succesvol deelgenomen aan dit AI-Interview. Je antwoorden zijn opgeslagen.
+            Je hebt succesvol deelgenomen aan dit AI-Interview. Je antwoorden worden nu geanalyseerd en toegevoegd aan het dashboard.
           </p>
           
-          <Button
-            onClick={handleReturnToStart}
-            className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
-          >
-            Terug naar start
-          </Button>
+          <div className="flex gap-4 justify-center">
+            <Button
+              onClick={handleReturnToStart}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              Terug naar start
+            </Button>
+            <Button
+              onClick={() => window.location.href = '/dashboard'}
+              className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              Bekijk Dashboard
+            </Button>
+          </div>
         </div>
       </div>
     );
