@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
-
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -12,12 +11,13 @@ export const InterviewChat = () => {
   const [sessionId, setSessionId] = useState<string>("");
   const [interviewId, setInterviewId] = useState<string>("");
   const [showThankYou, setShowThankYou] = useState(false);
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
+
   // Fixed avatar - Katya
   const AVATAR_URL = "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9";
   const AVATAR_NAME = "Katya";
-
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
     if (!hasStarted || !interviewId) return;
@@ -29,7 +29,7 @@ export const InterviewChat = () => {
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const [resource, config] = args;
-      
+
       // Check if this is a request to our interview-chat edge function
       if (typeof resource === 'string' && resource.includes('/functions/v1/interview-chat')) {
         const interviewId = localStorage.getItem('currentInterviewId');
@@ -44,10 +44,8 @@ export const InterviewChat = () => {
           }
         }
       }
-      
       return originalFetch(resource, config);
     };
-
     const script = document.createElement("script");
     script.innerHTML = `
       !function(window){
@@ -116,7 +114,6 @@ export const InterviewChat = () => {
       }(globalThis);
     `;
     document.body.appendChild(script);
-
     return () => {
       // Cleanup: remove the widget and script when component unmounts
       const widget = document.getElementById("heygen-streaming-embed");
@@ -130,21 +127,18 @@ export const InterviewChat = () => {
 
   const handleChecklistComplete = async () => {
     setHasStarted(true);
-    
+
     // Save interview session to Supabase
     try {
-      const { data, error } = await supabase
-        .from('interviews')
-        .insert({
-          avatar_name: AVATAR_NAME,
-          avatar_url: AVATAR_URL,
-          status: 'started'
-        })
-        .select()
-        .single();
-      
+      const {
+        data,
+        error
+      } = await supabase.from('interviews').insert({
+        avatar_name: AVATAR_NAME,
+        avatar_url: AVATAR_URL,
+        status: 'started'
+      }).select().single();
       if (error) throw error;
-      
       if (data) {
         setSessionId(data.session_id);
         setInterviewId(data.id);
@@ -158,7 +152,6 @@ export const InterviewChat = () => {
       });
     }
   };
-
   const handlePauseToggle = () => {
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) {
@@ -172,29 +165,30 @@ export const InterviewChat = () => {
       setIsPaused(!isPaused);
     }
   };
-
   const handleBack = async () => {
     // Update interview status to completed
     if (interviewId) {
       try {
-        await supabase
-          .from('interviews')
-          .update({
-            status: 'completed',
-            ended_at: new Date().toISOString()
-          })
-          .eq('id', interviewId);
+        await supabase.from('interviews').update({
+          status: 'completed',
+          ended_at: new Date().toISOString()
+        }).eq('id', interviewId);
 
         // Trigger AI analysis of the interview
         toast({
           title: "Interview beëindigd",
-          description: "Je antwoorden worden nu geanalyseerd...",
+          description: "Je antwoorden worden nu geanalyseerd..."
         });
 
         // Call edge function to analyze the interview
         supabase.functions.invoke('analyze-interview', {
-          body: { interviewId }
-        }).then(({ data, error }) => {
+          body: {
+            interviewId
+          }
+        }).then(({
+          data,
+          error
+        }) => {
           if (error) {
             console.error('Error analyzing interview:', error);
             toast({
@@ -206,77 +200,57 @@ export const InterviewChat = () => {
             console.log('Interview analysis completed:', data);
           }
         });
-
       } catch (error) {
         console.error('Error updating interview:', error);
       }
     }
-    
+
     // Clean up interviewer widget
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
     setHasStarted(false);
     setShowThankYou(true);
   };
-
   const handleReturnToStart = () => {
     setShowThankYou(false);
     setSessionId("");
     setInterviewId("");
   };
-
   if (showThankYou) {
-    return (
-      <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
+    return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
         {/* Subtle diagonal pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
         <div className="relative z-10 text-center px-8 max-w-2xl">
           <div className="mb-8">
-            <img 
-              src={redkiwiLogo} 
-              alt="RedKiwi Logo" 
-              className="h-16 mx-auto mb-8"
-            />
+            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-16 mx-auto mb-8" />
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Bedankt voor je deelname!
           </h1>
           
-          <p className="text-xl text-white/80 mb-8">
-            Je hebt succesvol deelgenomen aan dit AI-Interview. Je antwoorden worden nu geanalyseerd en toegevoegd aan het dashboard.
-          </p>
+          <p className="text-xl text-white/80 mb-8">Je hebt succesvol deelgenomen aan een AI-Interview. Jouw antwoorden helpen Redkiwi verbeteren.</p>
           
           <div className="flex gap-4 justify-center">
-            <Button
-              onClick={handleReturnToStart}
-              className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
-            >
+            <Button onClick={handleReturnToStart} className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105">
               Terug naar start
             </Button>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!hasStarted) {
     return <StartScreen onStart={handleChecklistComplete} />;
   }
-
-  return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+  return <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       {/* Header Section */}
       <div className="fixed top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10 py-4">
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
-          <button
-            onClick={handleBack}
-            className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2"
-          >
+          <button onClick={handleBack} className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -303,23 +277,14 @@ export const InterviewChat = () => {
           </div>
           
           <div className="flex gap-3">
-            <Button
-              onClick={handlePauseToggle}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
-            >
+            <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300">
               {isPaused ? 'Hervat' : 'Pauze'}
             </Button>
-            <Button
-              onClick={handleBack}
-              variant="outline"
-              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300"
-            >
+            <Button onClick={handleBack} variant="outline" className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300">
               Eindig interview
             </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
