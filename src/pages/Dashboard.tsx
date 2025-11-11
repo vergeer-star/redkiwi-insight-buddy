@@ -25,11 +25,38 @@ const SENTIMENT_COLORS = {
 export default function Dashboard() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchInterviews();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        navigate('/auth');
+        return;
+      }
+
+      // Check if user is Redkiwi employee
+      const { data: isEmployee, error: roleError } = await supabase
+        .rpc('is_redkiwi_employee', { _user_id: session.user.id });
+
+      if (roleError || !isEmployee) {
+        navigate('/auth');
+        return;
+      }
+
+      setIsAuthorized(true);
+      fetchInterviews();
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      navigate('/auth');
+    }
+  };
 
   const fetchInterviews = async () => {
     try {
@@ -88,7 +115,12 @@ export default function Dashboard() {
       negatief: interview.sentiment === 'negative' ? 1 : 0,
     }));
 
-  if (loading) {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
+
+  if (loading || !isAuthorized) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-xl">Laden...</div>
@@ -105,12 +137,22 @@ export default function Dashboard() {
             <img src={redkiwiLogo} alt="RedKiwi" className="h-12" />
             <h1 className="text-4xl font-bold">Interview Dashboard</h1>
           </div>
-          <Button
-            onClick={() => navigate('/')}
-            className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90"
-          >
-            Nieuw Interview
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => navigate('/')}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10"
+            >
+              Nieuw Interview
+            </Button>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10"
+            >
+              Uitloggen
+            </Button>
+          </div>
         </div>
       </div>
 

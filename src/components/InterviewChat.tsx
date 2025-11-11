@@ -251,16 +251,9 @@ export const InterviewChat = () => {
           <div className="flex gap-4 justify-center">
             <Button
               onClick={handleReturnToStart}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
-            >
-              Terug naar start
-            </Button>
-            <Button
-              onClick={() => window.location.href = '/dashboard'}
               className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105"
             >
-              Bekijk Dashboard
+              Terug naar start
             </Button>
           </div>
         </div>
