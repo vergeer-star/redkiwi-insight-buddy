@@ -5,6 +5,8 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
+import { useToast } from "@/hooks/use-toast";
+import { User, Session } from "@supabase/supabase-js";
 
 interface Interview {
   id: string;
@@ -25,35 +27,72 @@ const SENTIMENT_COLORS = {
 export default function Dashboard() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session) {
-        navigate('/auth');
-        return;
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (!session?.user) {
+          navigate('/auth');
+        } else {
+          checkAuthorization(session.user);
+        }
       }
+    );
 
-      // Check if user is Redkiwi employee
-      const { data: isEmployee, error: roleError } = await supabase
-        .rpc('is_redkiwi_employee', { _user_id: session.user.id });
-
-      if (roleError || !isEmployee) {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (!session?.user) {
         navigate('/auth');
+      } else {
+        checkAuthorization(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const checkAuthorization = async (user: User) => {
+    try {
+      // Check if user is Redkiwi employee
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      if (!profile?.email?.endsWith('@redkiwi.nl')) {
+        toast({
+          title: "Toegang geweigerd",
+          description: "Deze pagina is alleen toegankelijk voor Redkiwi-medewerkers",
+          variant: "destructive"
+        });
+        navigate('/');
         return;
       }
 
       setIsAuthorized(true);
       fetchInterviews();
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error('Authorization check failed:', error);
+      toast({
+        title: "Fout",
+        description: "Kon autorisatie niet verifiëren",
+        variant: "destructive"
+      });
       navigate('/auth');
     }
   };
@@ -72,6 +111,11 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
   };
 
   // Calculate sentiment distribution
@@ -115,12 +159,7 @@ export default function Dashboard() {
       negatief: interview.sentiment === 'negative' ? 1 : 0,
     }));
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/auth');
-  };
-
-  if (loading || !isAuthorized) {
+  if (!isAuthorized || loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-xl">Laden...</div>
@@ -137,7 +176,7 @@ export default function Dashboard() {
             <img src={redkiwiLogo} alt="RedKiwi" className="h-12" />
             <h1 className="text-4xl font-bold">Interview Dashboard</h1>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Button
               onClick={() => navigate('/')}
               variant="outline"
