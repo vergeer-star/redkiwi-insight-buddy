@@ -126,29 +126,34 @@ export const InterviewChat = () => {
   }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
 
   const handleChecklistComplete = async () => {
+    // Pre-generate IDs to avoid RLS SELECT on return
+    const newInterviewId = crypto.randomUUID();
+    const newSessionId = crypto.randomUUID();
+
+    // Set locally so UI and embed can initialize immediately
+    setInterviewId(newInterviewId);
+    setSessionId(newSessionId);
     setHasStarted(true);
 
-    // Save interview session to Supabase
+    // Save interview session to the backend without requesting a representation
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('interviews').insert({
-        avatar_name: AVATAR_NAME,
-        avatar_url: AVATAR_URL,
-        status: 'started'
-      }).select().single();
+      const { error } = await supabase
+        .from('interviews')
+        .insert({
+          id: newInterviewId,
+          session_id: newSessionId,
+          avatar_name: AVATAR_NAME,
+          avatar_url: AVATAR_URL,
+          status: 'started',
+        });
+
       if (error) throw error;
-      if (data) {
-        setSessionId(data.session_id);
-        setInterviewId(data.id);
-      }
     } catch (error) {
       console.error('Error saving interview:', error);
       toast({
         title: "Fout",
         description: "Kon interview sessie niet opslaan",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
