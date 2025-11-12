@@ -3,6 +3,8 @@ import { StartScreen } from "@/components/StartScreen";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { LayoutDashboard } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
@@ -11,13 +13,35 @@ export const InterviewChat = () => {
   const [sessionId, setSessionId] = useState<string>("");
   const [interviewId, setInterviewId] = useState<string>("");
   const [showThankYou, setShowThankYou] = useState(false);
+  const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const {
     toast
   } = useToast();
+  const navigate = useNavigate();
 
   // Fixed avatar - Katya
   const AVATAR_URL = "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9";
   const AVATAR_NAME = "Katya";
+
+  // Check if user is a RedKiwi employee
+  useEffect(() => {
+    const checkEmployee = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile?.email?.endsWith('@redkiwi.nl')) {
+          setIsRedkiwiEmployee(true);
+        }
+      }
+    };
+    checkEmployee();
+  }, []);
+
   useEffect(() => {
     // Only load HeyGen streaming embed script after interview has started
     if (!hasStarted || !interviewId) return;
@@ -282,6 +306,16 @@ export const InterviewChat = () => {
           </div>
           
           <div className="flex gap-3">
+            {isRedkiwiEmployee && (
+              <Button 
+                onClick={() => navigate('/dashboard')} 
+                variant="outline" 
+                className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300 flex items-center gap-2"
+              >
+                <LayoutDashboard size={18} />
+                Dashboard
+              </Button>
+            )}
             <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300">
               {isPaused ? 'Hervat' : 'Pauze'}
             </Button>
