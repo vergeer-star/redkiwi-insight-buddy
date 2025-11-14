@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
+import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
+import { WordCloudCard } from "@/components/WordCloudCard";
 
 interface Interview {
   id: string;
@@ -172,7 +173,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate('/')}>
             <img src={redkiwiLogo} alt="RedKiwi" className="h-12" />
             <h1 className="text-4xl font-bold">Interview Dashboard</h1>
           </div>
@@ -309,6 +310,11 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* Word Cloud */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <WordCloudCard />
+      </div>
+
       {/* Timeline */}
       <div className="max-w-7xl mx-auto mb-8">
         <Card className="bg-white/5 border-white/10">
@@ -369,7 +375,8 @@ export default function Dashboard() {
               {interviews.map((interview) => (
                 <div 
                   key={interview.id}
-                  className="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all"
+                  onClick={() => navigate(`/interview/${interview.id}`)}
+                  className="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
