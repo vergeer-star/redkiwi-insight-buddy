@@ -5,13 +5,15 @@ import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import redkiwiLogoNew from "@/assets/redkiwi-logo-new.png";
 import heygenLogoNew from "@/assets/heygen-logo-new.png";
 import heroAnimation from "@/assets/hero-animation.gif";
-import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2, LogIn } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 interface StartScreenProps {
   onStart: (language: string) => void;
 }
 export const StartScreen = ({
   onStart
 }: StartScreenProps) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isStarting, setIsStarting] = useState(false);
   const [micPermissionGranted, setMicPermissionGranted] = useState(false);
@@ -55,6 +57,15 @@ export const StartScreen = ({
     return <div className="min-h-[90vh] bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
+        
+        {/* Subtle login button in top right corner */}
+        <button
+          onClick={() => navigate('/auth')}
+          className="fixed top-4 right-4 z-20 p-2 text-white/40 hover:text-white/80 transition-colors duration-300 group"
+          aria-label="Inloggen"
+        >
+          <LogIn size={20} className="group-hover:scale-110 transition-transform duration-300" />
+        </button>
         
         <div className="relative w-full flex flex-col items-center justify-center space-y-8 z-10 animate-fade-in">
           {/* Main Logo / Animation - 45% of viewport width max */}
