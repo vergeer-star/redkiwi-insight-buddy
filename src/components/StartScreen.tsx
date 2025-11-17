@@ -158,8 +158,9 @@ export const StartScreen = ({
               }} />
               </a>
               <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer">
-                <img src={lovableLogo} alt="Lovable" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
-                imageRendering: 'crisp-edges'
+                <img src={lovableLogo} alt="Lovable" className="h-20 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
+                imageRendering: 'crisp-edges',
+                mixBlendMode: 'normal'
               }} />
               </a>
             </div>
