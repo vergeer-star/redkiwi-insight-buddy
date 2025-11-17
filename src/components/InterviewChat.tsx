@@ -97,12 +97,14 @@ export const InterviewChat = () => {
             visibility: hidden;
             transition: opacity 0.3s ease;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-          }
-          #heygen-streaming-embed iframe {
             background: transparent !important;
           }
+          #heygen-streaming-embed iframe,
+          #heygen-streaming-embed iframe body,
+          #heygen-streaming-embed iframe *,
           #heygen-streaming-embed * {
             background: transparent !important;
+            background-color: transparent !important;
           }
           #heygen-streaming-embed.show {
             opacity: 1;
@@ -257,16 +259,14 @@ export const InterviewChat = () => {
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
         <div className="relative z-10 text-center px-8 max-w-2xl">
-          <div className="mb-8">
-            <a 
-              href="https://www.redkiwi.com/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block transition-transform duration-300 hover:scale-110"
-            >
-              <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-32 mx-auto mb-8" />
-            </a>
-          </div>
+          <a 
+            href="https://www.redkiwi.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block transition-transform duration-300 hover:scale-110 mb-6"
+          >
+            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-32 mx-auto" />
+          </a>
           
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Bedankt voor je deelname!
@@ -286,13 +286,16 @@ export const InterviewChat = () => {
                   toast({ title: "Link gekopieerd!", description: "De link is naar je klembord gekopieerd." });
                 });
               }}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300 px-8 py-6 text-lg rounded-lg flex items-center gap-2"
+              className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <Share2 size={20} />
               Deel deze website
             </Button>
-            <Button onClick={handleReturnToStart} className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105">
+            <Button 
+              onClick={handleReturnToStart} 
+              variant="ghost"
+              className="text-white/60 hover:text-white/80 hover:bg-white/5 px-8 py-6 text-lg rounded-lg transition-all duration-300"
+            >
               Terug naar start
             </Button>
           </div>
