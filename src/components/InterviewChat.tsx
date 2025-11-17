@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
+import { Share2 } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
@@ -97,6 +97,12 @@ export const InterviewChat = () => {
             visibility: hidden;
             transition: opacity 0.3s ease;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+          }
+          #heygen-streaming-embed iframe {
+            background: transparent !important;
+          }
+          #heygen-streaming-embed * {
+            background: transparent !important;
           }
           #heygen-streaming-embed.show {
             opacity: 1;
@@ -252,7 +258,14 @@ export const InterviewChat = () => {
         
         <div className="relative z-10 text-center px-8 max-w-2xl">
           <div className="mb-8">
-            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-16 mx-auto mb-8" />
+            <a 
+              href="https://www.redkiwi.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block transition-transform duration-300 hover:scale-110"
+            >
+              <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-32 mx-auto mb-8" />
+            </a>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -261,7 +274,24 @@ export const InterviewChat = () => {
           
           <p className="text-xl text-white/80 mb-8">Je hebt succesvol deelgenomen aan een AI-Interview. Jouw antwoorden helpen Redkiwi verbeteren.</p>
           
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col gap-4 items-center">
+            <Button 
+              onClick={() => {
+                navigator.share({ 
+                  title: 'AI Interview met RedKiwi', 
+                  text: 'Doe mee met het AI Interview van RedKiwi!',
+                  url: window.location.origin 
+                }).catch(() => {
+                  navigator.clipboard.writeText(window.location.origin);
+                  toast({ title: "Link gekopieerd!", description: "De link is naar je klembord gekopieerd." });
+                });
+              }}
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300 px-8 py-6 text-lg rounded-lg flex items-center gap-2"
+            >
+              <Share2 size={20} />
+              Deel deze website
+            </Button>
             <Button onClick={handleReturnToStart} className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105">
               Terug naar start
             </Button>
@@ -306,16 +336,6 @@ export const InterviewChat = () => {
           </div>
           
           <div className="flex gap-3">
-            {isRedkiwiEmployee && (
-              <Button 
-                onClick={() => navigate('/dashboard')} 
-                variant="outline" 
-                className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300 flex items-center gap-2"
-              >
-                <LayoutDashboard size={18} />
-                Dashboard
-              </Button>
-            )}
             <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300">
               {isPaused ? 'Hervat' : 'Pauze'}
             </Button>

@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import redkiwiLogoNew from "@/assets/redkiwi-logo-new.png";
 import heygenLogoNew from "@/assets/heygen-logo-new.png";
+import lovableLogo from "@/assets/lovable-logo.png";
 import heroAnimation from "@/assets/hero-animation.gif";
 import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -153,6 +154,11 @@ export const StartScreen = ({
               </a>
               <a href="https://www.redkiwi.com/partners/heygen/" target="_blank" rel="noopener noreferrer">
                 <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
+                imageRendering: 'crisp-edges'
+              }} />
+              </a>
+              <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer">
+                <img src={lovableLogo} alt="Lovable" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
                 imageRendering: 'crisp-edges'
               }} />
               </a>
