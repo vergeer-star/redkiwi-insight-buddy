@@ -259,10 +259,8 @@ export const InterviewChat = () => {
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
     
-    // Navigate back to homepage
-    setHasStarted(false);
-    setSessionId("");
-    setInterviewId("");
+    // Show thank you page
+    setShowThankYou(true);
   };
 
   const handleBack = () => {
