@@ -21,27 +21,27 @@ export default function Auth() {
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Redirect authenticated users to dashboard
-        if (session?.user) {
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 0);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      // Redirect authenticated users to dashboard
+      if (session?.user) {
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 0);
       }
-    );
+    });
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     });
 
@@ -50,30 +50,30 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email.endsWith('@redkiwi.nl')) {
+
+    if (!email.endsWith("@redkiwi.nl")) {
       toast({
         title: "Toegang geweigerd",
         description: "Alleen @redkiwi.nl e-mailadressen zijn toegestaan",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     setLoading(true);
 
     try {
       const redirectUrl = `${window.location.origin}/dashboard`;
-      
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: fullName
-          }
-        }
+            full_name: fullName,
+          },
+        },
       });
 
       if (error) throw error;
@@ -86,7 +86,7 @@ export default function Auth() {
       toast({
         title: "Fout bij registreren",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -113,7 +113,7 @@ export default function Auth() {
       toast({
         title: "Fout bij inloggen",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -121,30 +121,22 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
-      
+
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
           <img src={redkiwiLogo} alt="RedKiwi" className="h-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white">
-            {isLogin ? 'Inloggen' : 'Registreren'}
-          </h1>
-          <p className="text-white/70 mt-2">
-            Alleen voor Redkiwi-medewerkers (@redkiwi.nl)
-          </p>
+          <h1 className="text-3xl font-bold text-white">{isLogin ? "Inloggen" : "Registreren"}</h1>
+          <p className="text-white/70 mt-2">Alleen voor Redkiwi-medewerkers (@redkiwi.nl)</p>
         </div>
 
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
-            <CardTitle className="text-white">
-              {isLogin ? 'Log in op je account' : 'Maak een account aan'}
-            </CardTitle>
+            <CardTitle className="text-white">{isLogin ? "Log in op je account" : "Maak een account aan"}</CardTitle>
             <CardDescription className="text-white/70">
-              {isLogin 
-                ? 'Voer je e-mailadres en wachtwoord in' 
-                : 'Voer je gegevens in om te registreren'}
+              {isLogin ? "Voer je e-mailadres en wachtwoord in" : "Voer je gegevens in om te registreren"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -162,7 +154,7 @@ export default function Auth() {
                   />
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <label className="text-sm text-white/70">E-mailadres</label>
                 <Input
@@ -188,14 +180,8 @@ export default function Auth() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white"
-              >
-                {loading 
-                  ? (isLogin ? 'Inloggen...' : 'Registreren...') 
-                  : (isLogin ? 'Inloggen' : 'Registreren')}
+              <Button type="submit" disabled={loading} className="w-full bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white">
+                {loading ? (isLogin ? "Inloggen..." : "Registreren...") : isLogin ? "Inloggen" : "Registreren"}
               </Button>
             </form>
 
@@ -204,15 +190,13 @@ export default function Auth() {
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-sm text-white/70 hover:text-white transition-colors"
               >
-                {isLogin 
-                  ? 'Nog geen account? Registreer hier' 
-                  : 'Al een account? Log hier in'}
+                {isLogin ? "Nog geen account? Registreer hier" : "Al een account? Log hier in"}
               </button>
             </div>
 
             <div className="mt-4 text-center">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 className="text-sm text-white/50 hover:text-white/70 transition-colors"
               >
                 Terug naar home
