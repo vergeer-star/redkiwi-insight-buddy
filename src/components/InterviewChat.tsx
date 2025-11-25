@@ -14,6 +14,7 @@ export const InterviewChat = () => {
   const [interviewId, setInterviewId] = useState<string>("");
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const {
     toast
   } = useToast();
@@ -48,6 +49,9 @@ export const InterviewChat = () => {
 
     // Store interviewId in localStorage for fetch interceptor
     localStorage.setItem('currentInterviewId', interviewId);
+    
+    // Set loading state
+    setIsLoadingAvatar(true);
 
     // Create fetch interceptor to add interviewId to requests
     const originalFetch = window.fetch;
@@ -132,6 +136,8 @@ export const InterviewChat = () => {
               initial=true;
               wrapDiv.classList.add("show");
               console.log("Heygen embed initialized and shown");
+              // Hide loading screen
+              window.dispatchEvent(new CustomEvent("heygen-loaded"));
             }
           }
         }));
@@ -145,6 +151,13 @@ export const InterviewChat = () => {
       }(globalThis);
     `;
     document.body.appendChild(script);
+    
+    // Listen for Heygen loaded event
+    const handleHeygenLoaded = () => {
+      setIsLoadingAvatar(false);
+    };
+    window.addEventListener("heygen-loaded", handleHeygenLoaded);
+    
     return () => {
       // Cleanup: remove the widget and script when component unmounts
       const widget = document.getElementById("heygen-streaming-embed");
@@ -153,6 +166,7 @@ export const InterviewChat = () => {
       localStorage.removeItem('currentInterviewId');
       // Restore original fetch
       window.fetch = originalFetch;
+      window.removeEventListener("heygen-loaded", handleHeygenLoaded);
     };
   }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
 
@@ -310,6 +324,17 @@ export const InterviewChat = () => {
   return <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      
+      {/* Loading Screen */}
+      {isLoadingAvatar && (
+        <div className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-sm flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-20 h-20 border-4 border-[#FF2B2B]/20 border-t-[#FF2B2B] rounded-full animate-spin mx-auto mb-6"></div>
+            <h2 className="text-2xl font-bold text-white mb-2">Katya wordt geladen...</h2>
+            <p className="text-white/60">Een moment geduld, het interview start zo</p>
+          </div>
+        </div>
+      )}
       
       {/* Header Section */}
       <div className="fixed top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10 py-4">
