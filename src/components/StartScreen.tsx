@@ -156,7 +156,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         </div>
 
         {/* Powered by section - at the bottom */}
-        <div className="relative w-full flex flex-col items-center gap-0 pb-4 z-10">
+        <div className="relative w-full flex flex-col items-center gap-0 pb-2 z-10">
           {/* Powered by text - 12px uppercase */}
           <p className="text-[12px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">Powered by</p>
 
