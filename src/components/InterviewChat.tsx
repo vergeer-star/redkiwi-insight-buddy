@@ -84,7 +84,7 @@ export const InterviewChat = () => {
         const stylesheet=document.createElement("style");
         stylesheet.innerHTML=\`
           #heygen-streaming-embed {
-            z-index: 1;
+            z-index: 100;
             position: fixed;
             top: 140px;
             left: 50%;
@@ -97,14 +97,6 @@ export const InterviewChat = () => {
             visibility: hidden;
             transition: opacity 0.3s ease;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-            background: transparent !important;
-          }
-          #heygen-streaming-embed iframe,
-          #heygen-streaming-embed iframe body,
-          #heygen-streaming-embed iframe *,
-          #heygen-streaming-embed * {
-            background: transparent !important;
-            background-color: transparent !important;
           }
           #heygen-streaming-embed.show {
             opacity: 1;
