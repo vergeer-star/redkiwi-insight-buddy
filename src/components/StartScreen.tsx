@@ -11,9 +11,7 @@ import { useNavigate } from "react-router-dom";
 interface StartScreenProps {
   onStart: (language: string) => void;
 }
-export const StartScreen = ({
-  onStart
-}: StartScreenProps) => {
+export const StartScreen = ({ onStart }: StartScreenProps) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isStarting, setIsStarting] = useState(false);
@@ -24,30 +22,30 @@ export const StartScreen = ({
   const handleStart = () => {
     setIsStarting(true);
     setTimeout(() => {
-      onStart('Nederlands');
+      onStart("Nederlands");
     }, 1500);
   };
   const scrollDown = () => {
-    window.scrollBy({ top: 100, behavior: 'smooth' });
+    window.scrollBy({ top: 100, behavior: "smooth" });
   };
 
   const toggleMicPermission = async () => {
     if (micPermissionGranted && micStream) {
       // Turn off microphone
-      micStream.getTracks().forEach(track => track.stop());
+      micStream.getTracks().forEach((track) => track.stop());
       setMicStream(null);
       setMicPermissionGranted(false);
     } else {
       // Request microphone permission
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true
+          audio: true,
         });
         setMicStream(stream);
         setMicPermissionGranted(true);
         scrollDown();
       } catch (error) {
-        console.error('Microphone permission denied:', error);
+        console.error("Microphone permission denied:", error);
         alert('Microfoon toegang is nodig voor het interview. Klik op "Toestaan" wanneer je browser erom vraagt.');
       }
     }
@@ -55,40 +53,50 @@ export const StartScreen = ({
 
   // Step 1: Hero with GIF
   if (step === 1) {
-    return <div className="min-h-[90vh] bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    return (
+      <div className="min-h-[90vh] flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
-        
+
         {/* Subtle login button in top right corner */}
         <button
-          onClick={() => navigate('/auth')}
+          onClick={() => navigate("/auth")}
           className="fixed top-4 right-4 z-20 p-2 text-white/40 hover:text-white/80 transition-colors duration-300 group"
           aria-label="Inloggen"
         >
           <LogIn size={20} className="group-hover:scale-110 transition-transform duration-300" />
         </button>
-        
+
         <div className="relative w-full flex flex-col items-center justify-center space-y-8 z-10 animate-fade-in">
           {/* Main Logo / Animation - 45% of viewport width max */}
           <div className="relative cursor-pointer w-[60%] md:w-[45%] max-w-xl" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
-              <img src={heroAnimation} alt="AI Animation" className="w-full h-auto mx-auto transition-all duration-500" style={{
-              animationPlayState: 'running'
-            }} />
+              <img
+                src={heroAnimation}
+                alt="AI Animation"
+                className="w-full h-auto mx-auto transition-all duration-500"
+                style={{
+                  animationPlayState: "running",
+                }}
+              />
               {/* Hover zone in het midden */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" onMouseEnter={e => {
-              const img = e.currentTarget.parentElement?.querySelector('img');
-              if (img) {
-                img.style.animationPlayState = 'paused';
-                img.style.transform = 'scale(1.05)';
-              }
-            }} onMouseLeave={e => {
-              const img = e.currentTarget.parentElement?.querySelector('img');
-              if (img) {
-                img.style.animationPlayState = 'running';
-                img.style.transform = 'scale(1)';
-              }
-            }}>
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group"
+                onMouseEnter={(e) => {
+                  const img = e.currentTarget.parentElement?.querySelector("img");
+                  if (img) {
+                    img.style.animationPlayState = "paused";
+                    img.style.transform = "scale(1.05)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const img = e.currentTarget.parentElement?.querySelector("img");
+                  if (img) {
+                    img.style.animationPlayState = "running";
+                    img.style.transform = "scale(1)";
+                  }
+                }}
+              >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
                     <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
@@ -100,29 +108,37 @@ export const StartScreen = ({
               </div>
             </div>
           </div>
-          
+
           {/* Headline - 64px spacing from logo */}
           <div className="w-full max-w-4xl text-center space-y-2 px-4">
             <div className="relative cursor-pointer" onClick={() => setStep(2)}>
-              <h1 className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight transition-transform duration-500" style={{
-              textShadow: '0 2px 20px rgba(0, 0, 0, 0.5)'
-            }}>
-                WELCOME TO AN<br />
+              <h1
+                className="text-[28px] md:text-[48px] lg:text-[56px] font-bold text-white tracking-wide leading-tight transition-transform duration-500"
+                style={{
+                  textShadow: "0 2px 20px rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                WELCOME TO AN
+                <br />
                 <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
               </h1>
-              
+
               {/* Hover zone in het midden */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group" onMouseEnter={e => {
-              const h1 = e.currentTarget.parentElement?.querySelector('h1');
-              if (h1) {
-                h1.style.transform = 'scale(1.05)';
-              }
-            }} onMouseLeave={e => {
-              const h1 = e.currentTarget.parentElement?.querySelector('h1');
-              if (h1) {
-                h1.style.transform = 'scale(1)';
-              }
-            }}>
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group"
+                onMouseEnter={(e) => {
+                  const h1 = e.currentTarget.parentElement?.querySelector("h1");
+                  if (h1) {
+                    h1.style.transform = "scale(1.05)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const h1 = e.currentTarget.parentElement?.querySelector("h1");
+                  if (h1) {
+                    h1.style.transform = "scale(1)";
+                  }
+                }}
+              >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                   <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
                     <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
@@ -133,58 +149,74 @@ export const StartScreen = ({
                 </div>
               </div>
             </div>
-            
+
             {/* Subtle grey line - 50px wide */}
             <div className="w-[50px] h-px bg-[#222222] mx-auto mt-4" />
           </div>
-          
+
           {/* Powered by section - perfectly centered */}
           <div className="w-full flex flex-col items-center gap-0">
             {/* Powered by text - 16px uppercase */}
-            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">
-              Powered by
-            </p>
-            
+            <p className="text-[16px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">Powered by</p>
+
             {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
             <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-0.5">
               <a href="https://www.redkiwi.com/" target="_blank" rel="noopener noreferrer">
-                <img src={redkiwiLogoNew} alt="Redkiwi" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
-                imageRendering: 'crisp-edges'
-              }} />
+                <img
+                  src={redkiwiLogoNew}
+                  alt="Redkiwi"
+                  className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                  style={{
+                    imageRendering: "crisp-edges",
+                  }}
+                />
               </a>
               <a href="https://www.redkiwi.com/partners/heygen/" target="_blank" rel="noopener noreferrer">
-                <img src={heygenLogoNew} alt="HeyGen" className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
-                imageRendering: 'crisp-edges'
-              }} />
+                <img
+                  src={heygenLogoNew}
+                  alt="HeyGen"
+                  className="h-24 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                  style={{
+                    imageRendering: "crisp-edges",
+                  }}
+                />
               </a>
               <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer">
-                <img src={lovableLogo} alt="Lovable" className="h-20 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer" style={{
-                imageRendering: 'crisp-edges',
-                mixBlendMode: 'normal'
-              }} />
+                <img
+                  src={lovableLogo}
+                  alt="Lovable"
+                  className="h-20 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                  style={{
+                    imageRendering: "crisp-edges",
+                    mixBlendMode: "normal",
+                  }}
+                />
               </a>
             </div>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // Step 2: Instructions with checklist
   if (step === 2) {
-    return <div className="min-h-screen bg-[#0B0B0B] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        
+
         <div className="relative max-w-4xl w-full space-y-8 text-center animate-fade-in">
           {/* Header Section */}
           <div className="space-y-4">
             <h2 className="text-6xl md:text-7xl font-bold text-white tracking-tight leading-tight">
               LET'S GET <span className="text-[#FF2B2B]">STARTED</span>
             </h2>
-            
+
             <div className="max-w-2xl mx-auto space-y-2">
               <p className="text-base text-white/90 leading-relaxed">
-                Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> om je ervaring te delen.
+                Een persoonlijk AI-gesprek van <strong className="text-white">5-10 minuten</strong> om je ervaring te
+                delen.
               </p>
               <p className="text-sm text-[#9C9C9C]">
                 Jouw antwoorden helpen ons beter te begrijpen hoe je ons merk beleeft.
@@ -196,13 +228,22 @@ export const StartScreen = ({
           <Card className="max-w-2xl mx-auto p-8 md:p-10 bg-white/[0.03] backdrop-blur-sm border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] rounded-2xl transition-all duration-500">
             <div className="space-y-6">
               {/* Mic Permission - Interactive */}
-              <div onClick={toggleMicPermission} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${micPermissionGranted ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${micPermissionGranted ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
-                  {micPermissionGranted ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Mic className="w-6 h-6 text-white" strokeWidth={2.5} />}
+              <div
+                onClick={toggleMicPermission}
+                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${micPermissionGranted ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+              >
+                <div
+                  className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${micPermissionGranted ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                >
+                  {micPermissionGranted ? (
+                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  ) : (
+                    <Mic className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  )}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed">
-                    {micPermissionGranted ? 'Microfoon toegang verleend' : 'Klik om microfoon toegang te geven'}
+                    {micPermissionGranted ? "Microfoon toegang verleend" : "Klik om microfoon toegang te geven"}
                   </p>
                   {micPermissionGranted && <p className="text-xs text-[#9C9C9C] mt-1">(klik om uit te schakelen)</p>}
                 </div>
@@ -212,13 +253,27 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Quiet Environment - Interactive */}
-              <div onClick={() => { setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed); scrollDown(); }} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
-                  {quietEnvironmentConfirmed ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Volume2 className="w-6 h-6 text-white" strokeWidth={2.5} />}
+              <div
+                onClick={() => {
+                  setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed);
+                  scrollDown();
+                }}
+                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+              >
+                <div
+                  className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                >
+                  {quietEnvironmentConfirmed ? (
+                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  ) : (
+                    <Volume2 className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  )}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed">
-                    {quietEnvironmentConfirmed ? 'Rustige omgeving bevestigd' : 'Ja, ik zit op een rustige omgeving zonder achtergrondgeluiden'}
+                    {quietEnvironmentConfirmed
+                      ? "Rustige omgeving bevestigd"
+                      : "Ja, ik zit op een rustige omgeving zonder achtergrondgeluiden"}
                   </p>
                 </div>
               </div>
@@ -227,16 +282,30 @@ export const StartScreen = ({
               <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
               {/* Privacy Consent - Interactive */}
-              <div onClick={() => { setPrivacyConsent(!privacyConsent); scrollDown(); }} className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? 'bg-[#FF2B2B]/5 border-[#FF2B2B]/20' : 'hover:bg-white/[0.02] hover:border-white/10'}`}>
-                <div className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? 'bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]' : 'bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
-                  {privacyConsent ? <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} /> : <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />}
+              <div
+                onClick={() => {
+                  setPrivacyConsent(!privacyConsent);
+                  scrollDown();
+                }}
+                className={`flex items-start gap-5 group cursor-pointer p-4 -m-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+              >
+                <div
+                  className={`mt-0.5 w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                >
+                  {privacyConsent ? (
+                    <CheckCircle2 className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  ) : (
+                    <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />
+                  )}
                 </div>
                 <div className="flex-1 text-left pt-2">
                   <p className="text-base text-white font-medium leading-relaxed mb-2">
-                    {privacyConsent ? 'Toestemming verleend' : 'Klik om toestemming te geven'}
+                    {privacyConsent ? "Toestemming verleend" : "Klik om toestemming te geven"}
                   </p>
                   <p className="text-xs text-[#9C9C9C] leading-relaxed">
-                    Jouw privacy is belangrijk. Er worden geen stem- of beeldopnames gemaakt; alleen de transcriptie van het interview wordt anoniem verwerkt. Je antwoorden blijven volledig vertrouwelijk en worden uitsluitend gebruikt voor dit onderzoek.
+                    Jouw privacy is belangrijk. Er worden geen stem- of beeldopnames gemaakt; alleen de transcriptie van
+                    het interview wordt anoniem verwerkt. Je antwoorden blijven volledig vertrouwelijk en worden
+                    uitsluitend gebruikt voor dit onderzoek.
                   </p>
                 </div>
               </div>
@@ -245,27 +314,39 @@ export const StartScreen = ({
 
           {/* CTA Button */}
           <div className="space-y-4">
-            <Button onClick={handleStart} disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed} className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden">
-              {isStarting ? <span className="flex items-center gap-3">
+            <Button
+              onClick={handleStart}
+              disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed}
+              className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-base font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden"
+            >
+              {isStarting ? (
+                <span className="flex items-center gap-3">
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Even instellen...
-                </span> : <span className="flex items-center gap-2">
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
                   Start Interview
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>}
+                </span>
+              )}
             </Button>
-            
-            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed) && <p className="text-xs text-[#9C9C9C]">
-                Vul eerst alle stappen in de checklist in
-              </p>}
-            
-            <button onClick={() => setStep(1)} className="text-sm text-[#9C9C9C] hover:text-white transition-colors flex items-center gap-1 mx-auto">
+
+            {(!privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed) && (
+              <p className="text-xs text-[#9C9C9C]">Vul eerst alle stappen in de checklist in</p>
+            )}
+
+            <button
+              onClick={() => setStep(1)}
+              className="text-sm text-[#9C9C9C] hover:text-white transition-colors flex items-center gap-1 mx-auto"
+            >
               <ChevronLeft className="w-4 h-4" />
               Terug
             </button>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   }
   return null;
 };
