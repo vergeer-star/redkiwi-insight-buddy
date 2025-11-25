@@ -215,7 +215,7 @@ export const InterviewChat = () => {
       setIsPaused(!isPaused);
     }
   };
-  const handleBack = async () => {
+  const handleEndInterview = async () => {
     // Update interview status to completed
     if (interviewId) {
       try {
@@ -256,6 +256,17 @@ export const InterviewChat = () => {
     }
 
     // Clean up interviewer widget
+    const widget = document.getElementById("heygen-streaming-embed");
+    if (widget) widget.remove();
+    
+    // Navigate back to homepage
+    setHasStarted(false);
+    setSessionId("");
+    setInterviewId("");
+  };
+
+  const handleBack = () => {
+    // Clean up interviewer widget without marking as completed
     const widget = document.getElementById("heygen-streaming-embed");
     if (widget) widget.remove();
     
@@ -369,7 +380,7 @@ export const InterviewChat = () => {
             <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300">
               {isPaused ? 'Hervat' : 'Pauze'}
             </Button>
-            <Button onClick={handleBack} variant="outline" className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300">
+            <Button onClick={handleEndInterview} variant="outline" className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300">
               Eindig interview
             </Button>
           </div>
