@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import redkiwiLogoNew from "@/assets/redkiwi-logo-new.png";
 import heygenLogoNew from "@/assets/heygen-logo-new.png";
-import lovableLogo from "@/assets/lovable-logo.png";
+import lovableLogo from "@/assets/lovable-logo-new.png";
 import heroAnimation from "@/assets/hero-animation.gif";
 import { ChevronRight, ChevronLeft, Mic, Volume2, Globe, Shield, CheckCircle2, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
