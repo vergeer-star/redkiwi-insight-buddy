@@ -90,11 +90,11 @@ export const InterviewChat = () => {
           #heygen-streaming-embed {
             z-index: 9999 !important;
             position: fixed !important;
-            top: 140px !important;
+            top: 50% !important;
             left: 50% !important;
-            transform: translateX(-50%) !important;
+            transform: translate(-50%, -50%) !important;
             width: min(800px, 70vw) !important;
-            height: min(450px, calc(100vh - 200px)) !important;
+            height: min(450px, 60vh) !important;
             border-radius: 16px !important;
             overflow: visible !important;
             opacity: 0 !important;
