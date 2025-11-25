@@ -93,8 +93,8 @@ export const InterviewChat = () => {
             top: 140px !important;
             left: 50% !important;
             transform: translateX(-50%) !important;
-            width: min(650px, 85vw) !important;
-            height: min(650px, calc(100vh - 180px)) !important;
+            width: min(500px, 60vw) !important;
+            height: min(750px, calc(100vh - 180px)) !important;
             border-radius: 16px !important;
             overflow: visible !important;
             opacity: 0 !important;
@@ -357,23 +357,10 @@ export const InterviewChat = () => {
             Terug
           </button>
           
-          <div className="flex-1 flex gap-8 items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
-              </h2>
-            </div>
-            
-            <div className="border-l border-white/20 pl-8">
-              <h3 className="text-lg font-bold text-white mb-3">
-                Tips voor een soepel AI-interview
-              </h3>
-              <ul className="text-white/70 text-sm space-y-2 text-left">
-                <li>• Zorg dat er geen achtergrondgeluiden zijn.</li>
-                <li>• Spreek duidelijk en articuleer goed.</li>
-                <li>• Vergeet niet de juiste taal te selecteren.</li>
-              </ul>
-            </div>
+          <div className="flex-1 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
+            </h2>
           </div>
           
           <div className="flex gap-3">
@@ -385,6 +372,27 @@ export const InterviewChat = () => {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Tips Sidebar */}
+      <div className="fixed right-8 top-[200px] z-[9990] w-80 bg-black/60 backdrop-blur-lg border border-white/20 rounded-xl p-6 shadow-2xl">
+        <h3 className="text-xl font-bold text-white mb-4">
+          Tips voor een soepel AI-interview
+        </h3>
+        <ul className="text-white/70 text-sm space-y-3">
+          <li className="flex items-start gap-2">
+            <span className="text-[#FF2B2B] mt-1">•</span>
+            <span>Zorg dat er geen achtergrondgeluiden zijn.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-[#FF2B2B] mt-1">•</span>
+            <span>Spreek duidelijk en articuleer goed.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-[#FF2B2B] mt-1">•</span>
+            <span>Vergeet niet de juiste taal te selecteren.</span>
+          </li>
+        </ul>
       </div>
     </div>;
 };
