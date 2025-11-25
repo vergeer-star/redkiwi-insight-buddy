@@ -170,26 +170,31 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-8 relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
+      
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
+      <div className="max-w-7xl mx-auto mb-12 relative z-10">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate('/')}>
-            <img src={redkiwiLogo} alt="RedKiwi" className="h-12" />
-            <h1 className="text-4xl font-bold">Interview Dashboard</h1>
+          <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
+            <img src={redkiwiLogo} alt="RedKiwi" className="h-14 transition-transform duration-300 group-hover:scale-105" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+              Interview Dashboard
+            </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
               onClick={() => navigate('/')}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm bg-white/5 px-6"
             >
               Nieuw Interview
             </Button>
             <Button
               onClick={handleLogout}
               variant="outline"
-              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10"
+              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] hover:shadow-[0_0_20px_rgba(237,28,36,0.3)] transition-all duration-300 backdrop-blur-sm bg-[#FF2B2B]/5 px-6"
             >
               Uitloggen
             </Button>
@@ -198,44 +203,44 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card className="bg-white/5 border-white/10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 relative z-10">
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
           <CardHeader>
-            <CardTitle className="text-white/70 text-sm">Totaal Interviews</CardTitle>
+            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Totaal Interviews</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{interviews.length}</div>
+            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">{interviews.length}</div>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
           <CardHeader>
-            <CardTitle className="text-white/70 text-sm">Geanalyseerd</CardTitle>
+            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Geanalyseerd</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">
               {interviews.filter(i => i.analyzed_at).length}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-gradient-to-br from-[#FF2B2B]/20 to-[#FF2B2B]/5 border-[#FF2B2B]/30 backdrop-blur-xl hover:border-[#FF2B2B]/60 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(237,28,36,0.3)] group">
           <CardHeader>
-            <CardTitle className="text-white/70 text-sm">Positief</CardTitle>
+            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Positief</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-400">
+            <div className="text-4xl font-bold text-[#FF2B2B] group-hover:scale-105 transition-transform duration-300">
               {sentimentData.positive || 0}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
           <CardHeader>
-            <CardTitle className="text-white/70 text-sm">Unieke Thema's</CardTitle>
+            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Unieke Thema's</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">
               {Object.keys(themeFrequency).length}
             </div>
           </CardContent>
@@ -243,11 +248,11 @@ export default function Dashboard() {
       </div>
 
       {/* Charts */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 relative z-10">
         {/* Sentiment Distribution */}
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">Sentimentverdeling</CardTitle>
+        <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
+          <CardHeader className="border-b border-white/10 pb-4">
+            <CardTitle className="text-white text-xl font-bold">Sentimentverdeling</CardTitle>
           </CardHeader>
           <CardContent>
             {sentimentChartData.length > 0 ? (
@@ -279,9 +284,9 @@ export default function Dashboard() {
         </Card>
 
         {/* Theme Frequency */}
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">Top 10 Thema's</CardTitle>
+        <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
+          <CardHeader className="border-b border-white/10 pb-4">
+            <CardTitle className="text-white text-xl font-bold">Top 10 Thema's</CardTitle>
           </CardHeader>
           <CardContent>
             {themeChartData.length > 0 ? (
@@ -312,15 +317,15 @@ export default function Dashboard() {
       </div>
 
       {/* Word Cloud */}
-      <div className="max-w-7xl mx-auto mb-8">
+      <div className="max-w-7xl mx-auto mb-12 relative z-10">
         <WordCloudCard />
       </div>
 
       {/* Timeline */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">Sentiment Tijdlijn</CardTitle>
+      <div className="max-w-7xl mx-auto mb-12 relative z-10">
+        <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
+          <CardHeader className="border-b border-white/10 pb-4">
+            <CardTitle className="text-white text-xl font-bold">Sentiment Tijdlijn</CardTitle>
           </CardHeader>
           <CardContent>
             {timelineData.length > 0 ? (
@@ -366,23 +371,23 @@ export default function Dashboard() {
       </div>
 
       {/* Interview List */}
-      <div className="max-w-7xl mx-auto">
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">Recente Interviews</CardTitle>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300">
+          <CardHeader className="border-b border-white/10 pb-4">
+            <CardTitle className="text-white text-xl font-bold">Recente Interviews</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {interviews.map((interview) => (
                 <div 
                   key={interview.id}
                   onClick={() => navigate(`/interview/${interview.id}`)}
-                  className="p-4 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                  className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-[#FF2B2B]/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(237,28,36,0.2)] transition-all duration-300 cursor-pointer group"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-white/70">
+                        <span className="text-white/70 group-hover:text-white transition-colors">
                           {new Date(interview.created_at).toLocaleString('nl-NL')}
                         </span>
                         {interview.sentiment && (
@@ -404,7 +409,7 @@ export default function Dashboard() {
                           {interview.themes.map((theme, idx) => (
                             <span 
                               key={idx}
-                              className="px-2 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded text-xs"
+                              className="px-3 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded-lg text-xs font-medium border border-[#FF2B2B]/30"
                             >
                               {theme}
                             </span>
@@ -413,14 +418,15 @@ export default function Dashboard() {
                       )}
                       
                       {interview.summary && (
-                        <p className="text-white/70 text-sm mt-2">
+                        <p className="text-white/70 text-sm mt-2 group-hover:text-white/90 transition-colors">
                           {interview.summary}
                         </p>
                       )}
                       
                       {!interview.analyzed_at && (
-                        <p className="text-yellow-400 text-sm mt-2">
-                          ⏳ Wacht op analyse...
+                        <p className="text-yellow-400 text-sm mt-2 flex items-center gap-2">
+                          <span className="w-4 h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+                          Wacht op analyse...
                         </p>
                       )}
                     </div>
@@ -429,7 +435,7 @@ export default function Dashboard() {
               ))}
               
               {interviews.length === 0 && (
-                <div className="text-center py-8 text-white/50">
+                <div className="text-center py-12 text-white/50">
                   Nog geen interviews beschikbaar
                 </div>
               )}

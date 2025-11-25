@@ -101,14 +101,17 @@ export function WordCloudCard() {
   };
 
   return (
-    <Card className="bg-white/5 border-white/10">
-      <CardHeader>
-        <CardTitle className="text-white">Kernwoorden: "Hoe ervaar je Redkiwi?"</CardTitle>
+    <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
+      <CardHeader className="border-b border-white/10 pb-4">
+        <CardTitle className="text-white text-xl font-bold">Kernwoorden: "Hoe ervaar je Redkiwi?"</CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="h-[400px] flex items-center justify-center text-white/50">
-            Laden...
+            <div className="flex items-center gap-3">
+              <span className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Laden...
+            </div>
           </div>
         ) : words.length > 0 ? (
           <div className="h-[400px]">
