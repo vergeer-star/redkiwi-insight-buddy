@@ -20,9 +20,9 @@ export const InterviewChat = () => {
   } = useToast();
   const navigate = useNavigate();
 
-  // Fixed avatar - Katya
+  // Fixed avatar - Maiya
   const AVATAR_URL = "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9";
-  const AVATAR_NAME = "Katya";
+  const AVATAR_NAME = "Maiya";
 
   // Check if user is a RedKiwi employee
   useEffect(() => {
@@ -275,6 +275,7 @@ export const InterviewChat = () => {
   };
   const handleReturnToStart = () => {
     setShowThankYou(false);
+    setHasStarted(false);
     setSessionId("");
     setInterviewId("");
   };
@@ -339,7 +340,7 @@ export const InterviewChat = () => {
         <div className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center">
             <div className="w-20 h-20 border-4 border-[#FF2B2B]/20 border-t-[#FF2B2B] rounded-full animate-spin mx-auto mb-6"></div>
-            <h2 className="text-2xl font-bold text-white mb-2">Katya wordt geladen...</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">Maiya wordt geladen...</h2>
             <p className="text-white/60">Een moment geduld, het interview start zo</p>
           </div>
         </div>
@@ -355,8 +356,8 @@ export const InterviewChat = () => {
             Terug
           </button>
           
-          <div className="flex-1 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <h2 className="text-2xl md:text-3xl font-bold text-white text-center whitespace-nowrap">
               Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
             </h2>
           </div>
@@ -372,12 +373,12 @@ export const InterviewChat = () => {
         </div>
       </div>
 
-      {/* Tips Sidebar */}
-      <div className="fixed right-8 top-[200px] z-[9990] w-80 bg-black/60 backdrop-blur-lg border border-white/20 rounded-xl p-6 shadow-2xl">
-        <h3 className="text-xl font-bold text-white mb-4">
+      {/* Tips Sidebar - positioned next to avatar on the right */}
+      <div className="fixed right-[calc(50%-450px)] top-1/2 -translate-y-1/2 z-[9990] w-64 bg-black/60 backdrop-blur-lg border border-white/20 rounded-xl p-5 shadow-2xl">
+        <h3 className="text-lg font-bold text-white mb-3">
           Tips voor een soepel AI-interview
         </h3>
-        <ul className="text-white/70 text-sm space-y-3">
+        <ul className="text-white/70 text-sm space-y-2">
           <li className="flex items-start gap-2">
             <span className="text-[#FF2B2B] mt-1">•</span>
             <span>Zorg dat er geen achtergrondgeluiden zijn.</span>
