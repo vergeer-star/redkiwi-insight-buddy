@@ -54,7 +54,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
   // Step 1: Hero with GIF
   if (step === 1) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen flex flex-col p-4 relative overflow-hidden">
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
 
@@ -67,7 +67,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           <LogIn size={20} className="group-hover:scale-110 transition-transform duration-300" />
         </button>
 
-        <div className="relative w-full flex flex-col items-center justify-center space-y-4 z-10 animate-fade-in">
+        <div className="relative w-full flex-1 flex flex-col items-center justify-center space-y-4 z-10 animate-fade-in">
           {/* Main Logo / Animation - 45% of viewport width max */}
           <div className="relative cursor-pointer w-[50%] md:w-[35%] max-w-md" onClick={() => setStep(2)}>
             <div className="relative overflow-hidden rounded-lg">
@@ -153,46 +153,46 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             {/* Subtle grey line - 50px wide */}
             <div className="w-[50px] h-px bg-[#222222] mx-auto mt-2" />
           </div>
+        </div>
 
-          {/* Powered by section - perfectly centered */}
-          <div className="w-full flex flex-col items-center gap-0">
-            {/* Powered by text - 16px uppercase */}
-            <p className="text-[12px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">Powered by</p>
+        {/* Powered by section - at the bottom */}
+        <div className="relative w-full flex flex-col items-center gap-0 pb-4 z-10">
+          {/* Powered by text - 12px uppercase */}
+          <p className="text-[12px] text-[#9C9C9C] font-medium tracking-[0.2em] uppercase">Powered by</p>
 
-            {/* Logos - exact 24px height, 32px spacing on desktop, stacked on mobile */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-0.5">
-              <a href="https://www.redkiwi.com/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src={redkiwiLogoNew}
-                  alt="Redkiwi"
-                  className="h-16 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
-                  style={{
-                    imageRendering: "crisp-edges",
-                  }}
-                />
-              </a>
-              <a href="https://www.redkiwi.com/partners/heygen/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src={heygenLogoNew}
-                  alt="HeyGen"
-                  className="h-16 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
-                  style={{
-                    imageRendering: "crisp-edges",
-                  }}
-                />
-              </a>
-              <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer">
-                <img
-                  src={lovableLogo}
-                  alt="Lovable"
-                  className="h-14 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
-                  style={{
-                    imageRendering: "crisp-edges",
-                    mixBlendMode: "normal",
-                  }}
-                />
-              </a>
-            </div>
+          {/* Logos - smaller size */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-0.5">
+            <a href="https://www.redkiwi.com/" target="_blank" rel="noopener noreferrer">
+              <img
+                src={redkiwiLogoNew}
+                alt="Redkiwi"
+                className="h-16 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                style={{
+                  imageRendering: "crisp-edges",
+                }}
+              />
+            </a>
+            <a href="https://www.redkiwi.com/partners/heygen/" target="_blank" rel="noopener noreferrer">
+              <img
+                src={heygenLogoNew}
+                alt="HeyGen"
+                className="h-16 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                style={{
+                  imageRendering: "crisp-edges",
+                }}
+              />
+            </a>
+            <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer">
+              <img
+                src={lovableLogo}
+                alt="Lovable"
+                className="h-14 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                style={{
+                  imageRendering: "crisp-edges",
+                  mixBlendMode: "normal",
+                }}
+              />
+            </a>
           </div>
         </div>
       </div>
