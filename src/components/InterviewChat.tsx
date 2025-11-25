@@ -84,32 +84,36 @@ export const InterviewChat = () => {
         const stylesheet=document.createElement("style");
         stylesheet.innerHTML=\`
           #heygen-streaming-embed {
-            z-index: 100;
-            position: fixed;
-            top: 140px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: min(650px, 85vw);
-            height: min(650px, calc(100vh - 180px));
-            border-radius: 16px;
-            overflow: hidden;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            z-index: 9999 !important;
+            position: fixed !important;
+            top: 140px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: min(650px, 85vw) !important;
+            height: min(650px, calc(100vh - 180px)) !important;
+            border-radius: 16px !important;
+            overflow: visible !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transition: opacity 0.3s ease !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+            pointer-events: auto !important;
           }
           #heygen-streaming-embed.show {
-            opacity: 1;
-            visibility: visible;
+            opacity: 1 !important;
+            visibility: visible !important;
           }
           #heygen-streaming-container {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
+            position: relative !important;
           }
           #heygen-streaming-container iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
+            width: 100% !important;
+            height: 100% !important;
+            border: 0 !important;
+            position: relative !important;
+            z-index: 1 !important;
           }
         \`;
         
@@ -126,7 +130,8 @@ export const InterviewChat = () => {
           if(e.origin===host&&e.data&&e.data.type&&"streaming-embed"===e.data.type){
             if("init"===e.data.action){
               initial=true;
-              wrapDiv.classList.toggle("show",initial);
+              wrapDiv.classList.add("show");
+              console.log("Heygen embed initialized and shown");
             }
           }
         }));
@@ -135,6 +140,8 @@ export const InterviewChat = () => {
         wrapDiv.appendChild(stylesheet);
         wrapDiv.appendChild(container);
         document.body.appendChild(wrapDiv);
+        
+        console.log("Heygen embed script loaded");
       }(globalThis);
     `;
     document.body.appendChild(script);
