@@ -186,7 +186,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               <img
                 src={lovableLogo}
                 alt="Lovable"
-                className="h-14 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
+                className="h-12 w-auto object-contain hover:opacity-80 transition-opacity cursor-pointer"
                 style={{
                   imageRendering: "crisp-edges",
                   mixBlendMode: "normal",
