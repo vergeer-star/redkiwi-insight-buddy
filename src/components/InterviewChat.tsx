@@ -15,8 +15,6 @@ export const InterviewChat = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const {
     toast
   } = useToast();
@@ -157,6 +155,22 @@ export const InterviewChat = () => {
               }));
             }
             
+            // Capture user talking messages
+            if(e.data.action === "user_talking_message" || e.data.event === "USER_TALKING_MESSAGE"){
+              console.log("User talking message:", e.data);
+              window.dispatchEvent(new CustomEvent("heygen-user-message", { 
+                detail: e.data 
+              }));
+            }
+            
+            // Capture avatar talking messages
+            if(e.data.action === "avatar_talking_message" || e.data.event === "AVATAR_TALKING_MESSAGE"){
+              console.log("Avatar talking message:", e.data);
+              window.dispatchEvent(new CustomEvent("heygen-avatar-message", { 
+                detail: e.data 
+              }));
+            }
+            
             // Capture session end event
             if(e.data.action === "session_end" || e.data.action === "ended"){
               console.log("HeyGen session ended");
@@ -179,54 +193,72 @@ export const InterviewChat = () => {
     
     // Listen for Heygen loaded event
     const handleHeygenLoaded = () => {
+      console.log("[HEYGEN] Avatar loaded and ready");
       setIsLoadingAvatar(false);
-      
-      // Start recording audio when HeyGen is ready
-      console.log("[RECORDING] Attempting to get user media for audio recording");
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-          console.log("[RECORDING] Media stream obtained successfully");
-          const recorder = new MediaRecorder(stream);
-          const chunks: Blob[] = [];
-          
-          recorder.ondataavailable = (e) => {
-            if (e.data.size > 0) {
-              console.log(`[RECORDING] Audio data chunk received: ${e.data.size} bytes`);
-              chunks.push(e.data);
-            }
-          };
-          
-          recorder.onstop = () => {
-            console.log(`[RECORDING] Recording stopped. Total chunks: ${chunks.length}, Total size: ${chunks.reduce((acc, chunk) => acc + chunk.size, 0)} bytes`);
-            setAudioChunks(chunks);
-            // Stop all tracks to release microphone
-            stream.getTracks().forEach(track => track.stop());
-          };
-          
-          recorder.start();
-          setMediaRecorder(recorder);
-          console.log("[RECORDING] Audio recording started successfully");
-        })
-        .catch(err => {
-          console.error("[RECORDING] Failed to start audio recording:", err);
-        });
     };
     
     // Listen for HeyGen session ID
     const handleHeygenSession = (e: CustomEvent) => {
-      console.log("Captured HeyGen session ID:", e.detail.sessionId);
+      console.log("[HEYGEN] Captured session ID:", e.detail.sessionId);
       setHeygenSessionId(e.detail.sessionId);
+    };
+    
+    // Listen for user messages and save them to database
+    const handleUserMessage = async (e: CustomEvent) => {
+      console.log("[HEYGEN] User message received:", e.detail);
+      if (!interviewId) return;
+      
+      try {
+        const { error } = await supabase
+          .from('interview_messages')
+          .insert({
+            interview_id: interviewId,
+            role: 'user',
+            content: e.detail.message || e.detail.text || JSON.stringify(e.detail),
+            timestamp: new Date().toISOString()
+          });
+        
+        if (error) {
+          console.error("[HEYGEN] Failed to save user message:", error);
+        } else {
+          console.log("[HEYGEN] User message saved successfully");
+        }
+      } catch (error) {
+        console.error("[HEYGEN] Error saving user message:", error);
+      }
+    };
+    
+    // Listen for avatar messages and save them to database
+    const handleAvatarMessage = async (e: CustomEvent) => {
+      console.log("[HEYGEN] Avatar message received:", e.detail);
+      if (!interviewId) return;
+      
+      try {
+        const { error } = await supabase
+          .from('interview_messages')
+          .insert({
+            interview_id: interviewId,
+            role: 'assistant',
+            content: e.detail.message || e.detail.text || JSON.stringify(e.detail),
+            timestamp: new Date().toISOString()
+          });
+        
+        if (error) {
+          console.error("[HEYGEN] Failed to save avatar message:", error);
+        } else {
+          console.log("[HEYGEN] Avatar message saved successfully");
+        }
+      } catch (error) {
+        console.error("[HEYGEN] Error saving avatar message:", error);
+      }
     };
     
     window.addEventListener("heygen-loaded", handleHeygenLoaded);
     window.addEventListener("heygen-session", handleHeygenSession as EventListener);
+    window.addEventListener("heygen-user-message", handleUserMessage as EventListener);
+    window.addEventListener("heygen-avatar-message", handleAvatarMessage as EventListener);
     
     return () => {
-      // Stop recording if active
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
-      
       // Cleanup: remove the widget and script when component unmounts
       const widget = document.getElementById("heygen-streaming-embed");
       if (widget) widget.remove();
@@ -236,6 +268,8 @@ export const InterviewChat = () => {
       window.fetch = originalFetch;
       window.removeEventListener("heygen-loaded", handleHeygenLoaded);
       window.removeEventListener("heygen-session", handleHeygenSession as EventListener);
+      window.removeEventListener("heygen-user-message", handleUserMessage as EventListener);
+      window.removeEventListener("heygen-avatar-message", handleAvatarMessage as EventListener);
     };
   }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
 
@@ -297,53 +331,19 @@ export const InterviewChat = () => {
           description: "Je antwoorden worden nu geanalyseerd..."
         });
 
-        // First transcribe the audio, then analyze
+        // Analyze the interview based on stored messages
         const processInterview = async () => {
           try {
             console.log("[PROCESS] Starting interview processing");
-            console.log(`[PROCESS] MediaRecorder state: ${mediaRecorder?.state}`);
-            console.log(`[PROCESS] Current audioChunks length: ${audioChunks.length}`);
+            console.log(`[PROCESS] HeyGen session ID: ${heygenSessionId || 'none'}, Fallback: ${sessionId}`);
             
-            // Stop recording if still active
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-              console.log("[PROCESS] Stopping active recording");
-              mediaRecorder.stop();
-              // Wait for recording to finish
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              console.log("[PROCESS] Recording stopped, audioChunks after wait:", audioChunks.length);
-            }
-            
-            // Convert audio chunks to base64
-            let audioData: string | undefined;
-            if (audioChunks.length > 0) {
-              console.log(`[PROCESS] Converting ${audioChunks.length} audio chunks to blob`);
-              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-              console.log(`[PROCESS] Audio blob created, size: ${audioBlob.size} bytes`);
-              
-              const reader = new FileReader();
-              audioData = await new Promise<string>((resolve) => {
-                reader.onloadend = () => {
-                  const base64 = reader.result as string;
-                  const base64Data = base64.split(',')[1];
-                  console.log(`[PROCESS] Audio converted to base64, length: ${base64Data.length} characters`);
-                  resolve(base64Data);
-                };
-                reader.readAsDataURL(audioBlob);
-              });
-            } else {
-              console.warn("[PROCESS] No audio chunks available for transcription");
-            }
-            
-            console.log(`[PROCESS] Calling transcribe-audio with audioData: ${audioData ? 'present' : 'missing'}`);
-            console.log(`[PROCESS] Session IDs - HeyGen: ${heygenSessionId || 'none'}, Fallback: ${sessionId}`);
-            
-            // Call transcribe-audio edge function with recorded audio
+            // Call transcribe-audio edge function to fetch HeyGen recording
+            console.log("[PROCESS] Attempting to fetch HeyGen recording for transcription");
             const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('transcribe-audio', {
               body: {
                 interviewId,
-                audioData, // Send recorded audio
-                sessionId: heygenSessionId || sessionId, // Prefer HeyGen's session ID if available
-                fallbackSessionId: sessionId // Keep our session ID as fallback
+                sessionId: heygenSessionId || sessionId,
+                fallbackSessionId: sessionId
               }
             });
 
