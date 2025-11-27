@@ -67,53 +67,23 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
           <LogIn size={20} className="group-hover:scale-110 transition-transform duration-300" />
         </button>
 
-        <div className="relative w-full flex-1 flex flex-col items-center justify-center space-y-4 z-10 animate-fade-in">
+        <div className="relative w-full flex-1 flex flex-col items-center justify-center space-y-8 z-10 animate-fade-in">
           {/* Main Logo / Animation - 45% of viewport width max */}
-          <div className="relative cursor-pointer w-[50%] md:w-[35%] max-w-md" onClick={() => setStep(2)}>
+          <div className="relative w-[50%] md:w-[35%] max-w-md">
             <div className="relative overflow-hidden rounded-lg">
               <img
                 src={heroAnimation}
                 alt="AI Animation"
-                className="w-full h-auto mx-auto transition-all duration-500"
-                style={{
-                  animationPlayState: "running",
-                }}
+                className="w-full h-auto mx-auto"
               />
-              {/* Hover zone in het midden */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group"
-                onMouseEnter={(e) => {
-                  const img = e.currentTarget.parentElement?.querySelector("img");
-                  if (img) {
-                    img.style.animationPlayState = "paused";
-                    img.style.transform = "scale(1.05)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  const img = e.currentTarget.parentElement?.querySelector("img");
-                  if (img) {
-                    img.style.animationPlayState = "running";
-                    img.style.transform = "scale(1)";
-                  }
-                }}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                  <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
-                    <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
-                      Klik om te beginnen
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Headline - 64px spacing from logo */}
-          <div className="w-full max-w-4xl text-center space-y-1 px-4">
-            <div className="relative cursor-pointer" onClick={() => setStep(2)}>
+          <div className="w-full max-w-4xl text-center space-y-6 px-4">
+            <div className="relative space-y-2">
               <h1
-                className="text-[24px] md:text-[36px] lg:text-[42px] font-bold text-white tracking-wide leading-tight transition-transform duration-500"
+                className="text-[24px] md:text-[36px] lg:text-[42px] font-bold text-white tracking-wide leading-tight"
                 style={{
                   textShadow: "0 2px 20px rgba(0, 0, 0, 0.5)",
                 }}
@@ -123,35 +93,20 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                 <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
               </h1>
 
-              {/* Hover zone in het midden */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 group"
-                onMouseEnter={(e) => {
-                  const h1 = e.currentTarget.parentElement?.querySelector("h1");
-                  if (h1) {
-                    h1.style.transform = "scale(1.05)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  const h1 = e.currentTarget.parentElement?.querySelector("h1");
-                  if (h1) {
-                    h1.style.transform = "scale(1)";
-                  }
-                }}
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
-                  <div className="bg-white/5 backdrop-blur-sm border border-white/20 px-6 py-3 rounded-md">
-                    <span className="text-white/80 font-medium text-base tracking-wide flex items-center gap-2">
-                      Klik om te beginnen
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Subtle grey line - 50px wide */}
+              <div className="w-[50px] h-px bg-[#222222] mx-auto mt-2" />
             </div>
 
-            {/* Subtle grey line - 50px wide */}
-            <div className="w-[50px] h-px bg-[#222222] mx-auto mt-2" />
+            {/* START Button */}
+            <Button
+              onClick={() => setStep(2)}
+              className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-lg font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl group relative overflow-hidden"
+            >
+              <span className="flex items-center gap-2">
+                START
+                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Button>
           </div>
         </div>
 

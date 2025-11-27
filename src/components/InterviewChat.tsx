@@ -204,13 +204,19 @@ export const InterviewChat = () => {
   };
   const handlePauseToggle = () => {
     const widget = document.getElementById("heygen-streaming-embed");
-    if (widget) {
+    const iframe = widget?.querySelector('iframe');
+    
+    if (widget && iframe) {
       if (isPaused) {
+        // Resume: show widget and send resume message to HeyGen
         widget.style.visibility = "visible";
         widget.style.opacity = "1";
+        iframe.contentWindow?.postMessage({ type: 'streaming-embed', action: 'resume' }, '*');
       } else {
+        // Pause: hide widget and send pause message to HeyGen
         widget.style.visibility = "hidden";
         widget.style.opacity = "0";
+        iframe.contentWindow?.postMessage({ type: 'streaming-embed', action: 'pause' }, '*');
       }
       setIsPaused(!isPaused);
     }
@@ -284,14 +290,14 @@ export const InterviewChat = () => {
         {/* Subtle diagonal pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
-        <div className="relative z-10 text-center px-8 max-w-2xl">
+        <div className="relative z-10 text-center px-8 max-w-2xl flex flex-col items-center">
           <a 
             href="https://www.redkiwi.com/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-block transition-transform duration-300 hover:scale-110 mb-6"
+            className="inline-block transition-transform duration-300 hover:scale-110 mb-8"
           >
-            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-32 mx-auto" />
+            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-24 mx-auto" />
           </a>
           
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -376,26 +382,27 @@ export const InterviewChat = () => {
       {/* Tips Sidebar - positioned to the right of avatar */}
       <div className="fixed left-[calc(50%+420px)] top-1/2 -translate-y-1/2 z-[9990] w-72 bg-gradient-to-br from-black/70 to-black/50 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
         <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
-          <div className="w-10 h-10 rounded-xl bg-[#FF2B2B]/10 flex items-center justify-center">
-            <svg className="w-5 h-5 text-[#FF2B2B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
           <h3 className="text-lg font-bold text-white">
             Interview Tips
           </h3>
         </div>
         <ul className="text-white/80 text-sm space-y-3">
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <span className="text-[#FF2B2B] text-lg leading-none mt-0.5">•</span>
+            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
             <span>Zorg dat er geen achtergrondgeluiden zijn</span>
           </li>
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <span className="text-[#FF2B2B] text-lg leading-none mt-0.5">•</span>
+            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
             <span>Spreek duidelijk en articuleer goed</span>
           </li>
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <span className="text-[#FF2B2B] text-lg leading-none mt-0.5">•</span>
+            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
             <span>Vergeet niet de juiste taal te selecteren</span>
           </li>
         </ul>
