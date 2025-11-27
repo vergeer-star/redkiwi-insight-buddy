@@ -253,7 +253,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto py-4 px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
-              <img src={redkiwiLogoPng} alt="RedKiwi" className="h-12 transition-transform duration-300 group-hover:scale-105" />
+              <img src={redkiwiLogoPng} alt="RedKiwi" className="h-16 transition-transform duration-300 group-hover:scale-105" />
               <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 Interview Dashboard
               </h1>
@@ -320,7 +320,7 @@ export default function Dashboard() {
 
       {/* AI Insights */}
       <div className="max-w-7xl mx-auto mb-8 relative z-10">
-        <AIInsights insights={aiInsights} />
+        <AIInsights insights={aiInsights} lastUpdated={new Date()} />
       </div>
 
       {/* KPI Tiles */}
@@ -341,7 +341,7 @@ export default function Dashboard() {
           title="Positief"
           value={sentimentData.positive || 0}
           icon={Heart}
-          gradient="from-primary/20 to-primary/5"
+          gradient="from-green-500/20 to-green-500/5"
           trend={15}
         />
         <KPITile

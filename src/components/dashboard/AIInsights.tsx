@@ -7,15 +7,32 @@ interface AIInsightsProps {
     outliers: string[];
     weekSummary: string;
   };
+  lastUpdated?: Date;
 }
 
-export function AIInsights({ insights }: AIInsightsProps) {
+export function AIInsights({ insights, lastUpdated }: AIInsightsProps) {
+  const formatLastUpdated = () => {
+    if (!lastUpdated) return 'Nu';
+    return new Date(lastUpdated).toLocaleString('nl-NL', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <Card className="bg-gradient-to-br from-primary/20 to-black/40 border-primary/30 backdrop-blur-xl hover:border-primary/60 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(227,6,19,0.3)] group">
       <CardHeader className="border-b border-white/10 pb-4">
-        <div className="flex items-center gap-3">
-          <Sparkles className="w-6 h-6 text-primary animate-pulse" />
-          <CardTitle className="text-white text-xl font-bold">AI Insights</CardTitle>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+            <CardTitle className="text-white text-xl font-bold">AI Insights</CardTitle>
+          </div>
+          <span className="text-white/50 text-xs">
+            Laatst bijgewerkt: {formatLastUpdated()}
+          </span>
         </div>
       </CardHeader>
       <CardContent className="space-y-4 pt-6">

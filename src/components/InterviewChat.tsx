@@ -8,7 +8,6 @@ import { Share2 } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [sessionId, setSessionId] = useState<string>("");
   const [interviewId, setInterviewId] = useState<string>("");
@@ -202,27 +201,6 @@ export const InterviewChat = () => {
       });
     }
   };
-  const handlePauseToggle = () => {
-    const widget = document.getElementById("heygen-streaming-embed");
-    
-    if (widget) {
-      if (isPaused) {
-        // Resume: show widget
-        widget.classList.add('show');
-        widget.style.pointerEvents = 'auto';
-      } else {
-        // Pause: hide widget and disable interactions
-        widget.classList.remove('show');
-        widget.style.pointerEvents = 'none';
-      }
-      setIsPaused(!isPaused);
-      
-      toast({
-        title: isPaused ? "Interview hervat" : "Interview gepauzeerd",
-        description: isPaused ? "Het interview gaat verder" : "Je kunt het interview later hervatten"
-      });
-    }
-  };
   const handleEndInterview = async () => {
     // Update interview status to completed
     if (interviewId) {
@@ -371,9 +349,6 @@ export const InterviewChat = () => {
           </div>
           
           <div className="flex gap-3">
-            <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-primary transition-all duration-300">
-              {isPaused ? 'Hervat' : 'Pauze'}
-            </Button>
             <Button onClick={handleEndInterview} variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary transition-all duration-300">
               Eindig interview
             </Button>
