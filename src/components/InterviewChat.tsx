@@ -182,18 +182,22 @@ export const InterviewChat = () => {
       setIsLoadingAvatar(false);
       
       // Start recording audio when HeyGen is ready
+      console.log("[RECORDING] Attempting to get user media for audio recording");
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
+          console.log("[RECORDING] Media stream obtained successfully");
           const recorder = new MediaRecorder(stream);
           const chunks: Blob[] = [];
           
           recorder.ondataavailable = (e) => {
             if (e.data.size > 0) {
+              console.log(`[RECORDING] Audio data chunk received: ${e.data.size} bytes`);
               chunks.push(e.data);
             }
           };
           
           recorder.onstop = () => {
+            console.log(`[RECORDING] Recording stopped. Total chunks: ${chunks.length}, Total size: ${chunks.reduce((acc, chunk) => acc + chunk.size, 0)} bytes`);
             setAudioChunks(chunks);
             // Stop all tracks to release microphone
             stream.getTracks().forEach(track => track.stop());
@@ -201,10 +205,10 @@ export const InterviewChat = () => {
           
           recorder.start();
           setMediaRecorder(recorder);
-          console.log("Audio recording started");
+          console.log("[RECORDING] Audio recording started successfully");
         })
         .catch(err => {
-          console.error("Failed to start audio recording:", err);
+          console.error("[RECORDING] Failed to start audio recording:", err);
         });
     };
     
@@ -240,6 +244,8 @@ export const InterviewChat = () => {
     const newInterviewId = crypto.randomUUID();
     const newSessionId = crypto.randomUUID();
 
+    console.log('[INTERVIEW] Starting new interview:', { interviewId: newInterviewId, sessionId: newSessionId });
+
     // Set locally so UI and embed can initialize immediately
     setInterviewId(newInterviewId);
     setSessionId(newSessionId);
@@ -247,6 +253,7 @@ export const InterviewChat = () => {
 
     // Save interview session to the backend without requesting a representation
     try {
+      console.log('[INTERVIEW] Saving interview to database');
       const { error } = await supabase
         .from('interviews')
         .insert({
@@ -257,9 +264,13 @@ export const InterviewChat = () => {
           status: 'started',
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[INTERVIEW] Failed to save interview:', error);
+        throw error;
+      }
+      console.log('[INTERVIEW] Interview saved successfully');
     } catch (error) {
-      console.error('Error saving interview:', error);
+      console.error('[INTERVIEW] Error saving interview:', error);
       toast({
         title: "Fout",
         description: "Kon interview sessie niet opslaan",
@@ -268,13 +279,17 @@ export const InterviewChat = () => {
     }
   };
   const handleEndInterview = async () => {
+    console.log('[INTERVIEW] Ending interview:', interviewId);
+    
     // Update interview status to completed
     if (interviewId) {
       try {
+        console.log('[INTERVIEW] Updating interview status to completed');
         await supabase.from('interviews').update({
           status: 'completed',
           ended_at: new Date().toISOString()
         }).eq('id', interviewId);
+        console.log('[INTERVIEW] Interview marked as completed');
 
         // Trigger AI analysis of the interview
         toast({
@@ -285,28 +300,42 @@ export const InterviewChat = () => {
         // First transcribe the audio, then analyze
         const processInterview = async () => {
           try {
+            console.log("[PROCESS] Starting interview processing");
+            console.log(`[PROCESS] MediaRecorder state: ${mediaRecorder?.state}`);
+            console.log(`[PROCESS] Current audioChunks length: ${audioChunks.length}`);
+            
             // Stop recording if still active
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+              console.log("[PROCESS] Stopping active recording");
               mediaRecorder.stop();
               // Wait for recording to finish
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              console.log("[PROCESS] Recording stopped, audioChunks after wait:", audioChunks.length);
             }
             
             // Convert audio chunks to base64
             let audioData: string | undefined;
             if (audioChunks.length > 0) {
+              console.log(`[PROCESS] Converting ${audioChunks.length} audio chunks to blob`);
               const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-              console.log("Audio recorded, size:", audioBlob.size);
+              console.log(`[PROCESS] Audio blob created, size: ${audioBlob.size} bytes`);
               
               const reader = new FileReader();
               audioData = await new Promise<string>((resolve) => {
                 reader.onloadend = () => {
                   const base64 = reader.result as string;
-                  resolve(base64.split(',')[1]); // Remove data URL prefix
+                  const base64Data = base64.split(',')[1];
+                  console.log(`[PROCESS] Audio converted to base64, length: ${base64Data.length} characters`);
+                  resolve(base64Data);
                 };
                 reader.readAsDataURL(audioBlob);
               });
+            } else {
+              console.warn("[PROCESS] No audio chunks available for transcription");
             }
+            
+            console.log(`[PROCESS] Calling transcribe-audio with audioData: ${audioData ? 'present' : 'missing'}`);
+            console.log(`[PROCESS] Session IDs - HeyGen: ${heygenSessionId || 'none'}, Fallback: ${sessionId}`);
             
             // Call transcribe-audio edge function with recorded audio
             const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('transcribe-audio', {
@@ -319,15 +348,17 @@ export const InterviewChat = () => {
             });
 
             if (transcribeError) {
-              console.error('Error transcribing interview:', transcribeError);
+              console.error('[PROCESS] Error transcribing interview:', transcribeError);
               toast({
                 title: "Transcriptie fout",
                 description: "Audio kon niet worden getranscribeerd",
                 variant: "destructive"
               });
             } else {
-              console.log('Transcription completed:', transcribeData);
+              console.log('[PROCESS] Transcription completed:', transcribeData);
             }
+            
+            console.log('[PROCESS] Starting interview analysis');
 
             // Then analyze the interview
             const { data, error } = await supabase.functions.invoke('analyze-interview', {
@@ -337,17 +368,17 @@ export const InterviewChat = () => {
             });
 
             if (error) {
-              console.error('Error analyzing interview:', error);
+              console.error('[PROCESS] Error analyzing interview:', error);
               toast({
                 title: "Analyse fout",
                 description: "Er is een fout opgetreden bij het analyseren",
                 variant: "destructive"
               });
             } else {
-              console.log('Interview analysis completed:', data);
+              console.log('[PROCESS] Interview analysis completed:', data);
             }
           } catch (err) {
-            console.error('Error processing interview:', err);
+            console.error('[PROCESS] Error processing interview:', err);
           }
         };
 
