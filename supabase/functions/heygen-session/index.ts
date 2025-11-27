@@ -30,10 +30,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         quality: 'high',
-        avatar_name: 'Maiya',
-        voice: {
-          voice_id: 'f3e7c8e5c2c647e7a5b3c9c7f8d4e2a1'
-        }
+        avatar_name: 'Katya_Chair_Sitting_public',
       }),
     });
 
