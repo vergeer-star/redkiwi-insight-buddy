@@ -49,6 +49,53 @@ export type Database = {
           },
         ]
       }
+      interview_transcriptions: {
+        Row: {
+          audio_url: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          interview_id: string
+          metadata: Json | null
+          segments: Json | null
+          timestamps: Json | null
+          transcription_text: string
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          interview_id: string
+          metadata?: Json | null
+          segments?: Json | null
+          timestamps?: Json | null
+          transcription_text: string
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          interview_id?: string
+          metadata?: Json | null
+          segments?: Json | null
+          timestamps?: Json | null
+          transcription_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_transcriptions_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interviews: {
         Row: {
           analyzed_at: string | null
