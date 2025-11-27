@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Share2 } from "lucide-react";
+import { Share2, Mic } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 import StreamingAvatar, { 
   AvatarQuality, 
@@ -13,6 +13,7 @@ import StreamingAvatar, {
   TaskType,
   VoiceEmotion 
 } from "@heygen/streaming-avatar";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -22,9 +23,12 @@ export const InterviewChat = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+  const [isAvatarSpeaking, setIsAvatarSpeaking] = useState(false);
+  const [conversationMessages, setConversationMessages] = useState<Array<{role: string, content: string}>>([]);
   
   const avatarRef = useRef<StreamingAvatar | null>(null);
   const mediaStreamRef = useRef<HTMLVideoElement | null>(null);
+  const { isListening, transcript, startListening, stopListening, resetTranscript } = useSpeechRecognition();
   
   const {
     toast
@@ -100,10 +104,17 @@ export const InterviewChat = () => {
         // Set up event listeners BEFORE starting session
         avatar.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
           console.log('[HEYGEN SDK] Avatar started talking', e);
+          setIsAvatarSpeaking(true);
         });
 
         avatar.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
           console.log('[HEYGEN SDK] Avatar stopped talking', e);
+          setIsAvatarSpeaking(false);
+          // Start listening when avatar stops talking
+          if (!isListening) {
+            console.log('[SPEECH] Starting to listen for user input');
+            setTimeout(() => startListening(), 500);
+          }
         });
 
         avatar.on(StreamingEvents.USER_START, (e) => {
@@ -215,7 +226,7 @@ export const InterviewChat = () => {
           taskMode: TaskMode.SYNC
         });
         
-        console.log('[HEYGEN SDK] Greeting completed, avatar should now be listening');
+        console.log('[HEYGEN SDK] Greeting completed, ready for conversation');
 
       } catch (error) {
         console.error('[HEYGEN SDK] Error initializing avatar:', error);
@@ -238,6 +249,106 @@ export const InterviewChat = () => {
       }
     };
   }, [hasStarted, interviewId]);
+
+  // Handle speech recognition transcript
+  useEffect(() => {
+    if (transcript && !isAvatarSpeaking) {
+      console.log('[SPEECH] User said:', transcript);
+      handleUserSpeech(transcript);
+      resetTranscript();
+    }
+  }, [transcript, isAvatarSpeaking]);
+
+  const handleUserSpeech = async (userText: string) => {
+    if (!userText.trim() || !interviewId) return;
+
+    stopListening();
+    console.log('[CONVERSATION] Processing user input:', userText);
+
+    // Save user message to database
+    const { error: saveError } = await supabase
+      .from('interview_messages')
+      .insert({
+        interview_id: interviewId,
+        role: 'user',
+        content: userText
+      });
+
+    if (saveError) {
+      console.error('[DATABASE] Error saving user message:', saveError);
+    }
+
+    // Add to conversation history
+    const updatedMessages = [...conversationMessages, { role: 'user', content: userText }];
+    setConversationMessages(updatedMessages);
+
+    try {
+      // Send to AI for response
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/interview-chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
+        },
+        body: JSON.stringify({
+          messages: updatedMessages,
+          interviewId: interviewId
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to get AI response');
+
+      // Read streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let aiResponse = '';
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          aiResponse += decoder.decode(value, { stream: true });
+        }
+      }
+
+      console.log('[CONVERSATION] AI response:', aiResponse);
+
+      // Save AI response to database
+      const { error: aiSaveError } = await supabase
+        .from('interview_messages')
+        .insert({
+          interview_id: interviewId,
+          role: 'assistant',
+          content: aiResponse
+        });
+
+      if (aiSaveError) {
+        console.error('[DATABASE] Error saving AI message:', aiSaveError);
+      }
+
+      // Update conversation history
+      setConversationMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
+
+      // Make avatar speak the response
+      if (avatarRef.current) {
+        await avatarRef.current.speak({
+          text: aiResponse,
+          taskType: TaskType.REPEAT,
+          taskMode: TaskMode.SYNC
+        });
+      }
+
+    } catch (error) {
+      console.error('[CONVERSATION] Error processing response:', error);
+      toast({
+        title: "Fout",
+        description: "Kon antwoord niet verwerken",
+        variant: "destructive"
+      });
+      // Resume listening even on error
+      startListening();
+    }
+  };
 
   const handleChecklistComplete = async () => {
     // Pre-generate IDs to avoid RLS SELECT on return
@@ -507,6 +618,28 @@ export const InterviewChat = () => {
           playsInline
           className="w-full h-full rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] object-cover"
         />
+        
+        {/* Status Indicators */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <span className="text-sm text-white/80">Opnemen</span>
+          </div>
+          
+          {isAvatarSpeaking && (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              <span className="text-sm text-primary font-medium">Avatar spreekt...</span>
+            </div>
+          )}
+          
+          {isListening && !isAvatarSpeaking && (
+            <div className="flex items-center gap-2">
+              <Mic className="w-4 h-4 text-primary animate-pulse" />
+              <span className="text-sm text-primary font-medium">Aan het luisteren...</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>;
 };
