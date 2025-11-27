@@ -74,10 +74,15 @@ export const InterviewChat = () => {
       return originalFetch(resource, config);
     };
     const script = document.createElement("script");
+    
+    // Get the Supabase project URL for the edge function
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const customServerUrl = `${supabaseUrl}/functions/v1/interview-chat`;
+    
     script.innerHTML = `
       !function(window){
         const host="https://labs.heygen.com",
-        url=host+"/guest/streaming-embed?share=${AVATAR_URL}&inIFrame=1",
+        url=host+"/guest/streaming-embed?share=${AVATAR_URL}&inIFrame=1&serverUrl=${encodeURIComponent(customServerUrl)}",
         wrapDiv=document.createElement("div");
         wrapDiv.id="heygen-streaming-embed";
         
