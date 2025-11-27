@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import redkiwiLogo from "@/assets/redkiwi-logo.png";
+import redkiwiLogoPng from "@/assets/redkiwi-logo-new.png";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
 import { WordCloudCard } from "@/components/WordCloudCard";
@@ -14,6 +14,8 @@ import { SentimentProgress } from "@/components/dashboard/SentimentProgress";
 import { InterviewCard } from "@/components/dashboard/InterviewCard";
 import { MessageSquare, BarChart3, Heart, Tags, Calendar, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { startOfWeek, format } from "date-fns";
+import { nl } from "date-fns/locale";
 
 interface Interview {
   id: string;
@@ -175,21 +177,42 @@ export default function Dashboard() {
     .slice(0, 10)
     .map(([name, count]) => ({ name, count }));
 
-  // Timeline data - sentiment over time (cumulative)
+  // Timeline data - sentiment over time per week (cumulative)
   const timelineData = interviews
     .filter(i => i.sentiment && i.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-    .reduce((acc: any[], interview, index) => {
-      const prev = acc[acc.length - 1] || { positief: 0, neutraal: 0, negatief: 0 };
-      acc.push({
-        index: index + 1,
-        date: new Date(interview.created_at).toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' }),
-        positief: prev.positief + (interview.sentiment === 'positive' ? 1 : 0),
-        neutraal: prev.neutraal + (interview.sentiment === 'neutral' ? 1 : 0),
-        negatief: prev.negatief + (interview.sentiment === 'negative' ? 1 : 0),
-      });
+    .reduce((acc: Record<string, any>, interview) => {
+      const weekStart = startOfWeek(new Date(interview.created_at), { weekStartsOn: 1 });
+      const weekKey = format(weekStart, 'yyyy-MM-dd');
+      const weekLabel = format(weekStart, "d MMM", { locale: nl });
+      
+      if (!acc[weekKey]) {
+        acc[weekKey] = {
+          week: weekLabel,
+          positief: 0,
+          neutraal: 0,
+          negatief: 0
+        };
+      }
+      
+      if (interview.sentiment === 'positive') acc[weekKey].positief++;
+      if (interview.sentiment === 'neutral') acc[weekKey].neutraal++;
+      if (interview.sentiment === 'negative') acc[weekKey].negatief++;
+      
       return acc;
-    }, []);
+    }, {});
+
+  // Convert to array and make cumulative
+  const timelineArray = Object.values(timelineData).reduce((acc: any[], curr: any) => {
+    const prev = acc[acc.length - 1] || { positief: 0, neutraal: 0, negatief: 0 };
+    acc.push({
+      week: curr.week,
+      positief: prev.positief + curr.positief,
+      neutraal: prev.neutraal + curr.neutraal,
+      negatief: prev.negatief + curr.negatief,
+    });
+    return acc;
+  }, []);
 
   // AI Insights
   const aiInsights = {
@@ -230,7 +253,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto py-4 px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
-              <img src={redkiwiLogo} alt="RedKiwi" className="h-12 transition-transform duration-300 group-hover:scale-105" />
+              <img src={redkiwiLogoPng} alt="RedKiwi" className="h-12 transition-transform duration-300 group-hover:scale-105" />
               <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 Interview Dashboard
               </h1>
@@ -386,9 +409,9 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            {timelineData.length > 0 ? (
+            {timelineArray.length > 0 ? (
               <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={timelineData}>
+                <AreaChart data={timelineArray}>
                   <defs>
                     <linearGradient id="colorPositief" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
@@ -404,7 +427,7 @@ export default function Dashboard() {
                     </linearGradient>
                   </defs>
                   <XAxis 
-                    dataKey="date" 
+                    dataKey="week" 
                     stroke="#fff"
                     style={{ fontSize: '12px' }}
                   />
