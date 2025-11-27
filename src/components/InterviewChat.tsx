@@ -125,14 +125,20 @@ export const InterviewChat = () => {
           console.log('[HEYGEN SDK] User stopped talking', e);
         });
 
-        // Critical: Listen for message events
+        // Critical: Listen for ALL message events from HeyGen and save them
         avatar.on(StreamingEvents.USER_TALKING_MESSAGE, async (message) => {
-          console.log('[HEYGEN SDK] User talking message:', message);
+          console.log('[HEYGEN SDK] User talking message received:', message);
           
-          if (!message?.message || !message.message.trim()) {
-            console.log('[HEYGEN SDK] Empty user message, skipping');
+          // Always try to extract and save the message
+          const messageText = message?.message || message?.detail?.message || '';
+          
+          if (!messageText || !messageText.trim()) {
+            console.log('[HEYGEN SDK] Empty or invalid user message, skipping');
             return;
           }
+
+          const cleanMessage = messageText.trim();
+          console.log('[HEYGEN SDK] Saving user message:', cleanMessage);
 
           try {
             const { error } = await supabase
@@ -140,27 +146,33 @@ export const InterviewChat = () => {
               .insert({
                 interview_id: interviewId,
                 role: 'user',
-                content: message.message.trim(),
+                content: cleanMessage,
                 timestamp: new Date().toISOString()
               });
 
             if (error) {
-              console.error('[HEYGEN SDK] Failed to save user message:', error);
+              console.error('[HEYGEN SDK] ❌ Failed to save user message:', error);
             } else {
               console.log('[HEYGEN SDK] ✓ User message saved to database');
             }
           } catch (error) {
-            console.error('[HEYGEN SDK] Error saving user message:', error);
+            console.error('[HEYGEN SDK] ❌ Exception saving user message:', error);
           }
         });
 
         avatar.on(StreamingEvents.AVATAR_TALKING_MESSAGE, async (message) => {
-          console.log('[HEYGEN SDK] Avatar talking message:', message);
+          console.log('[HEYGEN SDK] Avatar talking message received:', message);
           
-          if (!message?.message || !message.message.trim()) {
-            console.log('[HEYGEN SDK] Empty avatar message, skipping');
+          // Always try to extract and save the message
+          const messageText = message?.message || message?.detail?.message || '';
+          
+          if (!messageText || !messageText.trim()) {
+            console.log('[HEYGEN SDK] Empty or invalid avatar message, skipping');
             return;
           }
+
+          const cleanMessage = messageText.trim();
+          console.log('[HEYGEN SDK] Saving avatar message:', cleanMessage);
 
           try {
             const { error } = await supabase
@@ -168,17 +180,17 @@ export const InterviewChat = () => {
               .insert({
                 interview_id: interviewId,
                 role: 'assistant',
-                content: message.message.trim(),
+                content: cleanMessage,
                 timestamp: new Date().toISOString()
               });
 
             if (error) {
-              console.error('[HEYGEN SDK] Failed to save avatar message:', error);
+              console.error('[HEYGEN SDK] ❌ Failed to save avatar message:', error);
             } else {
               console.log('[HEYGEN SDK] ✓ Avatar message saved to database');
             }
           } catch (error) {
-            console.error('[HEYGEN SDK] Error saving avatar message:', error);
+            console.error('[HEYGEN SDK] ❌ Exception saving avatar message:', error);
           }
         });
 
