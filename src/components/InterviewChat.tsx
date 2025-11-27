@@ -204,21 +204,23 @@ export const InterviewChat = () => {
   };
   const handlePauseToggle = () => {
     const widget = document.getElementById("heygen-streaming-embed");
-    const iframe = widget?.querySelector('iframe');
     
-    if (widget && iframe) {
+    if (widget) {
       if (isPaused) {
-        // Resume: show widget and send resume message to HeyGen
-        widget.style.visibility = "visible";
-        widget.style.opacity = "1";
-        iframe.contentWindow?.postMessage({ type: 'streaming-embed', action: 'resume' }, '*');
+        // Resume: show widget
+        widget.classList.add('show');
+        widget.style.pointerEvents = 'auto';
       } else {
-        // Pause: hide widget and send pause message to HeyGen
-        widget.style.visibility = "hidden";
-        widget.style.opacity = "0";
-        iframe.contentWindow?.postMessage({ type: 'streaming-embed', action: 'pause' }, '*');
+        // Pause: hide widget and disable interactions
+        widget.classList.remove('show');
+        widget.style.pointerEvents = 'none';
       }
       setIsPaused(!isPaused);
+      
+      toast({
+        title: isPaused ? "Interview hervat" : "Interview gepauzeerd",
+        description: isPaused ? "Het interview gaat verder" : "Je kunt het interview later hervatten"
+      });
     }
   };
   const handleEndInterview = async () => {
@@ -288,7 +290,7 @@ export const InterviewChat = () => {
   if (showThankYou) {
     return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
         {/* Subtle diagonal pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
         <div className="relative z-10 text-center px-8 max-w-2xl flex flex-col items-center">
           <a 
@@ -318,7 +320,7 @@ export const InterviewChat = () => {
                   toast({ title: "Link gekopieerd!", description: "De link is naar je klembord gekopieerd." });
                 });
               }}
-              className="bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <Share2 size={20} />
               Deel deze website
@@ -339,13 +341,13 @@ export const InterviewChat = () => {
   }
   return <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Subtle diagonal pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
       
       {/* Loading Screen */}
       {isLoadingAvatar && (
         <div className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-sm flex items-center justify-center">
           <div className="text-center">
-            <div className="w-20 h-20 border-4 border-[#FF2B2B]/20 border-t-[#FF2B2B] rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
             <h2 className="text-2xl font-bold text-white mb-2">Maiya wordt geladen...</h2>
             <p className="text-white/60">Een moment geduld, het interview start zo</p>
           </div>
@@ -364,15 +366,15 @@ export const InterviewChat = () => {
           
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <h2 className="text-2xl md:text-3xl font-bold text-white text-center whitespace-nowrap">
-              Interview met <span className="text-[#FF2B2B]">{AVATAR_NAME}</span>
+              Interview met <span className="text-primary">{AVATAR_NAME}</span>
             </h2>
           </div>
           
           <div className="flex gap-3">
-            <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300">
+            <Button onClick={handlePauseToggle} variant="outline" className="border-white/20 text-white hover:bg-white/10 hover:border-primary transition-all duration-300">
               {isPaused ? 'Hervat' : 'Pauze'}
             </Button>
-            <Button onClick={handleEndInterview} variant="outline" className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] transition-all duration-300">
+            <Button onClick={handleEndInterview} variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary transition-all duration-300">
               Eindig interview
             </Button>
           </div>
@@ -388,19 +390,19 @@ export const InterviewChat = () => {
         </div>
         <ul className="text-white/80 text-sm space-y-3">
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             <span>Zorg dat er geen achtergrondgeluiden zijn</span>
           </li>
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             <span>Spreek duidelijk en articuleer goed</span>
           </li>
           <li className="flex items-start gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-            <svg className="w-5 h-5 text-[#FF2B2B] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             <span>Vergeet niet de juiste taal te selecteren</span>

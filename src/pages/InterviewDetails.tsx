@@ -187,7 +187,7 @@ export default function InterviewDetails() {
                 {interview.themes.map((theme, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded-full text-sm"
+                    className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm"
                   >
                     {theme}
                   </span>
@@ -236,7 +236,7 @@ export default function InterviewDetails() {
                     key={message.id}
                     className={`p-4 rounded-lg ${
                       message.role === 'assistant' 
-                        ? 'bg-[#FF2B2B]/10 border-l-4 border-[#FF2B2B]' 
+                        ? 'bg-primary/10 border-l-4 border-primary' 
                         : 'bg-white/5 border-l-4 border-white/20'
                     }`}
                   >

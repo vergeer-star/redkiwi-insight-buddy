@@ -11,10 +11,10 @@ interface AIInsightsProps {
 
 export function AIInsights({ insights }: AIInsightsProps) {
   return (
-    <Card className="bg-gradient-to-br from-[#FF2B2B]/20 to-black/40 border-[#FF2B2B]/30 backdrop-blur-xl hover:border-[#FF2B2B]/60 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(237,28,36,0.3)] group">
+    <Card className="bg-gradient-to-br from-primary/20 to-black/40 border-primary/30 backdrop-blur-xl hover:border-primary/60 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(227,6,19,0.3)] group">
       <CardHeader className="border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-6 h-6 text-[#FF2B2B] animate-pulse" />
+          <Sparkles className="w-6 h-6 text-primary animate-pulse" />
           <CardTitle className="text-white text-xl font-bold">AI Insights</CardTitle>
         </div>
       </CardHeader>
@@ -52,7 +52,7 @@ export function AIInsights({ insights }: AIInsightsProps) {
         {/* Weekanalyse */}
         <div className="p-4 bg-white/5 rounded-lg border border-white/10">
           <p className="text-white/70 text-sm leading-relaxed">
-            <span className="text-[#FF2B2B] font-medium">Deze week: </span>
+            <span className="text-primary font-medium">Deze week: </span>
             {insights.weekSummary}
           </p>
         </div>

@@ -246,7 +246,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-black text-white p-8 relative overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
       
       {/* Header - Sticky */}
       <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 mb-8">
@@ -269,7 +269,7 @@ export default function Dashboard() {
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] hover:shadow-[0_0_20px_rgba(237,28,36,0.3)] transition-all duration-300 backdrop-blur-sm bg-[#FF2B2B]/5 px-6"
+                className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_20px_rgba(227,6,19,0.3)] transition-all duration-300 backdrop-blur-sm bg-primary/5 px-6"
               >
                 Uitloggen
               </Button>
@@ -283,7 +283,7 @@ export default function Dashboard() {
         <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <Filter className="w-5 h-5 text-[#FF2B2B]" />
+              <Filter className="w-5 h-5 text-primary" />
               <Input
                 type="date"
                 value={dateFilter}
@@ -341,7 +341,7 @@ export default function Dashboard() {
           title="Positief"
           value={sentimentData.positive || 0}
           icon={Heart}
-          gradient="from-[#FF2B2B]/20 to-[#FF2B2B]/5"
+          gradient="from-primary/20 to-primary/5"
           trend={15}
         />
         <KPITile
@@ -382,7 +382,7 @@ export default function Dashboard() {
                     contentStyle={{ backgroundColor: '#1f2937', border: 'none' }}
                     labelStyle={{ color: '#fff' }}
                   />
-                  <Bar dataKey="count" fill="#FF2B2B" />
+                  <Bar dataKey="count" fill="hsl(var(--primary))" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -404,7 +404,7 @@ export default function Dashboard() {
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
           <CardHeader className="border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
-              <Calendar className="w-6 h-6 text-[#FF2B2B]" />
+              <Calendar className="w-6 h-6 text-primary" />
               <CardTitle className="text-white text-xl font-bold">Sentiment Tijdlijn</CardTitle>
             </div>
           </CardHeader>

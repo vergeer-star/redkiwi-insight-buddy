@@ -56,7 +56,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
     return (
       <div className="min-h-screen flex flex-col p-4 relative overflow-hidden">
         {/* Background pattern - behind everything */}
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
 
         {/* Subtle login button in top right corner */}
         <button
@@ -90,7 +90,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               >
                 WELCOME TO AN
                 <br />
-                <span className="text-[#FF2B2B]">AI-DRIVEN</span> INTERVIEW
+                <span className="text-primary">AI-DRIVEN</span> INTERVIEW
               </h1>
 
               {/* Subtle grey line - 50px wide */}
@@ -100,7 +100,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             {/* START Button */}
             <Button
               onClick={() => setStep(2)}
-              className="px-12 py-6 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-lg font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl group relative overflow-hidden"
+              className="px-12 py-6 bg-primary hover:bg-primary/90 text-white text-lg font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(227,6,19,0.4)] hover:shadow-[0_0_60px_rgba(227,6,19,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl group relative overflow-hidden"
             >
               <span className="flex items-center gap-2">
                 START
@@ -159,13 +159,13 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
         {/* Background pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
         <div className="relative max-w-4xl w-full space-y-4 text-center animate-fade-in">
           {/* Header Section */}
           <div className="space-y-2">
             <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">
-              LET'S GET <span className="text-[#FF2B2B]">STARTED</span>
+              LET'S GET <span className="text-primary">STARTED</span>
             </h2>
 
             <div className="max-w-2xl mx-auto space-y-1">
@@ -185,10 +185,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
               {/* Mic Permission - Interactive */}
               <div
                 onClick={toggleMicPermission}
-                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${micPermissionGranted ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${micPermissionGranted ? "bg-primary/5 border-primary/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
               >
                 <div
-                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${micPermissionGranted ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${micPermissionGranted ? "bg-primary shadow-[0_0_30px_rgba(227,6,19,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
                 >
                   {micPermissionGranted ? (
                     <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -213,10 +213,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   setQuietEnvironmentConfirmed(!quietEnvironmentConfirmed);
                   scrollDown();
                 }}
-                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${quietEnvironmentConfirmed ? "bg-primary/5 border-primary/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
               >
                 <div
-                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quietEnvironmentConfirmed ? "bg-primary shadow-[0_0_30px_rgba(227,6,19,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
                 >
                   {quietEnvironmentConfirmed ? (
                     <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -242,10 +242,10 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
                   setPrivacyConsent(!privacyConsent);
                   scrollDown();
                 }}
-                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? "bg-[#FF2B2B]/5 border-[#FF2B2B]/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
+                className={`flex items-start gap-3 group cursor-pointer p-2 rounded-xl transition-all duration-300 border border-transparent ${privacyConsent ? "bg-primary/5 border-primary/20" : "hover:bg-white/[0.02] hover:border-white/10"}`}
               >
                 <div
-                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? "bg-[#FF2B2B] shadow-[0_0_30px_rgba(237,28,36,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
+                  className={`mt-0.5 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${privacyConsent ? "bg-primary shadow-[0_0_30px_rgba(227,6,19,0.5)]" : "bg-white/5 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"}`}
                 >
                   {privacyConsent ? (
                     <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -272,7 +272,7 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
             <Button
               onClick={handleStart}
               disabled={isStarting || !privacyConsent || !micPermissionGranted || !quietEnvironmentConfirmed}
-              className="px-10 py-4 bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white text-sm font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(237,28,36,0.4)] hover:shadow-[0_0_60px_rgba(237,28,36,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden"
+              className="px-10 py-4 bg-primary hover:bg-primary/90 text-white text-sm font-bold tracking-wider uppercase shadow-[0_0_40px_rgba(227,6,19,0.4)] hover:shadow-[0_0_60px_rgba(227,6,19,0.6)] hover:scale-105 transition-all duration-300 border-none rounded-xl disabled:opacity-40 disabled:cursor-not-allowed group relative overflow-hidden"
             >
               {isStarting ? (
                 <span className="flex items-center gap-3">
