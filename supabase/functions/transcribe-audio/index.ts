@@ -109,16 +109,84 @@ serve(async (req) => {
       audioBlob = await audioResponse.blob();
       audioSourceUrl = audioUrl;
     } else {
-      console.log('No audio source provided, skipping transcription');
+      console.log('No audio source provided, attempting to build transcript from messages');
+
+      // Fall back to building a text transcript from stored interview messages
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data: messages, error: messagesError } = await supabase
+        .from('interview_messages')
+        .select('content, role, timestamp')
+        .eq('interview_id', interviewId)
+        .order('timestamp', { ascending: true });
+
+      if (messagesError) {
+        console.error('Error fetching interview messages for transcript:', messagesError);
+        throw messagesError;
+      }
+
+      if (!messages || messages.length === 0) {
+        console.log('No messages found to build transcript for interview:', interviewId);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'No messages available',
+            message: 'Interview has geen berichten om een transcript van te maken'
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          }
+        );
+      }
+
+      const transcriptionText = messages
+        .map((m: { timestamp: string; role: string; content: string }) => `${m.timestamp} [${m.role}]: ${m.content}`)
+        .join('\n');
+
+      const segments = messages.map((m: { timestamp: string; role: string; content: string }, index: number) => ({
+        index,
+        timestamp: m.timestamp,
+        role: m.role,
+        content: m.content,
+      }));
+
+      const { data: transcription, error: dbError } = await supabase
+        .from('interview_transcriptions')
+        .insert({
+          interview_id: interviewId,
+          audio_url: null,
+          transcription_text: transcriptionText,
+          segments,
+          timestamps: null,
+          confidence: null,
+          metadata: {
+            source: 'heygen_messages',
+            message_count: messages.length,
+            session_id: sessionId || null,
+          },
+        })
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error('Database error while saving message-based transcript:', dbError);
+        throw dbError;
+      }
+
+      console.log('Message-based transcription saved successfully:', transcription.id);
+
       return new Response(
-        JSON.stringify({ 
-          success: false,
-          error: 'No audio source available',
-          message: 'Interview has no audio to transcribe'
+        JSON.stringify({
+          success: true,
+          transcription,
+          message: 'Transcript succesvol opgebouwd uit HeyGen-berichten',
         }),
-        { 
+        {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200
+          status: 200,
         }
       );
     }
