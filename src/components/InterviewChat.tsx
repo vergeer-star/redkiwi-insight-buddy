@@ -265,25 +265,12 @@ export const InterviewChat = () => {
     stopListening();
     console.log('[CONVERSATION] Processing user input:', userText);
 
-    // Save user message to database
-    const { error: saveError } = await supabase
-      .from('interview_messages')
-      .insert({
-        interview_id: interviewId,
-        role: 'user',
-        content: userText
-      });
-
-    if (saveError) {
-      console.error('[DATABASE] Error saving user message:', saveError);
-    }
-
-    // Add to conversation history
+    // Add to conversation history (only clean user text)
     const updatedMessages = [...conversationMessages, { role: 'user', content: userText }];
     setConversationMessages(updatedMessages);
 
     try {
-      // Send to AI for response
+      // Send to AI for response (edge function will save to DB)
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/interview-chat`, {
         method: 'POST',
         headers: {
@@ -298,10 +285,10 @@ export const InterviewChat = () => {
 
       if (!response.ok) throw new Error('Failed to get AI response');
 
-      // Parse streaming response to extract only text content
+      // Parse streaming response to extract ONLY text content
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
-      let aiResponse = '';
+      let cleanText = '';
       let buffer = '';
 
       if (reader) {
@@ -316,45 +303,37 @@ export const InterviewChat = () => {
           buffer = lines.pop() || ''; // Keep incomplete line in buffer
           
           for (const line of lines) {
-            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            if (line.startsWith('data: ') && !line.includes('[DONE]')) {
               try {
-                const jsonStr = line.slice(6);
-                const data = JSON.parse(jsonStr);
-                const content = data.choices?.[0]?.delta?.content;
-                if (content) {
-                  aiResponse += content;
+                const jsonStr = line.slice(6).trim();
+                if (jsonStr) {
+                  const data = JSON.parse(jsonStr);
+                  const content = data.choices?.[0]?.delta?.content;
+                  if (content && typeof content === 'string') {
+                    cleanText += content;
+                  }
                 }
               } catch (e) {
                 // Skip malformed JSON
-                console.log('[CONVERSATION] Skipping malformed line:', line.substring(0, 100));
               }
             }
           }
         }
       }
 
-      console.log('[CONVERSATION] Extracted AI response:', aiResponse);
+      console.log('[CONVERSATION] Clean AI response:', cleanText);
 
-      // Save AI response to database
-      const { error: aiSaveError } = await supabase
-        .from('interview_messages')
-        .insert({
-          interview_id: interviewId,
-          role: 'assistant',
-          content: aiResponse
-        });
-
-      if (aiSaveError) {
-        console.error('[DATABASE] Error saving AI message:', aiSaveError);
+      if (!cleanText.trim()) {
+        throw new Error('Geen tekstuele response ontvangen');
       }
 
-      // Update conversation history
-      setConversationMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
+      // Update conversation history with ONLY clean text
+      setConversationMessages([...updatedMessages, { role: 'assistant', content: cleanText.trim() }]);
 
-      // Make avatar speak the response (only pure text, max 5000 chars)
-      if (avatarRef.current && aiResponse.trim()) {
-        const textToSpeak = aiResponse.trim().substring(0, 4900); // Keep under 5000 char limit
-        console.log('[CONVERSATION] Avatar speaking:', textToSpeak.substring(0, 100) + '...');
+      // Make avatar speak ONLY the clean text (max 4900 chars)
+      if (avatarRef.current) {
+        const textToSpeak = cleanText.trim().substring(0, 4900);
+        console.log('[AVATAR] Speaking text (length:', textToSpeak.length, '):', textToSpeak.substring(0, 100) + '...');
         await avatarRef.current.speak({
           text: textToSpeak,
           taskType: TaskType.REPEAT,
@@ -366,7 +345,7 @@ export const InterviewChat = () => {
       console.error('[CONVERSATION] Error processing response:', error);
       toast({
         title: "Fout",
-        description: "Kon antwoord niet verwerken",
+        description: error instanceof Error ? error.message : "Kon antwoord niet verwerken",
         variant: "destructive"
       });
       // Resume listening even on error
