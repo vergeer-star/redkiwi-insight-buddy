@@ -1,0 +1,126 @@
+import { useState } from "react";
+import { ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+interface Interview {
+  id: string;
+  created_at: string;
+  sentiment: string | null;
+  themes: string[] | null;
+  summary: string | null;
+  analyzed_at: string | null;
+}
+
+interface InterviewCardProps {
+  interview: Interview;
+  messages?: { role: string; content: string }[];
+}
+
+const SENTIMENT_COLORS = {
+  positive: '#10b981',
+  neutral: '#f59e0b',
+  negative: '#ef4444'
+};
+
+export function InterviewCard({ interview, messages = [] }: InterviewCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
+
+  return (
+    <div className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-[#FF2B2B]/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(237,28,36,0.2)] transition-all duration-300 group">
+      <div className="space-y-3">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-white/70 group-hover:text-white transition-colors font-medium">
+                {new Date(interview.created_at).toLocaleString('nl-NL')}
+              </span>
+              {interview.sentiment && (
+                <span 
+                  className="px-3 py-1 rounded-full text-xs font-bold"
+                  style={{ 
+                    backgroundColor: `${SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]}20`,
+                    color: SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]
+                  }}
+                >
+                  {interview.sentiment === 'positive' ? 'Positief' : 
+                   interview.sentiment === 'neutral' ? 'Neutraal' : 'Negatief'}
+                </span>
+              )}
+            </div>
+            
+            {/* Themes */}
+            {interview.themes && interview.themes.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {interview.themes.map((theme, idx) => (
+                  <span 
+                    key={idx}
+                    className="px-3 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded-lg text-xs font-medium border border-[#FF2B2B]/30"
+                  >
+                    {theme}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {/* Summary */}
+            {interview.summary && (
+              <p className="text-white/70 text-sm group-hover:text-white/90 transition-colors leading-relaxed">
+                {interview.summary}
+              </p>
+            )}
+            
+            {!interview.analyzed_at && (
+              <p className="text-yellow-400 text-sm mt-2 flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+                Wacht op analyse...
+              </p>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="ml-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            {isExpanded ? (
+              <ChevronUp className="w-5 h-5 text-white/70" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-white/70" />
+            )}
+          </button>
+        </div>
+
+        {/* Expanded content */}
+        {isExpanded && messages.length > 0 && (
+          <div className="mt-4 p-4 bg-black/40 rounded-lg border border-white/10 space-y-3 max-h-64 overflow-y-auto">
+            <div className="flex items-center gap-2 text-white/80 font-medium mb-3">
+              <MessageSquare className="w-4 h-4 text-[#FF2B2B]" />
+              <span>Transcript</span>
+            </div>
+            {messages.map((msg, idx) => (
+              <div key={idx} className="space-y-1">
+                <span className={`text-xs font-medium ${msg.role === 'assistant' ? 'text-[#FF2B2B]' : 'text-white/60'}`}>
+                  {msg.role === 'assistant' ? 'Interviewer' : 'Gebruiker'}
+                </span>
+                <p className="text-white/70 text-sm leading-relaxed pl-3 border-l-2 border-white/10">
+                  {msg.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-2 pt-2">
+          <button
+            onClick={() => navigate(`/interview/${interview.id}`)}
+            className="px-4 py-2 bg-[#FF2B2B]/20 hover:bg-[#FF2B2B]/30 text-[#FF2B2B] rounded-lg text-sm font-medium border border-[#FF2B2B]/30 hover:border-[#FF2B2B]/50 transition-all duration-200"
+          >
+            Details bekijken
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

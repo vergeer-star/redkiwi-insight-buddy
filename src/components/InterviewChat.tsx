@@ -95,8 +95,8 @@ export const InterviewChat = () => {
             transform: translate(-50%, -50%) !important;
             width: min(800px, 70vw) !important;
             height: min(450px, 60vh) !important;
-            border-radius: 16px !important;
-            overflow: visible !important;
+            border-radius: 24px !important;
+            overflow: hidden !important;
             opacity: 0 !important;
             visibility: hidden !important;
             transition: opacity 0.3s ease !important;
