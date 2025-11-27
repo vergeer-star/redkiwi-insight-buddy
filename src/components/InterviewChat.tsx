@@ -15,6 +15,8 @@ export const InterviewChat = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const {
     toast
   } = useToast();
@@ -178,6 +180,32 @@ export const InterviewChat = () => {
     // Listen for Heygen loaded event
     const handleHeygenLoaded = () => {
       setIsLoadingAvatar(false);
+      
+      // Start recording audio when HeyGen is ready
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          const recorder = new MediaRecorder(stream);
+          const chunks: Blob[] = [];
+          
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              chunks.push(e.data);
+            }
+          };
+          
+          recorder.onstop = () => {
+            setAudioChunks(chunks);
+            // Stop all tracks to release microphone
+            stream.getTracks().forEach(track => track.stop());
+          };
+          
+          recorder.start();
+          setMediaRecorder(recorder);
+          console.log("Audio recording started");
+        })
+        .catch(err => {
+          console.error("Failed to start audio recording:", err);
+        });
     };
     
     // Listen for HeyGen session ID
@@ -190,6 +218,11 @@ export const InterviewChat = () => {
     window.addEventListener("heygen-session", handleHeygenSession as EventListener);
     
     return () => {
+      // Stop recording if active
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      
       // Cleanup: remove the widget and script when component unmounts
       const widget = document.getElementById("heygen-streaming-embed");
       if (widget) widget.remove();
@@ -252,10 +285,34 @@ export const InterviewChat = () => {
         // First transcribe the audio, then analyze
         const processInterview = async () => {
           try {
-            // Call transcribe-audio edge function with both our sessionId and HeyGen's sessionId
+            // Stop recording if still active
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+              mediaRecorder.stop();
+              // Wait for recording to finish
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // Convert audio chunks to base64
+            let audioData: string | undefined;
+            if (audioChunks.length > 0) {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+              console.log("Audio recorded, size:", audioBlob.size);
+              
+              const reader = new FileReader();
+              audioData = await new Promise<string>((resolve) => {
+                reader.onloadend = () => {
+                  const base64 = reader.result as string;
+                  resolve(base64.split(',')[1]); // Remove data URL prefix
+                };
+                reader.readAsDataURL(audioBlob);
+              });
+            }
+            
+            // Call transcribe-audio edge function with recorded audio
             const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('transcribe-audio', {
               body: {
                 interviewId,
+                audioData, // Send recorded audio
                 sessionId: heygenSessionId || sessionId, // Prefer HeyGen's session ID if available
                 fallbackSessionId: sessionId // Keep our session ID as fallback
               }

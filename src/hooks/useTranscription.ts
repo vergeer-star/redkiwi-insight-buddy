@@ -6,7 +6,13 @@ export const useTranscription = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const { toast } = useToast();
 
-  const transcribeAudio = async (interviewId: string, audioUrl?: string, audioData?: string) => {
+  const transcribeAudio = async (
+    interviewId: string, 
+    audioUrl?: string, 
+    audioData?: string,
+    sessionId?: string,
+    fallbackSessionId?: string
+  ) => {
     setIsTranscribing(true);
     
     try {
@@ -14,7 +20,9 @@ export const useTranscription = () => {
         body: {
           interviewId,
           audioUrl,
-          audioData
+          audioData,
+          sessionId,
+          fallbackSessionId
         }
       });
 
