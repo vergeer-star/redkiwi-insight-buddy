@@ -298,20 +298,42 @@ export const InterviewChat = () => {
 
       if (!response.ok) throw new Error('Failed to get AI response');
 
-      // Read streaming response
+      // Parse streaming response to extract only text content
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let aiResponse = '';
+      let buffer = '';
 
       if (reader) {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          aiResponse += decoder.decode(value, { stream: true });
+          
+          buffer += decoder.decode(value, { stream: true });
+          
+          // Process complete lines
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+              try {
+                const jsonStr = line.slice(6);
+                const data = JSON.parse(jsonStr);
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  aiResponse += content;
+                }
+              } catch (e) {
+                // Skip malformed JSON
+                console.log('[CONVERSATION] Skipping malformed line:', line.substring(0, 100));
+              }
+            }
+          }
         }
       }
 
-      console.log('[CONVERSATION] AI response:', aiResponse);
+      console.log('[CONVERSATION] Extracted AI response:', aiResponse);
 
       // Save AI response to database
       const { error: aiSaveError } = await supabase
@@ -329,10 +351,12 @@ export const InterviewChat = () => {
       // Update conversation history
       setConversationMessages([...updatedMessages, { role: 'assistant', content: aiResponse }]);
 
-      // Make avatar speak the response
-      if (avatarRef.current) {
+      // Make avatar speak the response (only pure text, max 5000 chars)
+      if (avatarRef.current && aiResponse.trim()) {
+        const textToSpeak = aiResponse.trim().substring(0, 4900); // Keep under 5000 char limit
+        console.log('[CONVERSATION] Avatar speaking:', textToSpeak.substring(0, 100) + '...');
         await avatarRef.current.speak({
-          text: aiResponse,
+          text: textToSpeak,
           taskType: TaskType.REPEAT,
           taskMode: TaskMode.SYNC
         });
