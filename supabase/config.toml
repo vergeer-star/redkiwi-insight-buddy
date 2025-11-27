@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.analyze-interview]
 verify_jwt = false
+
+[functions.heygen-session]
+verify_jwt = false
+
+[functions.heygen-message]
+verify_jwt = false
