@@ -63,27 +63,18 @@ export const InterviewChat = () => {
         setIsLoadingAvatar(true);
         console.log('[HEYGEN SDK] Initializing avatar...');
 
-        // Get access token from HeyGen
-        const HEYGEN_API_KEY = import.meta.env.VITE_HEYGEN_API_KEY;
-        if (!HEYGEN_API_KEY) {
-          throw new Error('HeyGen API key not configured');
-        }
-
-        const tokenResponse = await fetch('https://api.heygen.com/v1/streaming.create_token', {
-          method: 'POST',
-          headers: {
-            'x-api-key': HEYGEN_API_KEY
-          }
-        });
-
-        if (!tokenResponse.ok) {
+        // Get access token from our edge function
+        const { data: tokenData, error: tokenError } = await supabase.functions.invoke('heygen-token');
+        
+        if (tokenError || !tokenData?.data?.token) {
+          console.error('[HEYGEN SDK] Token error:', tokenError);
           throw new Error('Failed to get HeyGen token');
         }
-
-        const { data: tokenData } = await tokenResponse.json();
+        
+        console.log('[HEYGEN SDK] Token received');
         
         // Initialize avatar
-        const avatar = new StreamingAvatar({ token: tokenData.token });
+        const avatar = new StreamingAvatar({ token: tokenData.data.token });
         avatarRef.current = avatar;
 
         // Set up event listeners BEFORE starting session
