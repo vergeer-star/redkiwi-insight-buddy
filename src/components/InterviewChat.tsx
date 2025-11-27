@@ -16,10 +16,6 @@ export const InterviewChat = () => {
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   
-  // Message buffers to accumulate HeyGen streaming chunks
-  const userMessageBuffer = useRef({ text: '', taskId: '', lastUpdate: 0 });
-  const avatarMessageBuffer = useRef({ text: '', taskId: '', lastUpdate: 0 });
-  
   const {
     toast
   } = useToast();
@@ -212,100 +208,81 @@ export const InterviewChat = () => {
     
     // Listen for user messages and save them to database
     const handleUserMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] User message chunk:", e.detail);
+      console.log("[HEYGEN] User message received:", e.detail);
       if (!interviewId) {
         console.warn("[HEYGEN] No interview ID, skipping message save");
         return;
       }
       
-      // HeyGen sends messages in chunks, accumulate them
-      const chunk = e.detail.message || e.detail.text || '';
-      const taskId = e.detail.task_id || '';
+      // Extract message from HeyGen USER_TALKING_MESSAGE event
+      // HeyGen sends: { message: string, task_id: string, timestamp: number }
+      const message = e.detail.message || e.detail.text || '';
+      const taskId = e.detail.task_id || e.detail.taskId || '';
       
-      // Reset buffer if new task or if too much time passed (>2s = new message)
-      const now = Date.now();
-      if (taskId !== userMessageBuffer.current.taskId || now - userMessageBuffer.current.lastUpdate > 2000) {
-        // Save previous accumulated message if exists
-        if (userMessageBuffer.current.text.trim()) {
-          console.log("[HEYGEN] Saving accumulated user message:", userMessageBuffer.current.text);
-          try {
-            const { error } = await supabase
-              .from('interview_messages')
-              .insert({
-                interview_id: interviewId,
-                role: 'user',
-                content: userMessageBuffer.current.text.trim(),
-                timestamp: new Date().toISOString()
-              });
-            
-            if (error) {
-              console.error("[HEYGEN] Failed to save user message:", error);
-            } else {
-              console.log("[HEYGEN] User message saved successfully");
-            }
-          } catch (error) {
-            console.error("[HEYGEN] Error saving user message:", error);
-          }
-        }
-        
-        // Start new buffer
-        userMessageBuffer.current.text = chunk;
-        userMessageBuffer.current.taskId = taskId;
-      } else {
-        // Accumulate chunk
-        userMessageBuffer.current.text += chunk;
+      if (!message || !message.trim()) {
+        console.log("[HEYGEN] Empty message, skipping");
+        return;
       }
       
-      userMessageBuffer.current.lastUpdate = now;
+      // Save complete user message immediately
+      console.log("[HEYGEN] Saving user message:", message);
+      try {
+        const { error } = await supabase
+          .from('interview_messages')
+          .insert({
+            interview_id: interviewId,
+            role: 'user',
+            content: message.trim(),
+            timestamp: new Date().toISOString()
+          });
+        
+        if (error) {
+          console.error("[HEYGEN] Failed to save user message:", error);
+        } else {
+          console.log("[HEYGEN] User message saved successfully to database");
+        }
+      } catch (error) {
+        console.error("[HEYGEN] Error saving user message:", error);
+      }
     };
     
     // Listen for avatar messages and save them to database
     const handleAvatarMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] Avatar message chunk:", e.detail);
+      console.log("[HEYGEN] Avatar message received:", e.detail);
       if (!interviewId) {
         console.warn("[HEYGEN] No interview ID, skipping message save");
         return;
       }
       
-      // HeyGen sends messages in chunks, accumulate them
-      const chunk = e.detail.message || e.detail.text || '';
-      const taskId = e.detail.task_id || '';
+      // Extract message from HeyGen AVATAR_TALKING_MESSAGE event
+      const message = e.detail.message || e.detail.text || '';
+      const taskId = e.detail.task_id || e.detail.taskId || '';
       
-      // Reset buffer if new task or if too much time passed (>2s = new message)
-      const now = Date.now();
-      if (taskId !== avatarMessageBuffer.current.taskId || now - avatarMessageBuffer.current.lastUpdate > 2000) {
-        // Save previous accumulated message if exists
-        if (avatarMessageBuffer.current.text.trim()) {
-          console.log("[HEYGEN] Saving accumulated avatar message:", avatarMessageBuffer.current.text);
-          try {
-            const { error } = await supabase
-              .from('interview_messages')
-              .insert({
-                interview_id: interviewId,
-                role: 'assistant',
-                content: avatarMessageBuffer.current.text.trim(),
-                timestamp: new Date().toISOString()
-              });
-            
-            if (error) {
-              console.error("[HEYGEN] Failed to save avatar message:", error);
-            } else {
-              console.log("[HEYGEN] Avatar message saved successfully");
-            }
-          } catch (error) {
-            console.error("[HEYGEN] Error saving avatar message:", error);
-          }
-        }
-        
-        // Start new buffer
-        avatarMessageBuffer.current.text = chunk;
-        avatarMessageBuffer.current.taskId = taskId;
-      } else {
-        // Accumulate chunk
-        avatarMessageBuffer.current.text += chunk;
+      if (!message || !message.trim()) {
+        console.log("[HEYGEN] Empty message, skipping");
+        return;
       }
       
-      avatarMessageBuffer.current.lastUpdate = now;
+      // Save complete avatar message immediately
+      console.log("[HEYGEN] Saving avatar message:", message);
+      try {
+        const { error } = await supabase
+          .from('interview_messages')
+          .insert({
+            interview_id: interviewId,
+            role: 'assistant',
+            content: message.trim(),
+            timestamp: new Date().toISOString()
+          });
+        
+        if (error) {
+          console.error("[HEYGEN] Failed to save avatar message:", error);
+        } else {
+          console.log("[HEYGEN] Avatar message saved successfully to database");
+        }
+      } catch (error) {
+        console.error("[HEYGEN] Error saving avatar message:", error);
+      }
     };
     
     window.addEventListener("heygen-loaded", handleHeygenLoaded);
