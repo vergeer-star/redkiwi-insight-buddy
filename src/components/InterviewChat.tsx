@@ -72,10 +72,30 @@ export const InterviewChat = () => {
         }
         
         console.log('[HEYGEN SDK] Token received');
-        
         // Initialize avatar
         const avatar = new StreamingAvatar({ token: tokenData.data.token });
         avatarRef.current = avatar;
+
+        // Set up video stream BEFORE other events
+        avatar.on(StreamingEvents.STREAM_READY, (event) => {
+          console.log('[HEYGEN SDK] Stream ready, attaching to video element');
+          if (event.detail && mediaStreamRef.current) {
+            mediaStreamRef.current.srcObject = event.detail;
+            mediaStreamRef.current.onloadedmetadata = () => {
+              mediaStreamRef.current?.play().catch(e => {
+                console.error('[HEYGEN SDK] Error playing video:', e);
+              });
+            };
+            console.log('[HEYGEN SDK] Video stream attached successfully');
+          }
+        });
+
+        avatar.on(StreamingEvents.STREAM_DISCONNECTED, () => {
+          console.log('[HEYGEN SDK] Stream disconnected');
+          if (mediaStreamRef.current) {
+            mediaStreamRef.current.srcObject = null;
+          }
+        });
 
         // Set up event listeners BEFORE starting session
         avatar.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
@@ -166,18 +186,6 @@ export const InterviewChat = () => {
 
         console.log('[HEYGEN SDK] Session created:', sessionData);
         setHeygenSessionId(sessionData.session_id);
-
-        // Set up video stream
-        if (mediaStreamRef.current) {
-          avatar.on(StreamingEvents.STREAM_READY, (event) => {
-            console.log('[HEYGEN SDK] Stream ready');
-            if (event.detail && mediaStreamRef.current) {
-              mediaStreamRef.current.srcObject = event.detail;
-              mediaStreamRef.current.play();
-            }
-          });
-        }
-
         setIsLoadingAvatar(false);
         console.log('[HEYGEN SDK] Avatar initialized successfully');
 
