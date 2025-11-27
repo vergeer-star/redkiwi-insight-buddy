@@ -6,6 +6,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Share2 } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
+import StreamingAvatar, { 
+  AvatarQuality, 
+  StreamingEvents, 
+  TaskMode, 
+  TaskType,
+  VoiceEmotion 
+} from "@heygen/streaming-avatar";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -16,14 +23,18 @@ export const InterviewChat = () => {
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   
+  const avatarRef = useRef<StreamingAvatar | null>(null);
+  const mediaStreamRef = useRef<HTMLVideoElement | null>(null);
+  
   const {
     toast
   } = useToast();
   const navigate = useNavigate();
 
-  // Fixed avatar - Maiya
-  const AVATAR_URL = "eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJLYXR5YV9DaGFpcl9TaXR0aW5nX3B1Ymxp%0D%0AYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzL2IxZmY1%0D%0AZWRiZjk2MjQyZTZhYzk0NjkyMjdkZjQwOTI0XzU1MzYwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJu%0D%0AZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjIwMWZkZDcxMmIy%0D%0ANDQwYjZiNmViNDdiYzVmOTYwNmIwIiwidXNlcm5hbWUiOiI2MGQxOTExYjQxZmM0YWI5YTkzYjY4%0D%0AY2EyYTE4ODY4NiJ9";
+  // Fixed avatar configuration
+  const AVATAR_ID = "Katya_Chair_Sitting_public";
   const AVATAR_NAME = "Maiya";
+  const KNOWLEDGE_BASE_ID = "201fdd712b2440b6b6eb47bc5f9606b0";
 
   // Check if user is a RedKiwi employee
   useEffect(() => {
@@ -45,265 +56,161 @@ export const InterviewChat = () => {
   }, []);
 
   useEffect(() => {
-    // Only load HeyGen streaming embed script after interview has started
     if (!hasStarted || !interviewId) return;
 
-    // Store interviewId in localStorage for fetch interceptor
-    localStorage.setItem('currentInterviewId', interviewId);
-    
-    // Set loading state
-    setIsLoadingAvatar(true);
+    const initializeAvatar = async () => {
+      try {
+        setIsLoadingAvatar(true);
+        console.log('[HEYGEN SDK] Initializing avatar...');
 
-    // Create fetch interceptor to add interviewId to requests
-    const originalFetch = window.fetch;
-    window.fetch = async (...args) => {
-      const [resource, config] = args;
+        // Get access token from HeyGen
+        const HEYGEN_API_KEY = import.meta.env.VITE_HEYGEN_API_KEY;
+        if (!HEYGEN_API_KEY) {
+          throw new Error('HeyGen API key not configured');
+        }
 
-      // Check if this is a request to our interview-chat edge function
-      if (typeof resource === 'string' && resource.includes('/functions/v1/interview-chat')) {
-        const interviewId = localStorage.getItem('currentInterviewId');
-        if (interviewId && config) {
-          // Parse existing body and add interviewId
+        const tokenResponse = await fetch('https://api.heygen.com/v1/streaming.create_token', {
+          method: 'POST',
+          headers: {
+            'x-api-key': HEYGEN_API_KEY
+          }
+        });
+
+        if (!tokenResponse.ok) {
+          throw new Error('Failed to get HeyGen token');
+        }
+
+        const { data: tokenData } = await tokenResponse.json();
+        
+        // Initialize avatar
+        const avatar = new StreamingAvatar({ token: tokenData.token });
+        avatarRef.current = avatar;
+
+        // Set up event listeners BEFORE starting session
+        avatar.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
+          console.log('[HEYGEN SDK] Avatar started talking', e);
+        });
+
+        avatar.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
+          console.log('[HEYGEN SDK] Avatar stopped talking', e);
+        });
+
+        avatar.on(StreamingEvents.USER_START, (e) => {
+          console.log('[HEYGEN SDK] User started talking', e);
+        });
+
+        avatar.on(StreamingEvents.USER_STOP, (e) => {
+          console.log('[HEYGEN SDK] User stopped talking', e);
+        });
+
+        // Critical: Listen for message events
+        avatar.on(StreamingEvents.USER_TALKING_MESSAGE, async (message) => {
+          console.log('[HEYGEN SDK] User talking message:', message);
+          
+          if (!message?.message || !message.message.trim()) {
+            console.log('[HEYGEN SDK] Empty user message, skipping');
+            return;
+          }
+
           try {
-            const body = JSON.parse(config.body as string);
-            body.interviewId = interviewId;
-            config.body = JSON.stringify(body);
-          } catch (e) {
-            console.error('Failed to add interviewId to request:', e);
-          }
-        }
-      }
-      return originalFetch(resource, config);
-    };
-    const script = document.createElement("script");
-    
-    // Get the Supabase project URL for the edge function
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const customServerUrl = `${supabaseUrl}/functions/v1/interview-chat`;
-    
-    script.innerHTML = `
-      !function(window){
-        const host="https://labs.heygen.com",
-        url=host+"/guest/streaming-embed?share=${AVATAR_URL}&inIFrame=1&serverUrl=${encodeURIComponent(customServerUrl)}",
-        wrapDiv=document.createElement("div");
-        wrapDiv.id="heygen-streaming-embed";
-        
-        const container=document.createElement("div");
-        container.id="heygen-streaming-container";
-        
-        const stylesheet=document.createElement("style");
-        stylesheet.innerHTML=\`
-          #heygen-streaming-embed {
-            z-index: 9999 !important;
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            width: min(800px, 70vw) !important;
-            height: min(450px, 60vh) !important;
-            border-radius: 24px !important;
-            overflow: hidden !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-            transition: opacity 0.3s ease !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
-            pointer-events: auto !important;
-          }
-          #heygen-streaming-embed.show {
-            opacity: 1 !important;
-            visibility: visible !important;
-          }
-          #heygen-streaming-container {
-            width: 100% !important;
-            height: 100% !important;
-            position: relative !important;
-          }
-          #heygen-streaming-container iframe {
-            width: 100% !important;
-            height: 100% !important;
-            border: 0 !important;
-            position: relative !important;
-            z-index: 1 !important;
-          }
-        \`;
-        
-        const iframe=document.createElement("iframe");
-        iframe.allowFullscreen=true;
-        iframe.title="Streaming Embed";
-        iframe.role="dialog";
-        iframe.allow="microphone";
-        iframe.src=url;
-        
-        let initial=false;
-        
-        window.addEventListener("message",(e=>{
-          if(e.origin===host&&e.data&&e.data.type){
-            console.log("[HEYGEN_RAW] Message received:", e.data);
-            
-            // Handle streaming-embed type messages
-            if("streaming-embed"===e.data.type){
-              if("init"===e.data.action){
-                initial=true;
-                wrapDiv.classList.add("show");
-                console.log("[HEYGEN] Embed initialized and shown");
-                window.dispatchEvent(new CustomEvent("heygen-loaded"));
-              }
-              
-              // Capture session info
-              if(e.data.sessionId){
-                console.log("[HEYGEN] Session ID:", e.data.sessionId);
-                window.dispatchEvent(new CustomEvent("heygen-session", { 
-                  detail: { sessionId: e.data.sessionId } 
-                }));
-              }
-              
-              // Capture session end event
-              if(e.data.action === "session_end" || e.data.action === "ended"){
-                console.log("[HEYGEN] Session ended");
-                window.dispatchEvent(new CustomEvent("heygen-session-end", { 
-                  detail: e.data 
-                }));
-              }
+            const { error } = await supabase
+              .from('interview_messages')
+              .insert({
+                interview_id: interviewId,
+                role: 'user',
+                content: message.message.trim(),
+                timestamp: new Date().toISOString()
+              });
+
+            if (error) {
+              console.error('[HEYGEN SDK] Failed to save user message:', error);
+            } else {
+              console.log('[HEYGEN SDK] ✓ User message saved to database');
             }
-            
-            // Handle user talking messages (separate message type)
-            if(e.data.type === "user_talking_message"){
-              console.log("[HEYGEN] User talking:", e.data);
-              window.dispatchEvent(new CustomEvent("heygen-user-message", { 
-                detail: e.data 
-              }));
-            }
-            
-            // Handle avatar talking messages (separate message type)
-            if(e.data.type === "avatar_talking_message"){
-              console.log("[HEYGEN] Avatar talking:", e.data);
-              window.dispatchEvent(new CustomEvent("heygen-avatar-message", { 
-                detail: e.data 
-              }));
-            }
+          } catch (error) {
+            console.error('[HEYGEN SDK] Error saving user message:', error);
           }
-        }));
-        
-        container.appendChild(iframe);
-        wrapDiv.appendChild(stylesheet);
-        wrapDiv.appendChild(container);
-        document.body.appendChild(wrapDiv);
-        
-        console.log("Heygen embed script loaded");
-      }(globalThis);
-    `;
-    document.body.appendChild(script);
-    
-    // Listen for Heygen loaded event
-    const handleHeygenLoaded = () => {
-      console.log("[HEYGEN] Avatar loaded and ready");
-      setIsLoadingAvatar(false);
-    };
-    
-    // Listen for HeyGen session ID
-    const handleHeygenSession = (e: CustomEvent) => {
-      console.log("[HEYGEN] Captured session ID:", e.detail.sessionId);
-      setHeygenSessionId(e.detail.sessionId);
-    };
-    
-    // Listen for user messages and save them to database
-    const handleUserMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] User message received:", e.detail);
-      if (!interviewId) {
-        console.warn("[HEYGEN] No interview ID, skipping message save");
-        return;
-      }
-      
-      // Extract message from HeyGen USER_TALKING_MESSAGE event
-      // HeyGen sends: { message: string, task_id: string, timestamp: number }
-      const message = e.detail.message || e.detail.text || '';
-      const taskId = e.detail.task_id || e.detail.taskId || '';
-      
-      if (!message || !message.trim()) {
-        console.log("[HEYGEN] Empty message, skipping");
-        return;
-      }
-      
-      // Save complete user message immediately
-      console.log("[HEYGEN] Saving user message:", message);
-      try {
-        const { error } = await supabase
-          .from('interview_messages')
-          .insert({
-            interview_id: interviewId,
-            role: 'user',
-            content: message.trim(),
-            timestamp: new Date().toISOString()
+        });
+
+        avatar.on(StreamingEvents.AVATAR_TALKING_MESSAGE, async (message) => {
+          console.log('[HEYGEN SDK] Avatar talking message:', message);
+          
+          if (!message?.message || !message.message.trim()) {
+            console.log('[HEYGEN SDK] Empty avatar message, skipping');
+            return;
+          }
+
+          try {
+            const { error } = await supabase
+              .from('interview_messages')
+              .insert({
+                interview_id: interviewId,
+                role: 'assistant',
+                content: message.message.trim(),
+                timestamp: new Date().toISOString()
+              });
+
+            if (error) {
+              console.error('[HEYGEN SDK] Failed to save avatar message:', error);
+            } else {
+              console.log('[HEYGEN SDK] ✓ Avatar message saved to database');
+            }
+          } catch (error) {
+            console.error('[HEYGEN SDK] Error saving avatar message:', error);
+          }
+        });
+
+        // Start avatar session
+        const sessionData = await avatar.createStartAvatar({
+          quality: AvatarQuality.High,
+          avatarName: AVATAR_ID,
+          knowledgeBase: KNOWLEDGE_BASE_ID,
+          voice: {
+            rate: 1.0,
+            emotion: VoiceEmotion.FRIENDLY
+          },
+          language: 'nl',
+          disableIdleTimeout: false
+        });
+
+        console.log('[HEYGEN SDK] Session created:', sessionData);
+        setHeygenSessionId(sessionData.session_id);
+
+        // Set up video stream
+        if (mediaStreamRef.current) {
+          avatar.on(StreamingEvents.STREAM_READY, (event) => {
+            console.log('[HEYGEN SDK] Stream ready');
+            if (event.detail && mediaStreamRef.current) {
+              mediaStreamRef.current.srcObject = event.detail;
+              mediaStreamRef.current.play();
+            }
           });
-        
-        if (error) {
-          console.error("[HEYGEN] Failed to save user message:", error);
-        } else {
-          console.log("[HEYGEN] User message saved successfully to database");
         }
+
+        setIsLoadingAvatar(false);
+        console.log('[HEYGEN SDK] Avatar initialized successfully');
+
       } catch (error) {
-        console.error("[HEYGEN] Error saving user message:", error);
+        console.error('[HEYGEN SDK] Error initializing avatar:', error);
+        setIsLoadingAvatar(false);
+        toast({
+          title: "Fout",
+          description: "Kon avatar niet laden",
+          variant: "destructive"
+        });
       }
     };
-    
-    // Listen for avatar messages and save them to database
-    const handleAvatarMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] Avatar message received:", e.detail);
-      if (!interviewId) {
-        console.warn("[HEYGEN] No interview ID, skipping message save");
-        return;
-      }
-      
-      // Extract message from HeyGen AVATAR_TALKING_MESSAGE event
-      const message = e.detail.message || e.detail.text || '';
-      const taskId = e.detail.task_id || e.detail.taskId || '';
-      
-      if (!message || !message.trim()) {
-        console.log("[HEYGEN] Empty message, skipping");
-        return;
-      }
-      
-      // Save complete avatar message immediately
-      console.log("[HEYGEN] Saving avatar message:", message);
-      try {
-        const { error } = await supabase
-          .from('interview_messages')
-          .insert({
-            interview_id: interviewId,
-            role: 'assistant',
-            content: message.trim(),
-            timestamp: new Date().toISOString()
-          });
-        
-        if (error) {
-          console.error("[HEYGEN] Failed to save avatar message:", error);
-        } else {
-          console.log("[HEYGEN] Avatar message saved successfully to database");
-        }
-      } catch (error) {
-        console.error("[HEYGEN] Error saving avatar message:", error);
-      }
-    };
-    
-    window.addEventListener("heygen-loaded", handleHeygenLoaded);
-    window.addEventListener("heygen-session", handleHeygenSession as EventListener);
-    window.addEventListener("heygen-user-message", handleUserMessage as EventListener);
-    window.addEventListener("heygen-avatar-message", handleAvatarMessage as EventListener);
-    
+
+    initializeAvatar();
+
     return () => {
-      // Cleanup: remove the widget and script when component unmounts
-      const widget = document.getElementById("heygen-streaming-embed");
-      if (widget) widget.remove();
-      if (script.parentNode) script.parentNode.removeChild(script);
-      localStorage.removeItem('currentInterviewId');
-      // Restore original fetch
-      window.fetch = originalFetch;
-      window.removeEventListener("heygen-loaded", handleHeygenLoaded);
-      window.removeEventListener("heygen-session", handleHeygenSession as EventListener);
-      window.removeEventListener("heygen-user-message", handleUserMessage as EventListener);
-      window.removeEventListener("heygen-avatar-message", handleAvatarMessage as EventListener);
+      console.log('[HEYGEN SDK] Cleaning up avatar');
+      if (avatarRef.current) {
+        avatarRef.current.stopAvatar();
+        avatarRef.current = null;
+      }
     };
-  }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
+  }, [hasStarted, interviewId]);
 
   const handleChecklistComplete = async () => {
     // Pre-generate IDs to avoid RLS SELECT on return
@@ -326,7 +233,7 @@ export const InterviewChat = () => {
           id: newInterviewId,
           session_id: newSessionId,
           avatar_name: AVATAR_NAME,
-          avatar_url: AVATAR_URL,
+          avatar_url: AVATAR_ID,
           status: 'started',
         });
 
@@ -420,9 +327,10 @@ export const InterviewChat = () => {
       }
     }
 
-    // Clean up interviewer widget
-    const widget = document.getElementById("heygen-streaming-embed");
-    if (widget) widget.remove();
+    // Stop avatar
+    if (avatarRef.current) {
+      await avatarRef.current.stopAvatar();
+    }
     
     // Show thank you page
     setShowThankYou(true);
@@ -562,6 +470,16 @@ export const InterviewChat = () => {
             <span>Vergeet niet de juiste taal te selecteren</span>
           </li>
         </ul>
+      </div>
+
+      {/* Avatar Video */}
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] z-[9995]">
+        <video
+          ref={mediaStreamRef}
+          autoPlay
+          playsInline
+          className="w-full h-full rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] object-cover"
+        />
       </div>
     </div>;
 };
