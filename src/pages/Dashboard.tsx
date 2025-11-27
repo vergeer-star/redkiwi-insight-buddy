@@ -230,7 +230,12 @@ export default function Dashboard() {
 
   // Filtered interviews
   const filteredInterviews = interviews.filter(interview => {
-    if (dateFilter && !interview.created_at.startsWith(dateFilter)) return false;
+    // Date filter - check if interview date matches selected date
+    if (dateFilter) {
+      const interviewDate = new Date(interview.created_at).toISOString().split('T')[0];
+      if (interviewDate !== dateFilter) return false;
+    }
+    // Sentiment filter
     if (sentimentFilter && interview.sentiment !== sentimentFilter) return false;
     return true;
   });
@@ -341,7 +346,6 @@ export default function Dashboard() {
           title="Positief"
           value={sentimentData.positive || 0}
           icon={Heart}
-          gradient="from-green-500/20 to-green-500/5"
           trend={15}
         />
         <KPITile
