@@ -30,7 +30,11 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         quality: 'high',
-        avatar_name: 'Katya_Chair_Sitting_public',
+        avatar_id: 'Kristin_public_2_20240108',
+        voice: {
+          voice_id: '1bd001e7e50f421d891986aad5158bc8',
+          rate: 1.0
+        }
       }),
     });
 
