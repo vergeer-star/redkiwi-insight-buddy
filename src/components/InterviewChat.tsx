@@ -10,6 +10,7 @@ export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [sessionId, setSessionId] = useState<string>("");
+  const [heygenSessionId, setHeygenSessionId] = useState<string>(""); // HeyGen's actual session ID
   const [interviewId, setInterviewId] = useState<string>("");
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
@@ -136,12 +137,30 @@ export const InterviewChat = () => {
         
         window.addEventListener("message",(e=>{
           if(e.origin===host&&e.data&&e.data.type&&"streaming-embed"===e.data.type){
+            console.log("HeyGen message received:", e.data);
+            
             if("init"===e.data.action){
               initial=true;
               wrapDiv.classList.add("show");
               console.log("Heygen embed initialized and shown");
               // Hide loading screen
               window.dispatchEvent(new CustomEvent("heygen-loaded"));
+            }
+            
+            // Capture session info
+            if(e.data.sessionId){
+              console.log("HeyGen session ID:", e.data.sessionId);
+              window.dispatchEvent(new CustomEvent("heygen-session", { 
+                detail: { sessionId: e.data.sessionId } 
+              }));
+            }
+            
+            // Capture session end event
+            if(e.data.action === "session_end" || e.data.action === "ended"){
+              console.log("HeyGen session ended");
+              window.dispatchEvent(new CustomEvent("heygen-session-end", { 
+                detail: e.data 
+              }));
             }
           }
         }));
@@ -160,7 +179,15 @@ export const InterviewChat = () => {
     const handleHeygenLoaded = () => {
       setIsLoadingAvatar(false);
     };
+    
+    // Listen for HeyGen session ID
+    const handleHeygenSession = (e: CustomEvent) => {
+      console.log("Captured HeyGen session ID:", e.detail.sessionId);
+      setHeygenSessionId(e.detail.sessionId);
+    };
+    
     window.addEventListener("heygen-loaded", handleHeygenLoaded);
+    window.addEventListener("heygen-session", handleHeygenSession as EventListener);
     
     return () => {
       // Cleanup: remove the widget and script when component unmounts
@@ -171,6 +198,7 @@ export const InterviewChat = () => {
       // Restore original fetch
       window.fetch = originalFetch;
       window.removeEventListener("heygen-loaded", handleHeygenLoaded);
+      window.removeEventListener("heygen-session", handleHeygenSession as EventListener);
     };
   }, [hasStarted, interviewId]); // Load when hasStarted and interviewId is available
 
@@ -221,26 +249,52 @@ export const InterviewChat = () => {
           description: "Je antwoorden worden nu geanalyseerd..."
         });
 
-        // Call edge function to analyze the interview
-        supabase.functions.invoke('analyze-interview', {
-          body: {
-            interviewId
-          }
-        }).then(({
-          data,
-          error
-        }) => {
-          if (error) {
-            console.error('Error analyzing interview:', error);
-            toast({
-              title: "Analyse fout",
-              description: "Er is een fout opgetreden bij het analyseren",
-              variant: "destructive"
+        // First transcribe the audio, then analyze
+        const processInterview = async () => {
+          try {
+            // Call transcribe-audio edge function with both our sessionId and HeyGen's sessionId
+            const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('transcribe-audio', {
+              body: {
+                interviewId,
+                sessionId: heygenSessionId || sessionId, // Prefer HeyGen's session ID if available
+                fallbackSessionId: sessionId // Keep our session ID as fallback
+              }
             });
-          } else {
-            console.log('Interview analysis completed:', data);
+
+            if (transcribeError) {
+              console.error('Error transcribing interview:', transcribeError);
+              toast({
+                title: "Transcriptie fout",
+                description: "Audio kon niet worden getranscribeerd",
+                variant: "destructive"
+              });
+            } else {
+              console.log('Transcription completed:', transcribeData);
+            }
+
+            // Then analyze the interview
+            const { data, error } = await supabase.functions.invoke('analyze-interview', {
+              body: {
+                interviewId
+              }
+            });
+
+            if (error) {
+              console.error('Error analyzing interview:', error);
+              toast({
+                title: "Analyse fout",
+                description: "Er is een fout opgetreden bij het analyseren",
+                variant: "destructive"
+              });
+            } else {
+              console.log('Interview analysis completed:', data);
+            }
+          } catch (err) {
+            console.error('Error processing interview:', err);
           }
-        });
+        };
+
+        processInterview();
       } catch (error) {
         console.error('Error updating interview:', error);
       }

@@ -13,7 +13,15 @@ serve(async (req) => {
   }
 
   try {
-    const { interviewId, audioUrl, audioData } = await req.json();
+    const { interviewId, audioUrl, audioData, sessionId, fallbackSessionId } = await req.json();
+
+    console.log('Transcribe request:', {
+      interviewId,
+      hasAudioUrl: !!audioUrl,
+      hasAudioData: !!audioData,
+      sessionId,
+      fallbackSessionId
+    });
 
     if (!interviewId) {
       throw new Error('Interview ID is required');
@@ -26,9 +34,68 @@ serve(async (req) => {
 
     console.log('Starting transcription for interview:', interviewId);
 
+    // If we have a sessionId but no audio, try to fetch from HeyGen
+    let audioToTranscribe: Blob | null = null;
+    let audioSourceUrl: string | null = null;
+
+    if (sessionId && !audioUrl && !audioData) {
+      console.log('Attempting to fetch HeyGen recording for session:', sessionId);
+      
+      // Try to get the recording from HeyGen API
+      // Note: Adjust these endpoints based on HeyGen's actual API
+      const sessionToTry = [sessionId, fallbackSessionId].filter(Boolean);
+      
+      for (const sid of sessionToTry) {
+        try {
+          console.log(`Trying HeyGen session ID: ${sid}`);
+          
+          // First try to get session info
+          const sessionInfoResponse = await fetch(`https://api.heygen.com/v1/streaming.get`, {
+            method: 'POST',
+            headers: {
+              'X-Api-Key': HEYGEN_API_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ session_id: sid })
+          });
+
+          if (sessionInfoResponse.ok) {
+            const sessionInfo = await sessionInfoResponse.json();
+            console.log('HeyGen session info:', sessionInfo);
+            
+            // Check if recording is available
+            if (sessionInfo.data?.recording_url || sessionInfo.data?.video_url) {
+              const recordingUrl = sessionInfo.data.recording_url || sessionInfo.data.video_url;
+              console.log('Found recording URL:', recordingUrl);
+              audioSourceUrl = recordingUrl;
+              const audioResponse = await fetch(recordingUrl);
+              audioToTranscribe = await audioResponse.blob();
+              console.log('Successfully fetched HeyGen recording');
+              break;
+            } else {
+              console.log('Session exists but no recording URL yet:', sessionInfo);
+            }
+          } else {
+            const errorText = await sessionInfoResponse.text();
+            console.log(`HeyGen session fetch failed (${sessionInfoResponse.status}):`, errorText);
+          }
+        } catch (error) {
+          console.log('Error fetching HeyGen session:', sid, error);
+        }
+      }
+      
+      if (!audioToTranscribe) {
+        console.warn('Could not fetch HeyGen recording from any session ID');
+      }
+    }
+
     // Prepare audio for HeyGen API
     let audioBlob: Blob;
-    if (audioData) {
+    
+    if (audioToTranscribe) {
+      // Use the audio we fetched from HeyGen
+      audioBlob = audioToTranscribe;
+    } else if (audioData) {
       // Convert base64 to blob
       const binaryString = atob(audioData);
       const bytes = new Uint8Array(binaryString.length);
@@ -40,8 +107,20 @@ serve(async (req) => {
       // Fetch audio from URL
       const audioResponse = await fetch(audioUrl);
       audioBlob = await audioResponse.blob();
+      audioSourceUrl = audioUrl;
     } else {
-      throw new Error('Either audioUrl or audioData must be provided');
+      console.log('No audio source provided, skipping transcription');
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'No audio source available',
+          message: 'Interview has no audio to transcribe'
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
     }
 
     // Send to HeyGen transcription API
@@ -75,7 +154,7 @@ serve(async (req) => {
       .from('interview_transcriptions')
       .insert({
         interview_id: interviewId,
-        audio_url: audioUrl || null,
+        audio_url: audioSourceUrl || audioUrl || null,
         transcription_text: transcriptionResult.text || '',
         segments: transcriptionResult.segments || [],
         timestamps: transcriptionResult.timestamps || {},
@@ -83,7 +162,8 @@ serve(async (req) => {
         metadata: {
           language: transcriptionResult.language || 'nl',
           duration: transcriptionResult.duration || null,
-          raw_response: transcriptionResult
+          raw_response: transcriptionResult,
+          session_id: sessionId || null
         }
       })
       .select()
