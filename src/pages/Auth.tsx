@@ -123,7 +123,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
@@ -180,7 +180,7 @@ export default function Auth() {
                 />
               </div>
 
-              <Button type="submit" disabled={loading} className="w-full bg-[#FF2B2B] hover:bg-[#FF2B2B]/90 text-white">
+              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white">
                 {loading ? (isLogin ? "Inloggen..." : "Registreren...") : isLogin ? "Inloggen" : "Registreren"}
               </Button>
             </form>

@@ -32,11 +32,11 @@ export const AvatarSelection = ({ onSelect, onBack }: AvatarSelectionProps) => {
   return (
     <div className="min-h-screen flex items-center justify-center p-8 relative overflow-hidden">
       {/* Background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
       <div className="relative max-w-6xl w-full">
         <h2 className="text-5xl md:text-6xl font-bold text-white text-center mb-4">
-          KIES JE <span className="text-[#FF2B2B]">INTERVIEWER</span>
+          KIES JE <span className="text-primary">INTERVIEWER</span>
         </h2>
         <p className="text-gray-400 text-center mb-16">Klik op de persoon om het gesprek te starten</p>
 
@@ -45,10 +45,10 @@ export const AvatarSelection = ({ onSelect, onBack }: AvatarSelectionProps) => {
             <div key={avatar.name} className="flex flex-col items-center gap-4 animate-fade-in group">
               <button onClick={() => handleAvatarClick(avatar)} className="relative">
                 {/* Glow effect behind */}
-                <div className="absolute inset-0 rounded-full bg-[#FF2B2B]/0 blur-xl transition-all duration-500 group-hover:bg-[#FF2B2B]/30 group-hover:scale-125" />
+                <div className="absolute inset-0 rounded-full bg-primary/0 blur-xl transition-all duration-500 group-hover:bg-primary/30 group-hover:scale-125" />
 
                 {/* Main avatar bubble */}
-                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:border-[#FF2B2B] group-hover:shadow-[0_30px_100px_rgba(237,28,36,0.6)] group-hover:scale-110 group-hover:-translate-y-2">
+                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover:border-primary group-hover:shadow-[0_30px_100px_rgba(227,6,19,0.6)] group-hover:scale-110 group-hover:-translate-y-2">
                   <img
                     src={avatar.preview}
                     alt={avatar.name}
@@ -58,7 +58,7 @@ export const AvatarSelection = ({ onSelect, onBack }: AvatarSelectionProps) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#FF2B2B]/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 </div>
               </button>
-              <h3 className="text-2xl font-bold text-white transition-all duration-300 group-hover:text-[#FF2B2B]">
+              <h3 className="text-2xl font-bold text-white transition-all duration-300 group-hover:text-primary">
                 {avatar.name}
               </h3>
             </div>
@@ -70,7 +70,7 @@ export const AvatarSelection = ({ onSelect, onBack }: AvatarSelectionProps) => {
             <Button
               onClick={onBack}
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 hover:border-[#FF2B2B] transition-all duration-300"
+              className="border-white/20 text-white hover:bg-white/10 hover:border-primary transition-all duration-300"
             >
               Terug
             </Button>

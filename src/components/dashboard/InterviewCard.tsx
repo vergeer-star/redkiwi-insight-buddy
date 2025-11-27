@@ -27,7 +27,7 @@ export function InterviewCard({ interview, messages = [] }: InterviewCardProps) 
   const navigate = useNavigate();
 
   return (
-    <div className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-[#FF2B2B]/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(237,28,36,0.2)] transition-all duration-300 group">
+    <div className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-primary/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(227,6,19,0.2)] transition-all duration-300 group">
       <div className="space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -56,7 +56,7 @@ export function InterviewCard({ interview, messages = [] }: InterviewCardProps) 
                 {interview.themes.map((theme, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded-lg text-xs font-medium border border-[#FF2B2B]/30"
+                    className="px-3 py-1 bg-primary/20 text-primary rounded-lg text-xs font-medium border border-primary/30"
                   >
                     {theme}
                   </span>
@@ -95,12 +95,12 @@ export function InterviewCard({ interview, messages = [] }: InterviewCardProps) 
         {isExpanded && messages.length > 0 && (
           <div className="mt-4 p-4 bg-black/40 rounded-lg border border-white/10 space-y-3 max-h-64 overflow-y-auto">
             <div className="flex items-center gap-2 text-white/80 font-medium mb-3">
-              <MessageSquare className="w-4 h-4 text-[#FF2B2B]" />
+              <MessageSquare className="w-4 h-4 text-primary" />
               <span>Transcript</span>
             </div>
             {messages.map((msg, idx) => (
               <div key={idx} className="space-y-1">
-                <span className={`text-xs font-medium ${msg.role === 'assistant' ? 'text-[#FF2B2B]' : 'text-white/60'}`}>
+                <span className={`text-xs font-medium ${msg.role === 'assistant' ? 'text-primary' : 'text-white/60'}`}>
                   {msg.role === 'assistant' ? 'Interviewer' : 'Gebruiker'}
                 </span>
                 <p className="text-white/70 text-sm leading-relaxed pl-3 border-l-2 border-white/10">
@@ -115,7 +115,7 @@ export function InterviewCard({ interview, messages = [] }: InterviewCardProps) 
         <div className="flex gap-2 pt-2">
           <button
             onClick={() => navigate(`/interview/${interview.id}`)}
-            className="px-4 py-2 bg-[#FF2B2B]/20 hover:bg-[#FF2B2B]/30 text-[#FF2B2B] rounded-lg text-sm font-medium border border-[#FF2B2B]/30 hover:border-[#FF2B2B]/50 transition-all duration-200"
+            className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg text-sm font-medium border border-primary/30 hover:border-primary/50 transition-all duration-200"
           >
             Details bekijken
           </button>

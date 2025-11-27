@@ -27,10 +27,10 @@ export function KPITile({ title, value, icon: Icon, trend, gradient = "from-whit
 
   return (
     <Card className={`bg-gradient-to-br ${gradient} border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group relative overflow-hidden`}>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FF2B2B]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
         <CardTitle className="text-white/60 text-xs font-medium tracking-wide uppercase">{title}</CardTitle>
-        <Icon className="w-5 h-5 text-[#FF2B2B] group-hover:scale-110 transition-transform duration-300" />
+        <Icon className="w-5 h-5 text-primary group-hover:scale-110 transition-transform duration-300" />
       </CardHeader>
       <CardContent className="relative z-10">
         <div className="flex items-end justify-between">
