@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Share2 } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
+import StreamingAvatar from "@heygen/streaming-avatar";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -69,17 +70,9 @@ export const InterviewChat = () => {
 
         console.log('HeyGen session created:', sessionData);
 
-        // Load HeyGen Streaming SDK
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@heygen/streaming-avatar@1.0.3/dist/index.umd.js';
-        script.async = true;
-
-        script.onload = async () => {
-          try {
-            // @ts-ignore - HeyGen SDK loaded via script
-            const StreamingAvatar = window.StreamingAvatar;
-
-            avatarInstance = new StreamingAvatar({
+        // Initialize HeyGen Streaming SDK
+        try {
+          avatarInstance = new StreamingAvatar({
               token: sessionData.data.access_token,
             });
 
@@ -130,31 +123,18 @@ export const InterviewChat = () => {
               knowledgeBase: sessionData.data.knowledge_base_id
             });
 
-            console.log('Avatar initialized successfully');
-            setIsLoadingAvatar(false);
+          console.log('Avatar initialized successfully');
+          setIsLoadingAvatar(false);
 
-          } catch (error) {
-            console.error('Error initializing HeyGen SDK:', error);
-            toast({
-              title: "Fout",
-              description: "Kon avatar niet initialiseren",
-              variant: "destructive",
-            });
-            setIsLoadingAvatar(false);
-          }
-        };
-
-        script.onerror = () => {
-          console.error('Failed to load HeyGen SDK script');
+        } catch (error) {
+          console.error('Error initializing HeyGen SDK:', error);
           toast({
             title: "Fout",
-            description: "Kon avatar script niet laden",
+            description: "Kon avatar niet initialiseren",
             variant: "destructive",
           });
           setIsLoadingAvatar(false);
-        };
-
-        document.body.appendChild(script);
+        }
 
       } catch (error) {
         console.error('Error in HeyGen initialization:', error);
