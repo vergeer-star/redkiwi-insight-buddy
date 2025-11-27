@@ -189,6 +189,14 @@ export const InterviewChat = () => {
         setIsLoadingAvatar(false);
         console.log('[HEYGEN SDK] Avatar initialized successfully');
 
+        // Start the conversation with an initial greeting
+        console.log('[HEYGEN SDK] Starting initial conversation');
+        await avatar.speak({
+          text: "Hallo! Welkom bij dit interview. Ik ben Maiya en ik ga je vandaag een aantal vragen stellen. Laten we beginnen. Kun je jezelf kort voorstellen?",
+          taskType: TaskType.REPEAT,
+          taskMode: TaskMode.SYNC
+        });
+
       } catch (error) {
         console.error('[HEYGEN SDK] Error initializing avatar:', error);
         setIsLoadingAvatar(false);
