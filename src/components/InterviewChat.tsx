@@ -186,6 +186,24 @@ export const InterviewChat = () => {
 
         console.log('[HEYGEN SDK] Session created:', sessionData);
         setHeygenSessionId(sessionData.session_id);
+        
+        // Request microphone permissions explicitly
+        console.log('[HEYGEN SDK] Requesting microphone permissions');
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          console.log('[HEYGEN SDK] Microphone access granted');
+          // Stop the test stream, HeyGen SDK will handle the actual audio
+          stream.getTracks().forEach(track => track.stop());
+        } catch (micError) {
+          console.error('[HEYGEN SDK] Microphone permission denied:', micError);
+          toast({
+            title: "Microfoon toegang vereist",
+            description: "Geef toegang tot je microfoon om het interview te starten",
+            variant: "destructive"
+          });
+          throw micError;
+        }
+        
         setIsLoadingAvatar(false);
         console.log('[HEYGEN SDK] Avatar initialized successfully');
 
@@ -196,6 +214,8 @@ export const InterviewChat = () => {
           taskType: TaskType.REPEAT,
           taskMode: TaskMode.SYNC
         });
+        
+        console.log('[HEYGEN SDK] Greeting completed, avatar should now be listening');
 
       } catch (error) {
         console.error('[HEYGEN SDK] Error initializing avatar:', error);
