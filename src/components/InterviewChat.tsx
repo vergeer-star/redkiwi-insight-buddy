@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { StartScreen } from "@/components/StartScreen";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,11 @@ export const InterviewChat = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+  
+  // Message buffers to accumulate HeyGen streaming chunks
+  const userMessageBuffer = useRef({ text: '', taskId: '', lastUpdate: 0 });
+  const avatarMessageBuffer = useRef({ text: '', taskId: '', lastUpdate: 0 });
+  
   const {
     toast
   } = useToast();
@@ -136,45 +141,47 @@ export const InterviewChat = () => {
         let initial=false;
         
         window.addEventListener("message",(e=>{
-          if(e.origin===host&&e.data&&e.data.type&&"streaming-embed"===e.data.type){
-            console.log("HeyGen message received:", e.data);
+          if(e.origin===host&&e.data&&e.data.type){
+            console.log("[HEYGEN_RAW] Message received:", e.data);
             
-            if("init"===e.data.action){
-              initial=true;
-              wrapDiv.classList.add("show");
-              console.log("Heygen embed initialized and shown");
-              // Hide loading screen
-              window.dispatchEvent(new CustomEvent("heygen-loaded"));
+            // Handle streaming-embed type messages
+            if("streaming-embed"===e.data.type){
+              if("init"===e.data.action){
+                initial=true;
+                wrapDiv.classList.add("show");
+                console.log("[HEYGEN] Embed initialized and shown");
+                window.dispatchEvent(new CustomEvent("heygen-loaded"));
+              }
+              
+              // Capture session info
+              if(e.data.sessionId){
+                console.log("[HEYGEN] Session ID:", e.data.sessionId);
+                window.dispatchEvent(new CustomEvent("heygen-session", { 
+                  detail: { sessionId: e.data.sessionId } 
+                }));
+              }
+              
+              // Capture session end event
+              if(e.data.action === "session_end" || e.data.action === "ended"){
+                console.log("[HEYGEN] Session ended");
+                window.dispatchEvent(new CustomEvent("heygen-session-end", { 
+                  detail: e.data 
+                }));
+              }
             }
             
-            // Capture session info
-            if(e.data.sessionId){
-              console.log("HeyGen session ID:", e.data.sessionId);
-              window.dispatchEvent(new CustomEvent("heygen-session", { 
-                detail: { sessionId: e.data.sessionId } 
-              }));
-            }
-            
-            // Capture user talking messages
-            if(e.data.action === "user_talking_message" || e.data.event === "USER_TALKING_MESSAGE"){
-              console.log("User talking message:", e.data);
+            // Handle user talking messages (separate message type)
+            if(e.data.type === "user_talking_message"){
+              console.log("[HEYGEN] User talking:", e.data);
               window.dispatchEvent(new CustomEvent("heygen-user-message", { 
                 detail: e.data 
               }));
             }
             
-            // Capture avatar talking messages
-            if(e.data.action === "avatar_talking_message" || e.data.event === "AVATAR_TALKING_MESSAGE"){
-              console.log("Avatar talking message:", e.data);
+            // Handle avatar talking messages (separate message type)
+            if(e.data.type === "avatar_talking_message"){
+              console.log("[HEYGEN] Avatar talking:", e.data);
               window.dispatchEvent(new CustomEvent("heygen-avatar-message", { 
-                detail: e.data 
-              }));
-            }
-            
-            // Capture session end event
-            if(e.data.action === "session_end" || e.data.action === "ended"){
-              console.log("HeyGen session ended");
-              window.dispatchEvent(new CustomEvent("heygen-session-end", { 
                 detail: e.data 
               }));
             }
@@ -205,52 +212,100 @@ export const InterviewChat = () => {
     
     // Listen for user messages and save them to database
     const handleUserMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] User message received:", e.detail);
-      if (!interviewId) return;
-      
-      try {
-        const { error } = await supabase
-          .from('interview_messages')
-          .insert({
-            interview_id: interviewId,
-            role: 'user',
-            content: e.detail.message || e.detail.text || JSON.stringify(e.detail),
-            timestamp: new Date().toISOString()
-          });
-        
-        if (error) {
-          console.error("[HEYGEN] Failed to save user message:", error);
-        } else {
-          console.log("[HEYGEN] User message saved successfully");
-        }
-      } catch (error) {
-        console.error("[HEYGEN] Error saving user message:", error);
+      console.log("[HEYGEN] User message chunk:", e.detail);
+      if (!interviewId) {
+        console.warn("[HEYGEN] No interview ID, skipping message save");
+        return;
       }
+      
+      // HeyGen sends messages in chunks, accumulate them
+      const chunk = e.detail.message || e.detail.text || '';
+      const taskId = e.detail.task_id || '';
+      
+      // Reset buffer if new task or if too much time passed (>2s = new message)
+      const now = Date.now();
+      if (taskId !== userMessageBuffer.current.taskId || now - userMessageBuffer.current.lastUpdate > 2000) {
+        // Save previous accumulated message if exists
+        if (userMessageBuffer.current.text.trim()) {
+          console.log("[HEYGEN] Saving accumulated user message:", userMessageBuffer.current.text);
+          try {
+            const { error } = await supabase
+              .from('interview_messages')
+              .insert({
+                interview_id: interviewId,
+                role: 'user',
+                content: userMessageBuffer.current.text.trim(),
+                timestamp: new Date().toISOString()
+              });
+            
+            if (error) {
+              console.error("[HEYGEN] Failed to save user message:", error);
+            } else {
+              console.log("[HEYGEN] User message saved successfully");
+            }
+          } catch (error) {
+            console.error("[HEYGEN] Error saving user message:", error);
+          }
+        }
+        
+        // Start new buffer
+        userMessageBuffer.current.text = chunk;
+        userMessageBuffer.current.taskId = taskId;
+      } else {
+        // Accumulate chunk
+        userMessageBuffer.current.text += chunk;
+      }
+      
+      userMessageBuffer.current.lastUpdate = now;
     };
     
     // Listen for avatar messages and save them to database
     const handleAvatarMessage = async (e: CustomEvent) => {
-      console.log("[HEYGEN] Avatar message received:", e.detail);
-      if (!interviewId) return;
-      
-      try {
-        const { error } = await supabase
-          .from('interview_messages')
-          .insert({
-            interview_id: interviewId,
-            role: 'assistant',
-            content: e.detail.message || e.detail.text || JSON.stringify(e.detail),
-            timestamp: new Date().toISOString()
-          });
-        
-        if (error) {
-          console.error("[HEYGEN] Failed to save avatar message:", error);
-        } else {
-          console.log("[HEYGEN] Avatar message saved successfully");
-        }
-      } catch (error) {
-        console.error("[HEYGEN] Error saving avatar message:", error);
+      console.log("[HEYGEN] Avatar message chunk:", e.detail);
+      if (!interviewId) {
+        console.warn("[HEYGEN] No interview ID, skipping message save");
+        return;
       }
+      
+      // HeyGen sends messages in chunks, accumulate them
+      const chunk = e.detail.message || e.detail.text || '';
+      const taskId = e.detail.task_id || '';
+      
+      // Reset buffer if new task or if too much time passed (>2s = new message)
+      const now = Date.now();
+      if (taskId !== avatarMessageBuffer.current.taskId || now - avatarMessageBuffer.current.lastUpdate > 2000) {
+        // Save previous accumulated message if exists
+        if (avatarMessageBuffer.current.text.trim()) {
+          console.log("[HEYGEN] Saving accumulated avatar message:", avatarMessageBuffer.current.text);
+          try {
+            const { error } = await supabase
+              .from('interview_messages')
+              .insert({
+                interview_id: interviewId,
+                role: 'assistant',
+                content: avatarMessageBuffer.current.text.trim(),
+                timestamp: new Date().toISOString()
+              });
+            
+            if (error) {
+              console.error("[HEYGEN] Failed to save avatar message:", error);
+            } else {
+              console.log("[HEYGEN] Avatar message saved successfully");
+            }
+          } catch (error) {
+            console.error("[HEYGEN] Error saving avatar message:", error);
+          }
+        }
+        
+        // Start new buffer
+        avatarMessageBuffer.current.text = chunk;
+        avatarMessageBuffer.current.taskId = taskId;
+      } else {
+        // Accumulate chunk
+        avatarMessageBuffer.current.text += chunk;
+      }
+      
+      avatarMessageBuffer.current.lastUpdate = now;
     };
     
     window.addEventListener("heygen-loaded", handleHeygenLoaded);
