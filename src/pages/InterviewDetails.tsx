@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import TranscriptionViewer from "@/components/TranscriptionViewer";
 
 interface Interview {
   id: string;
@@ -25,6 +26,19 @@ interface Message {
   timestamp: string;
 }
 
+interface Transcription {
+  id: string;
+  transcription_text: string;
+  segments?: any[];
+  audio_url?: string;
+  confidence?: number;
+  created_at: string;
+  metadata?: {
+    language?: string;
+    duration?: number;
+  };
+}
+
 const SENTIMENT_COLORS = {
   positive: '#10b981',
   neutral: '#f59e0b',
@@ -37,6 +51,7 @@ export default function InterviewDetails() {
   const { toast } = useToast();
   const [interview, setInterview] = useState<Interview | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFullTranscript, setShowFullTranscript] = useState(false);
 
@@ -93,6 +108,16 @@ export default function InterviewDetails() {
 
       if (messagesError) throw messagesError;
       setMessages(messagesData || []);
+
+      // Fetch transcriptions
+      const { data: transcriptionsData, error: transcriptionsError } = await supabase
+        .from('interview_transcriptions')
+        .select('*')
+        .eq('interview_id', id)
+        .order('created_at', { ascending: false });
+
+      if (transcriptionsError) throw transcriptionsError;
+      setTranscriptions(transcriptionsData as any || []);
     } catch (error) {
       console.error('Error fetching interview details:', error);
       toast({
@@ -212,6 +237,18 @@ export default function InterviewDetails() {
             )}
           </CardContent>
         </Card>
+
+        {/* Transcriptions */}
+        {transcriptions.length > 0 && (
+          <div className="mb-6 space-y-6">
+            {transcriptions.map((transcription) => (
+              <TranscriptionViewer 
+                key={transcription.id} 
+                transcription={transcription}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Full Transcript */}
         <Card className="bg-white/5 border-white/10">
