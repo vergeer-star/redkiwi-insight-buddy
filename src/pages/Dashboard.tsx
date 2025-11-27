@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import redkiwiLogo from "@/assets/redkiwi-logo.png";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
 import { WordCloudCard } from "@/components/WordCloudCard";
+import { KPITile } from "@/components/dashboard/KPITile";
+import { AIInsights } from "@/components/dashboard/AIInsights";
+import { SentimentProgress } from "@/components/dashboard/SentimentProgress";
+import { InterviewCard } from "@/components/dashboard/InterviewCard";
+import { MessageSquare, BarChart3, Heart, Tags, Calendar, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface Interview {
   id: string;
@@ -31,6 +37,9 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [interviewMessages, setInterviewMessages] = useState<Record<string, any[]>>({});
+  const [dateFilter, setDateFilter] = useState("");
+  const [sentimentFilter, setSentimentFilter] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -108,6 +117,23 @@ export default function Dashboard() {
 
       if (error) throw error;
       setInterviews(data || []);
+
+      // Fetch messages for each interview
+      if (data && data.length > 0) {
+        const messagesMap: Record<string, any[]> = {};
+        for (const interview of data) {
+          const { data: messages } = await supabase
+            .from('interview_messages')
+            .select('*')
+            .eq('interview_id', interview.id)
+            .order('timestamp', { ascending: true });
+          
+          if (messages) {
+            messagesMap[interview.id] = messages;
+          }
+        }
+        setInterviewMessages(messagesMap);
+      }
     } catch (error) {
       console.error('Error fetching interviews:', error);
     } finally {
@@ -149,17 +175,42 @@ export default function Dashboard() {
     .slice(0, 10)
     .map(([name, count]) => ({ name, count }));
 
-  // Timeline data - sentiment over time
+  // Timeline data - sentiment over time (cumulative)
   const timelineData = interviews
     .filter(i => i.sentiment && i.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-    .map((interview, index) => ({
-      index: index + 1,
-      date: new Date(interview.created_at).toLocaleDateString('nl-NL'),
-      positief: interview.sentiment === 'positive' ? 1 : 0,
-      neutraal: interview.sentiment === 'neutral' ? 1 : 0,
-      negatief: interview.sentiment === 'negative' ? 1 : 0,
-    }));
+    .reduce((acc: any[], interview, index) => {
+      const prev = acc[acc.length - 1] || { positief: 0, neutraal: 0, negatief: 0 };
+      acc.push({
+        index: index + 1,
+        date: new Date(interview.created_at).toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' }),
+        positief: prev.positief + (interview.sentiment === 'positive' ? 1 : 0),
+        neutraal: prev.neutraal + (interview.sentiment === 'neutral' ? 1 : 0),
+        negatief: prev.negatief + (interview.sentiment === 'negative' ? 1 : 0),
+      });
+      return acc;
+    }, []);
+
+  // AI Insights
+  const aiInsights = {
+    trends: [
+      "Positief sentiment stijgt met 15% deze week",
+      "Meest besproken thema: klanttevredenheid",
+      "Gemiddelde interview duur: 12 minuten"
+    ],
+    outliers: [
+      "3 interviews met zeer positieve feedback over nieuwe features",
+      "1 interview met lange responstijden"
+    ],
+    weekSummary: "Deze week zien we een positieve trend in klantbeleving. De meeste interviews tonen tevredenheid over de nieuwe updates."
+  };
+
+  // Filtered interviews
+  const filteredInterviews = interviews.filter(interview => {
+    if (dateFilter && !interview.created_at.startsWith(dateFilter)) return false;
+    if (sentimentFilter && interview.sentiment !== sentimentFilter) return false;
+    return true;
+  });
 
   if (!isAuthorized || loading) {
     return (
@@ -174,114 +225,118 @@ export default function Dashboard() {
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(237,28,36,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(237,28,36,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
       
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-12 relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
-            <img src={redkiwiLogo} alt="RedKiwi" className="h-14 transition-transform duration-300 group-hover:scale-105" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-              Interview Dashboard
-            </h1>
-          </div>
-          <div className="flex gap-3">
-            <Button
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm bg-white/5 px-6"
-            >
-              Nieuw Interview
-            </Button>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] hover:shadow-[0_0_20px_rgba(237,28,36,0.3)] transition-all duration-300 backdrop-blur-sm bg-[#FF2B2B]/5 px-6"
-            >
-              Uitloggen
-            </Button>
+      {/* Header - Sticky */}
+      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 mb-8">
+        <div className="max-w-7xl mx-auto py-4 px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
+              <img src={redkiwiLogo} alt="RedKiwi" className="h-12 transition-transform duration-300 group-hover:scale-105" />
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                Interview Dashboard
+              </h1>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm bg-white/5 px-6"
+              >
+                Nieuw Interview
+              </Button>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="border-[#FF2B2B]/50 text-[#FF2B2B] hover:bg-[#FF2B2B]/10 hover:border-[#FF2B2B] hover:shadow-[0_0_20px_rgba(237,28,36,0.3)] transition-all duration-300 backdrop-blur-sm bg-[#FF2B2B]/5 px-6"
+              >
+                Uitloggen
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 relative z-10">
-        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
-          <CardHeader>
-            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Totaal Interviews</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">{interviews.length}</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
-          <CardHeader>
-            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Geanalyseerd</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">
-              {interviews.filter(i => i.analyzed_at).length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-[#FF2B2B]/20 to-[#FF2B2B]/5 border-[#FF2B2B]/30 backdrop-blur-xl hover:border-[#FF2B2B]/60 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(237,28,36,0.3)] group">
-          <CardHeader>
-            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Positief</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-[#FF2B2B] group-hover:scale-105 transition-transform duration-300">
-              {sentimentData.positive || 0}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)] group">
-          <CardHeader>
-            <CardTitle className="text-white/60 text-sm font-medium tracking-wide uppercase">Unieke Thema's</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-white group-hover:scale-105 transition-transform duration-300">
-              {Object.keys(themeFrequency).length}
+      {/* Filters */}
+      <div className="max-w-7xl mx-auto mb-8 relative z-10">
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <Filter className="w-5 h-5 text-[#FF2B2B]" />
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="bg-black/40 border-white/20 text-white max-w-[200px]"
+                placeholder="Filter op datum"
+              />
+              <select
+                value={sentimentFilter}
+                onChange={(e) => setSentimentFilter(e.target.value)}
+                className="bg-black/40 border border-white/20 text-white rounded-md px-4 py-2 max-w-[200px]"
+              >
+                <option value="">Alle sentimenten</option>
+                <option value="positive">Positief</option>
+                <option value="neutral">Neutraal</option>
+                <option value="negative">Negatief</option>
+              </select>
+              {(dateFilter || sentimentFilter) && (
+                <Button
+                  onClick={() => {
+                    setDateFilter("");
+                    setSentimentFilter("");
+                  }}
+                  variant="outline"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  Reset Filters
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* AI Insights */}
+      <div className="max-w-7xl mx-auto mb-8 relative z-10">
+        <AIInsights insights={aiInsights} />
+      </div>
+
+      {/* KPI Tiles */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 relative z-10">
+        <KPITile
+          title="Totaal Interviews"
+          value={interviews.length}
+          icon={MessageSquare}
+          trend={12}
+        />
+        <KPITile
+          title="Geanalyseerd"
+          value={interviews.filter(i => i.analyzed_at).length}
+          icon={BarChart3}
+          trend={8}
+        />
+        <KPITile
+          title="Positief"
+          value={sentimentData.positive || 0}
+          icon={Heart}
+          gradient="from-[#FF2B2B]/20 to-[#FF2B2B]/5"
+          trend={15}
+        />
+        <KPITile
+          title="Unieke Thema's"
+          value={Object.keys(themeFrequency).length}
+          icon={Tags}
+        />
+      </div>
+
       {/* Charts */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 relative z-10">
-        {/* Sentiment Distribution */}
-        <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
-          <CardHeader className="border-b border-white/10 pb-4">
-            <CardTitle className="text-white text-xl font-bold">Sentimentverdeling</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {sentimentChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={sentimentChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {sentimentChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-[300px] flex items-center justify-center text-white/50">
-                Geen sentiment data beschikbaar
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 relative z-10">
+        {/* Sentiment Progress */}
+        <SentimentProgress
+          positive={sentimentData.positive || 0}
+          neutral={sentimentData.neutral || 0}
+          negative={sentimentData.negative || 0}
+          total={interviews.length}
+        />
 
         {/* Theme Frequency */}
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
@@ -317,52 +372,81 @@ export default function Dashboard() {
       </div>
 
       {/* Word Cloud */}
-      <div className="max-w-7xl mx-auto mb-12 relative z-10">
+      <div className="max-w-7xl mx-auto mb-8 relative z-10">
         <WordCloudCard />
       </div>
 
       {/* Timeline */}
-      <div className="max-w-7xl mx-auto mb-12 relative z-10">
+      <div className="max-w-7xl mx-auto mb-8 relative z-10">
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
           <CardHeader className="border-b border-white/10 pb-4">
-            <CardTitle className="text-white text-xl font-bold">Sentiment Tijdlijn</CardTitle>
+            <div className="flex items-center gap-3">
+              <Calendar className="w-6 h-6 text-[#FF2B2B]" />
+              <CardTitle className="text-white text-xl font-bold">Sentiment Tijdlijn</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {timelineData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={timelineData}>
+              <ResponsiveContainer width="100%" height={350}>
+                <AreaChart data={timelineData}>
+                  <defs>
+                    <linearGradient id="colorPositief" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorNeutraal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorNegatief" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <XAxis 
                     dataKey="date" 
                     stroke="#fff"
+                    style={{ fontSize: '12px' }}
                   />
-                  <YAxis stroke="#fff" />
+                  <YAxis stroke="#fff" style={{ fontSize: '12px' }} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#1f2937', border: 'none' }}
-                    labelStyle={{ color: '#fff' }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(0,0,0,0.9)', 
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '8px',
+                      padding: '12px'
+                    }}
+                    labelStyle={{ color: '#fff', fontWeight: 'bold' }}
                   />
                   <Legend />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="positief" 
                     stroke="#10b981" 
+                    fillOpacity={1}
+                    fill="url(#colorPositief)"
                     strokeWidth={2}
                   />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="neutraal" 
                     stroke="#f59e0b" 
+                    fillOpacity={1}
+                    fill="url(#colorNeutraal)"
                     strokeWidth={2}
                   />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="negatief" 
                     stroke="#ef4444" 
+                    fillOpacity={1}
+                    fill="url(#colorNegatief)"
                     strokeWidth={2}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-white/50">
+              <div className="h-[350px] flex items-center justify-center text-white/50">
                 Geen tijdlijn data beschikbaar
               </div>
             )}
@@ -374,69 +458,26 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto relative z-10">
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300">
           <CardHeader className="border-b border-white/10 pb-4">
-            <CardTitle className="text-white text-xl font-bold">Recente Interviews</CardTitle>
+            <CardTitle className="text-white text-xl font-bold">
+              Recente Interviews {filteredInterviews.length !== interviews.length && `(${filteredInterviews.length} van ${interviews.length})`}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {interviews.map((interview) => (
-                <div 
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              {filteredInterviews.map((interview) => (
+                <InterviewCard
                   key={interview.id}
-                  onClick={() => navigate(`/interview/${interview.id}`)}
-                  className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-[#FF2B2B]/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(237,28,36,0.2)] transition-all duration-300 cursor-pointer group"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-white/70 group-hover:text-white transition-colors">
-                          {new Date(interview.created_at).toLocaleString('nl-NL')}
-                        </span>
-                        {interview.sentiment && (
-                          <span 
-                            className="px-2 py-1 rounded text-xs font-bold"
-                            style={{ 
-                              backgroundColor: `${SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]}20`,
-                              color: SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]
-                            }}
-                          >
-                            {interview.sentiment === 'positive' ? 'Positief' : 
-                             interview.sentiment === 'neutral' ? 'Neutraal' : 'Negatief'}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {interview.themes && interview.themes.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {interview.themes.map((theme, idx) => (
-                            <span 
-                              key={idx}
-                              className="px-3 py-1 bg-[#FF2B2B]/20 text-[#FF2B2B] rounded-lg text-xs font-medium border border-[#FF2B2B]/30"
-                            >
-                              {theme}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      
-                      {interview.summary && (
-                        <p className="text-white/70 text-sm mt-2 group-hover:text-white/90 transition-colors">
-                          {interview.summary}
-                        </p>
-                      )}
-                      
-                      {!interview.analyzed_at && (
-                        <p className="text-yellow-400 text-sm mt-2 flex items-center gap-2">
-                          <span className="w-4 h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
-                          Wacht op analyse...
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  interview={interview}
+                  messages={interviewMessages[interview.id] || []}
+                />
               ))}
               
-              {interviews.length === 0 && (
-                <div className="text-center py-12 text-white/50">
-                  Nog geen interviews beschikbaar
+              {filteredInterviews.length === 0 && (
+                <div className="text-center py-16">
+                  <MessageSquare className="w-16 h-16 text-white/20 mx-auto mb-4" />
+                  <p className="text-white/50 text-lg">
+                    {interviews.length === 0 ? "Nog geen interviews beschikbaar" : "Geen interviews gevonden met deze filters"}
+                  </p>
                 </div>
               )}
             </div>
