@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, FileAudio } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TranscriptionViewer from "@/components/TranscriptionViewer";
 
 interface Interview {
   id: string;
@@ -14,6 +15,7 @@ interface Interview {
 interface InterviewCardProps {
   interview: Interview;
   messages?: { role: string; content: string }[];
+  transcriptions?: any[];
 }
 
 const SENTIMENT_COLORS = {
@@ -22,8 +24,9 @@ const SENTIMENT_COLORS = {
   negative: '#ef4444'
 };
 
-export function InterviewCard({ interview, messages = [] }: InterviewCardProps) {
+export function InterviewCard({ interview, messages = [], transcriptions = [] }: InterviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showTranscriptions, setShowTranscriptions] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -108,6 +111,35 @@ export function InterviewCard({ interview, messages = [] }: InterviewCardProps) 
                 </p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Transcriptions Section */}
+        {transcriptions.length > 0 && (
+          <div className="mt-4">
+            <button
+              onClick={() => setShowTranscriptions(!showTranscriptions)}
+              className="flex items-center gap-2 text-white/80 hover:text-white font-medium mb-3 transition-colors"
+            >
+              <FileAudio className="w-4 h-4 text-primary" />
+              <span>Transcripties ({transcriptions.length})</span>
+              {showTranscriptions ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+            
+            {showTranscriptions && (
+              <div className="space-y-4">
+                {transcriptions.map((transcription) => (
+                  <TranscriptionViewer 
+                    key={transcription.id} 
+                    transcription={transcription}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
