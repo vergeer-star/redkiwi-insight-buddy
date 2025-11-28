@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [session, setSession] = useState<Session | null>(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [interviewMessages, setInterviewMessages] = useState<Record<string, any[]>>({});
+  const [interviewTranscriptions, setInterviewTranscriptions] = useState<Record<string, any[]>>({});
   const [dateFilter, setDateFilter] = useState("");
   const [sentimentFilter, setSentimentFilter] = useState("");
   const navigate = useNavigate();
@@ -120,10 +121,13 @@ export default function Dashboard() {
       if (error) throw error;
       setInterviews(data || []);
 
-      // Fetch messages for each interview
+      // Fetch messages and transcriptions for each interview
       if (data && data.length > 0) {
         const messagesMap: Record<string, any[]> = {};
+        const transcriptionsMap: Record<string, any[]> = {};
+        
         for (const interview of data) {
+          // Fetch messages
           const { data: messages } = await supabase
             .from('interview_messages')
             .select('*')
@@ -133,8 +137,21 @@ export default function Dashboard() {
           if (messages) {
             messagesMap[interview.id] = messages;
           }
+
+          // Fetch transcriptions
+          const { data: transcriptions } = await supabase
+            .from('interview_transcriptions')
+            .select('*')
+            .eq('interview_id', interview.id)
+            .order('created_at', { ascending: false });
+          
+          if (transcriptions) {
+            transcriptionsMap[interview.id] = transcriptions;
+          }
         }
+        
         setInterviewMessages(messagesMap);
+        setInterviewTranscriptions(transcriptionsMap);
       }
     } catch (error) {
       console.error('Error fetching interviews:', error);
@@ -492,11 +509,12 @@ export default function Dashboard() {
           <CardContent className="pt-6">
             <div className="space-y-4">
               {filteredInterviews.map((interview) => (
-                <InterviewCard
-                  key={interview.id}
-                  interview={interview}
-                  messages={interviewMessages[interview.id] || []}
-                />
+            <InterviewCard 
+              key={interview.id}
+              interview={interview}
+              messages={interviewMessages[interview.id] || []}
+              transcriptions={interviewTranscriptions[interview.id] || []}
+            />
               ))}
               
               {filteredInterviews.length === 0 && (
