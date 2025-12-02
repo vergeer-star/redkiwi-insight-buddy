@@ -41,6 +41,21 @@ export const InterviewChat = () => {
   const AVATAR_NAME = "Maiya";
   const KNOWLEDGE_BASE_ID = "201fdd712b2440b6b6eb47bc5f9606b0";
 
+  // Pause/resume video when isPaused changes
+  useEffect(() => {
+    if (mediaStreamRef.current) {
+      if (isPaused) {
+        mediaStreamRef.current.pause();
+        console.log('[VIDEO] Video paused');
+      } else {
+        mediaStreamRef.current.play().catch(e => {
+          console.error('[VIDEO] Error resuming video:', e);
+        });
+        console.log('[VIDEO] Video resumed');
+      }
+    }
+  }, [isPaused]);
+
   // Check if user is a RedKiwi employee
   useEffect(() => {
     const checkEmployee = async () => {
