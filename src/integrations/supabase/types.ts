@@ -103,6 +103,7 @@ export type Database = {
           avatar_url: string
           created_at: string
           ended_at: string | null
+          excluded: boolean
           id: string
           language: string | null
           sentiment: string | null
@@ -118,6 +119,7 @@ export type Database = {
           avatar_url: string
           created_at?: string
           ended_at?: string | null
+          excluded?: boolean
           id?: string
           language?: string | null
           sentiment?: string | null
@@ -133,6 +135,7 @@ export type Database = {
           avatar_url?: string
           created_at?: string
           ended_at?: string | null
+          excluded?: boolean
           id?: string
           language?: string | null
           sentiment?: string | null

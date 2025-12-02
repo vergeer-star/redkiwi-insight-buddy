@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, MessageSquare, FileAudio } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, FileAudio, EyeOff, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TranscriptionViewer from "@/components/TranscriptionViewer";
 
@@ -10,12 +10,14 @@ interface Interview {
   themes: string[] | null;
   summary: string | null;
   analyzed_at: string | null;
+  excluded?: boolean;
 }
 
 interface InterviewCardProps {
   interview: Interview;
   messages?: { role: string; content: string }[];
   transcriptions?: any[];
+  onToggleExclude?: (id: string, excluded: boolean) => void;
 }
 
 const SENTIMENT_COLORS = {
@@ -24,13 +26,17 @@ const SENTIMENT_COLORS = {
   negative: '#ef4444'
 };
 
-export function InterviewCard({ interview, messages = [], transcriptions = [] }: InterviewCardProps) {
+export function InterviewCard({ interview, messages = [], transcriptions = [], onToggleExclude }: InterviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTranscriptions, setShowTranscriptions] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className="p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 hover:border-primary/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(227,6,19,0.2)] transition-all duration-300 group">
+    <div className={`p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border transition-all duration-300 group ${
+      interview.excluded 
+        ? 'border-white/10 opacity-50' 
+        : 'border-white/20 hover:border-primary/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(227,6,19,0.2)]'
+    }`}>
       <div className="space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -151,6 +157,28 @@ export function InterviewCard({ interview, messages = [], transcriptions = [] }:
           >
             Details bekijken
           </button>
+          {onToggleExclude && (
+            <button
+              onClick={() => onToggleExclude(interview.id, interview.excluded || false)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 flex items-center gap-2 ${
+                interview.excluded
+                  ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400 border-green-500/30 hover:border-green-500/50'
+                  : 'bg-white/10 hover:bg-white/20 text-white/70 border-white/20 hover:border-white/40'
+              }`}
+            >
+              {interview.excluded ? (
+                <>
+                  <Eye className="w-4 h-4" />
+                  Herstellen
+                </>
+              ) : (
+                <>
+                  <EyeOff className="w-4 h-4" />
+                  Uitsluiten
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

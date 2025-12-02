@@ -25,6 +25,7 @@ interface Interview {
   summary: string | null;
   status: string;
   analyzed_at: string | null;
+  excluded: boolean;
 }
 
 const SENTIMENT_COLORS = {
@@ -165,8 +166,41 @@ export default function Dashboard() {
     navigate('/');
   };
 
-  // Calculate sentiment distribution
-  const sentimentData = interviews
+  // Toggle exclude status
+  const toggleExclude = async (interviewId: string, currentExcluded: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('interviews')
+        .update({ excluded: !currentExcluded })
+        .eq('id', interviewId);
+
+      if (error) throw error;
+
+      setInterviews(prev => prev.map(i => 
+        i.id === interviewId ? { ...i, excluded: !currentExcluded } : i
+      ));
+
+      toast({
+        title: currentExcluded ? "Interview hersteld" : "Interview uitgesloten",
+        description: currentExcluded 
+          ? "Dit interview wordt nu meegenomen in de analyses" 
+          : "Dit interview wordt niet meer meegenomen in de analyses",
+      });
+    } catch (error) {
+      console.error('Error toggling exclude:', error);
+      toast({
+        title: "Fout",
+        description: "Kon interview status niet wijzigen",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Filter out excluded interviews for analytics
+  const activeInterviews = interviews.filter(i => !i.excluded);
+
+  // Calculate sentiment distribution (only active interviews)
+  const sentimentData = activeInterviews
     .filter(i => i.sentiment)
     .reduce((acc, interview) => {
       const sentiment = interview.sentiment!;
@@ -180,8 +214,8 @@ export default function Dashboard() {
     color: SENTIMENT_COLORS[name as keyof typeof SENTIMENT_COLORS]
   }));
 
-  // Calculate theme frequency
-  const themeFrequency = interviews
+  // Calculate theme frequency (only active interviews)
+  const themeFrequency = activeInterviews
     .filter(i => i.themes && i.themes.length > 0)
     .flatMap(i => i.themes!)
     .reduce((acc, theme) => {
@@ -194,8 +228,8 @@ export default function Dashboard() {
     .slice(0, 10)
     .map(([name, count]) => ({ name, count }));
 
-  // Timeline data - sentiment over time per week (cumulative)
-  const timelineData = interviews
+  // Timeline data - sentiment over time per week (cumulative, only active interviews)
+  const timelineData = activeInterviews
     .filter(i => i.sentiment && i.created_at)
     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
     .reduce((acc: Record<string, any>, interview) => {
@@ -348,14 +382,14 @@ export default function Dashboard() {
       {/* KPI Tiles */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 relative z-10">
         <KPITile
-          title="Totaal Interviews"
-          value={interviews.length}
+          title="Actieve Interviews"
+          value={activeInterviews.length}
           icon={MessageSquare}
           trend={12}
         />
         <KPITile
           title="Geanalyseerd"
-          value={interviews.filter(i => i.analyzed_at).length}
+          value={activeInterviews.filter(i => i.analyzed_at).length}
           icon={BarChart3}
           trend={8}
         />
@@ -509,12 +543,13 @@ export default function Dashboard() {
           <CardContent className="pt-6">
             <div className="space-y-4">
               {filteredInterviews.map((interview) => (
-            <InterviewCard 
-              key={interview.id}
-              interview={interview}
-              messages={interviewMessages[interview.id] || []}
-              transcriptions={interviewTranscriptions[interview.id] || []}
-            />
+                <InterviewCard 
+                  key={interview.id}
+                  interview={interview}
+                  messages={interviewMessages[interview.id] || []}
+                  transcriptions={interviewTranscriptions[interview.id] || []}
+                  onToggleExclude={toggleExclude}
+                />
               ))}
               
               {filteredInterviews.length === 0 && (
