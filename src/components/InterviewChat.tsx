@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Share2, Mic } from "lucide-react";
+import { Share2, Mic, Pause, Play } from "lucide-react";
 import redkiwiLogo from "@/assets/redkiwi-logo-new.png";
 import StreamingAvatar, { 
   AvatarQuality, 
@@ -24,6 +24,7 @@ export const InterviewChat = () => {
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
   const [isAvatarSpeaking, setIsAvatarSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [conversationMessages, setConversationMessages] = useState<Array<{role: string, content: string}>>([]);
   
   const avatarRef = useRef<StreamingAvatar | null>(null);
@@ -264,15 +265,15 @@ export const InterviewChat = () => {
 
   // Handle speech recognition transcript
   useEffect(() => {
-    if (transcript && !isAvatarSpeaking) {
+    if (transcript && !isAvatarSpeaking && !isPaused) {
       console.log('[SPEECH] User said:', transcript);
       handleUserSpeech(transcript);
       resetTranscript();
     }
-  }, [transcript, isAvatarSpeaking]);
+  }, [transcript, isAvatarSpeaking, isPaused]);
 
   const handleUserSpeech = async (userText: string) => {
-    if (!userText.trim() || !interviewId) return;
+    if (!userText.trim() || !interviewId || isPaused) return;
 
     stopListening();
     console.log('[CONVERSATION] Processing user input:', userText);
@@ -404,6 +405,31 @@ export const InterviewChat = () => {
       });
     }
   };
+  
+  const handleTogglePause = () => {
+    if (isPaused) {
+      // Resume interview
+      console.log('[INTERVIEW] Resuming interview');
+      setIsPaused(false);
+      if (!isAvatarSpeaking) {
+        startListening();
+      }
+      toast({
+        title: "Interview hervat",
+        description: "Het interview gaat verder"
+      });
+    } else {
+      // Pause interview
+      console.log('[INTERVIEW] Pausing interview');
+      setIsPaused(true);
+      stopListening();
+      toast({
+        title: "Interview gepauzeerd",
+        description: "Klik opnieuw om door te gaan"
+      });
+    }
+  };
+  
   const handleEndInterview = async () => {
     console.log('[INTERVIEW] Ending interview:', interviewId);
     
@@ -589,6 +615,23 @@ export const InterviewChat = () => {
           </div>
           
           <div className="flex gap-3">
+            <Button 
+              onClick={handleTogglePause} 
+              variant="outline" 
+              className={`border-white/30 ${isPaused ? 'text-green-500 border-green-500/50 hover:bg-green-500/10' : 'text-white hover:bg-white/10'} transition-all duration-300 flex items-center gap-2`}
+            >
+              {isPaused ? (
+                <>
+                  <Play className="w-4 h-4" />
+                  Hervat
+                </>
+              ) : (
+                <>
+                  <Pause className="w-4 h-4" />
+                  Pauzeer
+                </>
+              )}
+            </Button>
             <Button onClick={handleEndInterview} variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary transition-all duration-300">
               Eindig interview
             </Button>
@@ -642,23 +685,32 @@ export const InterviewChat = () => {
         
         {/* Status Indicators */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 border border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-sm text-white/80">Opnemen</span>
-          </div>
-          
-          {isAvatarSpeaking && (
+          {isPaused ? (
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              <span className="text-sm text-primary font-medium">Avatar spreekt...</span>
+              <Pause className="w-4 h-4 text-yellow-500 animate-pulse" />
+              <span className="text-sm text-yellow-500 font-medium">Interview gepauzeerd</span>
             </div>
-          )}
-          
-          {isListening && !isAvatarSpeaking && (
-            <div className="flex items-center gap-2">
-              <Mic className="w-4 h-4 text-primary animate-pulse" />
-              <span className="text-sm text-primary font-medium">Aan het luisteren...</span>
-            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm text-white/80">Opnemen</span>
+              </div>
+              
+              {isAvatarSpeaking && (
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <span className="text-sm text-primary font-medium">Avatar spreekt...</span>
+                </div>
+              )}
+              
+              {isListening && !isAvatarSpeaking && (
+                <div className="flex items-center gap-2">
+                  <Mic className="w-4 h-4 text-primary animate-pulse" />
+                  <span className="text-sm text-primary font-medium">Aan het luisteren...</span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
