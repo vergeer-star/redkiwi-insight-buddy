@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,12 +48,14 @@ const SENTIMENT_COLORS = {
 export default function InterviewDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const highlightWord = searchParams.get('highlight');
   const { toast } = useToast();
   const [interview, setInterview] = useState<Interview | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [transcriptions, setTranscriptions] = useState<Transcription[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showFullTranscript, setShowFullTranscript] = useState(false);
+  const [showFullTranscript, setShowFullTranscript] = useState(!!highlightWord);
 
   useEffect(() => {
     checkAuth();
@@ -286,7 +288,15 @@ export default function InterviewDetails() {
                       </span>
                     </div>
                     <p className="text-white/80 whitespace-pre-line">
-                      {message.content}
+                      {highlightWord ? (
+                        message.content.split(new RegExp(`(${highlightWord})`, 'gi')).map((part, i) => 
+                          part.toLowerCase() === highlightWord.toLowerCase() ? (
+                            <mark key={i} className="bg-primary/50 text-white px-1 rounded">{part}</mark>
+                          ) : part
+                        )
+                      ) : (
+                        message.content
+                      )}
                     </p>
                   </div>
                 ))}
