@@ -26,6 +26,7 @@ interface Interview {
   status: string;
   analyzed_at: string | null;
   excluded: boolean;
+  deleted_at: string | null;
 }
 
 const SENTIMENT_COLORS = {
@@ -116,6 +117,7 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('interviews')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -190,6 +192,32 @@ export default function Dashboard() {
       toast({
         title: "Fout",
         description: "Kon interview status niet wijzigen",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Soft delete interview
+  const handleDelete = async (interviewId: string) => {
+    try {
+      const { error } = await supabase
+        .from('interviews')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', interviewId);
+
+      if (error) throw error;
+
+      setInterviews(prev => prev.filter(i => i.id !== interviewId));
+
+      toast({
+        title: "Interview verwijderd",
+        description: "Het interview is gearchiveerd en niet meer zichtbaar",
+      });
+    } catch (error) {
+      console.error('Error deleting interview:', error);
+      toast({
+        title: "Fout",
+        description: "Kon interview niet verwijderen",
         variant: "destructive"
       });
     }
@@ -548,6 +576,7 @@ export default function Dashboard() {
                   messages={interviewMessages[interview.id] || []}
                   transcriptions={interviewTranscriptions[interview.id] || []}
                   onToggleExclude={toggleExclude}
+                  onDelete={handleDelete}
                 />
               ))}
               

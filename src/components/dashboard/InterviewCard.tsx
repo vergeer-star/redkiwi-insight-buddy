@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, MessageSquare, FileAudio, EyeOff, Eye } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, FileAudio, EyeOff, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TranscriptionViewer from "@/components/TranscriptionViewer";
 
@@ -19,6 +19,7 @@ interface InterviewCardProps {
   messages?: { role: string; content: string }[];
   transcriptions?: any[];
   onToggleExclude?: (id: string, excluded: boolean) => void;
+  onDelete?: (id: string) => void;
 }
 
 const SENTIMENT_COLORS = {
@@ -27,7 +28,7 @@ const SENTIMENT_COLORS = {
   negative: '#ef4444'
 };
 
-export function InterviewCard({ interview, messages = [], transcriptions = [], onToggleExclude }: InterviewCardProps) {
+export function InterviewCard({ interview, messages = [], transcriptions = [], onToggleExclude, onDelete }: InterviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTranscriptions, setShowTranscriptions] = useState(false);
   const navigate = useNavigate();
@@ -188,6 +189,15 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
                   Uitsluiten
                 </>
               )}
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(interview.id)}
+              className="px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 hover:border-red-500/50"
+            >
+              <Trash2 className="w-4 h-4" />
+              Verwijderen
             </button>
           )}
         </div>
