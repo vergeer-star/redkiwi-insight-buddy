@@ -73,80 +73,95 @@ const STOP_WORDS = new Set([
   'hebben', 'hadden', 'ben', 'bent', 'was', 'waren', 'wordt', 'werden'
 ]);
 
-// Simple circle packing algorithm
+// Improved circle packing algorithm with guaranteed no overlap
 function packCircles(data: WordData[], width: number, height: number): (WordData & BubblePosition)[] {
   if (data.length === 0) return [];
   
   const maxValue = Math.max(...data.map(d => d.value));
-  const minR = 35;
-  const maxR = 90;
+  const minR = 30;
+  const maxR = 70;
+  const padding = 6;
   
   // Calculate radii based on value
-  const circles = data.map(d => ({
+  const circles: (WordData & BubblePosition)[] = data.map(d => ({
     ...d,
     r: minR + (d.value / maxValue) * (maxR - minR),
-    x: width / 2,
-    y: height / 2
+    x: 0,
+    y: 0
   }));
   
   // Sort by size descending for better packing
   circles.sort((a, b) => b.r - a.r);
   
+  // Check if circle collides with any placed circle
+  const collides = (circle: BubblePosition, placed: BubblePosition[]): boolean => {
+    for (const other of placed) {
+      const dx = circle.x - other.x;
+      const dy = circle.y - other.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < circle.r + other.r + padding) {
+        return true;
+      }
+    }
+    return false;
+  };
+  
+  // Check if circle is within bounds
+  const inBounds = (circle: BubblePosition): boolean => {
+    return circle.x - circle.r >= padding &&
+           circle.x + circle.r <= width - padding &&
+           circle.y - circle.r >= padding &&
+           circle.y + circle.r <= height - padding;
+  };
+  
+  const placed: (WordData & BubblePosition)[] = [];
+  
   // Place first circle in center
   if (circles.length > 0) {
     circles[0].x = width / 2;
     circles[0].y = height / 2;
+    placed.push(circles[0]);
   }
   
-  // Place remaining circles using spiral placement
+  // Place remaining circles using spiral placement with collision detection
   for (let i = 1; i < circles.length; i++) {
-    let placed = false;
-    let angle = 0;
-    let radius = 0;
-    const angleStep = 0.5;
-    const radiusStep = 3;
+    const circle = circles[i];
+    let bestPosition: { x: number; y: number } | null = null;
+    let bestDistance = Infinity;
     
-    while (!placed && radius < Math.max(width, height)) {
-      const x = width / 2 + radius * Math.cos(angle);
-      const y = height / 2 + radius * Math.sin(angle);
-      
-      // Check collision with all placed circles
-      let collision = false;
-      for (let j = 0; j < i; j++) {
-        const dx = x - circles[j].x;
-        const dy = y - circles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const minDist = circles[i].r + circles[j].r + 4; // 4px gap
+    // Try spiral positions from center outward
+    for (let radius = 0; radius < Math.max(width, height) / 2; radius += 5) {
+      for (let angle = 0; angle < Math.PI * 2; angle += 0.2) {
+        const x = width / 2 + radius * Math.cos(angle);
+        const y = height / 2 + radius * Math.sin(angle);
         
-        if (dist < minDist) {
-          collision = true;
-          break;
+        const testCircle = { ...circle, x, y };
+        
+        if (inBounds(testCircle) && !collides(testCircle, placed)) {
+          const distFromCenter = Math.sqrt(
+            Math.pow(x - width / 2, 2) + Math.pow(y - height / 2, 2)
+          );
+          
+          if (distFromCenter < bestDistance) {
+            bestDistance = distFromCenter;
+            bestPosition = { x, y };
+          }
         }
       }
       
-      // Check bounds
-      if (!collision && x - circles[i].r > 0 && x + circles[i].r < width &&
-          y - circles[i].r > 0 && y + circles[i].r < height) {
-        circles[i].x = x;
-        circles[i].y = y;
-        placed = true;
-      }
-      
-      angle += angleStep;
-      if (angle > Math.PI * 2) {
-        angle = 0;
-        radius += radiusStep;
-      }
+      // If we found a position in this radius ring, use it
+      if (bestPosition) break;
     }
     
-    // If couldn't place, put somewhere visible
-    if (!placed) {
-      circles[i].x = 50 + Math.random() * (width - 100);
-      circles[i].y = 50 + Math.random() * (height - 100);
+    if (bestPosition) {
+      circle.x = bestPosition.x;
+      circle.y = bestPosition.y;
+      placed.push(circle);
     }
+    // If no position found, skip this circle (don't add overlapping)
   }
   
-  return circles;
+  return placed;
 }
 
 export function WordCloudCard() {
@@ -256,9 +271,9 @@ export function WordCloudCard() {
     return 'hsl(356, 40%, 75%)';
   };
 
-  const handleBubbleClick = (interviewIds: string[]) => {
+  const handleBubbleClick = (word: string, interviewIds: string[]) => {
     if (interviewIds.length > 0) {
-      navigate(`/interview/${interviewIds[0]}`);
+      navigate(`/interview/${interviewIds[0]}?highlight=${encodeURIComponent(word)}`);
     }
   };
 
@@ -284,7 +299,7 @@ export function WordCloudCard() {
                 <g 
                   key={bubble.text}
                   className="cursor-pointer transition-all duration-300"
-                  onClick={() => handleBubbleClick(bubble.interviewIds)}
+                  onClick={() => handleBubbleClick(bubble.text, bubble.interviewIds)}
                   onMouseEnter={() => setHoveredWord(bubble.text)}
                   onMouseLeave={() => setHoveredWord(null)}
                   style={{
@@ -343,7 +358,7 @@ export function WordCloudCard() {
                   className="absolute bg-black/95 border border-primary/50 rounded-lg px-4 py-3 z-50 shadow-lg cursor-pointer"
                   onMouseEnter={() => setHoveredWord(bubble.text)}
                   onMouseLeave={() => setHoveredWord(null)}
-                  onClick={() => handleBubbleClick(bubble.interviewIds)}
+                  onClick={() => handleBubbleClick(bubble.text, bubble.interviewIds)}
                   style={{
                     left: Math.min(bubble.x + bubble.r + 10, containerWidth - 200),
                     top: Math.max(bubble.y - 40, 10),
