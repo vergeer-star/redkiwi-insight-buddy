@@ -1,55 +1,37 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ReactWordcloud from "react-wordcloud";
-import "tippy.js/dist/tippy.css";
-import "tippy.js/animations/scale.css";
+
+interface WordData {
+  text: string;
+  value: number;
+}
 
 export function WordCloudCard() {
-  const [words, setWords] = useState<Array<{ text: string; value: number }>>([]);
+  const [words, setWords] = useState<WordData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRedkiwiExperiences();
+    fetchKeywords();
   }, []);
 
-  const fetchRedkiwiExperiences = async () => {
+  const fetchKeywords = async () => {
     try {
-      // Fetch all interview messages
+      // Fetch all user messages from interviews
       const { data: messages, error } = await supabase
         .from('interview_messages')
-        .select('content, role, interview_id')
-        .eq('role', 'user')
-        .order('timestamp', { ascending: true });
+        .select('content')
+        .eq('role', 'user');
 
       if (error) throw error;
 
-      // Group messages by interview to find context
-      const interviewMessages = messages?.reduce((acc, msg) => {
-        if (!acc[msg.interview_id]) {
-          acc[msg.interview_id] = [];
-        }
-        acc[msg.interview_id].push(msg.content);
-        return acc;
-      }, {} as Record<string, string[]>) || {};
+      // Also fetch themes from interviews
+      const { data: interviews, error: interviewError } = await supabase
+        .from('interviews')
+        .select('themes')
+        .is('deleted_at', null);
 
-      // Find answers related to "Hoe ervaar je Redkiwi?" or similar questions
-      const redkiwiAnswers: string[] = [];
-      
-      Object.values(interviewMessages).forEach((msgs) => {
-        // Look for the question and get the next user message
-        for (let i = 0; i < msgs.length - 1; i++) {
-          const msg = msgs[i].toLowerCase();
-          if (msg.includes('hoe ervaar je redkiwi') || 
-              msg.includes('ervaring met redkiwi') ||
-              msg.includes('wat vind je van redkiwi')) {
-            // Get the next message as the answer
-            if (msgs[i + 1]) {
-              redkiwiAnswers.push(msgs[i + 1]);
-            }
-          }
-        }
-      });
+      if (interviewError) throw interviewError;
 
       // Process text to create word frequency
       const wordFrequency: Record<string, number> = {};
@@ -57,15 +39,18 @@ export function WordCloudCard() {
         'de', 'het', 'een', 'en', 'van', 'in', 'op', 'is', 'te', 'die', 'dat',
         'voor', 'met', 'als', 'aan', 'om', 'ook', 'naar', 'er', 'zijn', 'heeft',
         'bij', 'kan', 'meer', 'wel', 'niet', 'worden', 'maar', 'wat', 'zeer',
-        'je', 'ik', 'we', 'ze', 'hij', 'zij', 'me', 'mij', 'ons', 'hun',
-        'redkiwi', 'red', 'kiwi', 'the', 'and', 'or', 'of'
+        'je', 'ik', 'we', 'ze', 'hij', 'zij', 'me', 'mij', 'ons', 'hun', 'ja',
+        'nee', 'nou', 'dus', 'dan', 'nog', 'toch', 'alleen', 'even', 'heel',
+        'best', 'beetje', 'eigenlijk', 'gewoon', 'echt', 'goed', 'veel', 'zelf',
+        'the', 'and', 'or', 'of', 'to', 'a', 'is', 'it', 'that', 'was', 'for',
+        'hallo', 'bedankt', 'graag', 'dank', 'prima', 'oké', 'okay'
       ]);
 
-      redkiwiAnswers.forEach(answer => {
-        // Split by words and clean
-        const cleanWords = answer
+      // Process all user messages
+      messages?.forEach(msg => {
+        const cleanWords = msg.content
           .toLowerCase()
-          .replace(/[.,!?;:()\[\]{}]/g, ' ')
+          .replace(/[.,!?;:()\[\]{}"']/g, ' ')
           .split(/\s+/)
           .filter(word => word.length > 3 && !stopWords.has(word));
 
@@ -74,36 +59,46 @@ export function WordCloudCard() {
         });
       });
 
-      // Convert to word cloud format
+      // Add themes with higher weight
+      interviews?.forEach(interview => {
+        interview.themes?.forEach((theme: string) => {
+          const cleanTheme = theme.toLowerCase().trim();
+          if (cleanTheme.length > 2) {
+            wordFrequency[cleanTheme] = (wordFrequency[cleanTheme] || 0) + 5; // Weight themes higher
+          }
+        });
+      });
+
+      // Convert to bubble format - top 30 words
       const wordCloudData = Object.entries(wordFrequency)
         .map(([text, value]) => ({ text, value }))
         .sort((a, b) => b.value - a.value)
-        .slice(0, 50); // Top 50 words
+        .slice(0, 30);
 
       setWords(wordCloudData);
     } catch (error) {
-      console.error('Error fetching Redkiwi experiences:', error);
+      console.error('Error fetching keywords:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const options = {
-    rotations: 2,
-    rotationAngles: [-90, 0] as [number, number],
-    fontSizes: [20, 80] as [number, number],
-    colors: ['#FF2B2B', '#FF5555', '#FF7777', '#FF9999', '#FFBBBB'],
-    enableTooltip: true,
-    deterministic: true,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-    fontWeight: 'bold',
-    padding: 2,
+  // Calculate circle sizes based on value
+  const maxValue = Math.max(...words.map(w => w.value), 1);
+  const minSize = 40;
+  const maxSize = 120;
+
+  const getSize = (value: number) => {
+    const normalized = value / maxValue;
+    return minSize + normalized * (maxSize - minSize);
   };
+
+  const colors = ['#E30613', '#FF4444', '#FF6666', '#FF8888', '#FFAAAA'];
 
   return (
     <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
       <CardHeader className="border-b border-white/10 pb-4">
-        <CardTitle className="text-white text-xl font-bold">Kernwoorden: "Hoe ervaar je Redkiwi?"</CardTitle>
+        <CardTitle className="text-white text-xl font-bold">Kernwoorden uit Interviews</CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -114,15 +109,39 @@ export function WordCloudCard() {
             </div>
           </div>
         ) : words.length > 0 ? (
-          <div className="h-[400px]">
-            <ReactWordcloud 
-              words={words} 
-              options={options}
-            />
+          <div className="h-[400px] flex flex-wrap items-center justify-center gap-3 p-4 overflow-hidden">
+            {words.map((word, index) => {
+              const size = getSize(word.value);
+              const colorIndex = Math.min(Math.floor((1 - word.value / maxValue) * colors.length), colors.length - 1);
+              return (
+                <div
+                  key={word.text}
+                  className="flex items-center justify-center rounded-full transition-all duration-300 hover:scale-110 cursor-default"
+                  style={{
+                    width: size,
+                    height: size,
+                    backgroundColor: colors[colorIndex],
+                    opacity: 0.7 + (word.value / maxValue) * 0.3,
+                    animation: `fadeIn 0.5s ease-out ${index * 0.05}s both`
+                  }}
+                  title={`${word.text}: ${word.value}x genoemd`}
+                >
+                  <span 
+                    className="text-white font-bold text-center px-1 truncate"
+                    style={{ 
+                      fontSize: Math.max(10, size / 5),
+                      maxWidth: size - 8
+                    }}
+                  >
+                    {word.text}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="h-[400px] flex items-center justify-center text-white/50">
-            Geen data beschikbaar voor word cloud
+            Geen kernwoorden gevonden
           </div>
         )}
       </CardContent>
