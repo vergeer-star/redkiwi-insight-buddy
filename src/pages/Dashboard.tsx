@@ -116,7 +116,6 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('interviews')
         .select('*')
-        .eq('status', 'completed')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

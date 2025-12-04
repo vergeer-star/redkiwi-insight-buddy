@@ -9,6 +9,7 @@ interface Interview {
   sentiment: string | null;
   themes: string[] | null;
   summary: string | null;
+  status: string;
   analyzed_at: string | null;
   excluded?: boolean;
 }
@@ -44,6 +45,16 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
             <div className="flex items-center gap-3 mb-2">
               <span className="text-white/70 group-hover:text-white transition-colors font-medium">
                 {new Date(interview.created_at).toLocaleString('nl-NL')}
+              </span>
+              {/* Status badge */}
+              <span 
+                className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  interview.status === 'completed' 
+                    ? 'bg-green-500/20 text-green-400' 
+                    : 'bg-yellow-500/20 text-yellow-400'
+                }`}
+              >
+                {interview.status === 'completed' ? 'Voltooid' : 'Niet afgemaakt'}
               </span>
               {interview.sentiment && (
                 <span 
