@@ -102,6 +102,7 @@ export type Database = {
           avatar_name: string
           avatar_url: string
           created_at: string
+          deleted_at: string | null
           ended_at: string | null
           excluded: boolean
           id: string
@@ -118,6 +119,7 @@ export type Database = {
           avatar_name: string
           avatar_url: string
           created_at?: string
+          deleted_at?: string | null
           ended_at?: string | null
           excluded?: boolean
           id?: string
@@ -134,6 +136,7 @@ export type Database = {
           avatar_name?: string
           avatar_url?: string
           created_at?: string
+          deleted_at?: string | null
           ended_at?: string | null
           excluded?: boolean
           id?: string
