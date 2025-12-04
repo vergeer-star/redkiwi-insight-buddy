@@ -45,6 +45,18 @@ const BRAND_PERCEPTION_KEYWORDS = new Set([
   'development', 'strategie', 'concept', 'campagne', 'website', 'app', 'platform'
 ]);
 
+// Common Dutch names to exclude
+const COMMON_NAMES = new Set([
+  'jan', 'piet', 'klaas', 'henk', 'johan', 'peter', 'mark', 'tom', 'bas',
+  'jasper', 'robin', 'lars', 'tim', 'kevin', 'dennis', 'jeroen', 'martijn',
+  'niels', 'rick', 'sander', 'joris', 'wouter', 'bart', 'daan', 'floris',
+  'anne', 'lisa', 'emma', 'julia', 'sophie', 'laura', 'eva', 'anna', 'maria',
+  'linda', 'kim', 'jessica', 'jennifer', 'mandy', 'sanne', 'marloes', 'anouk',
+  'fleur', 'lotte', 'noor', 'iris', 'roos', 'mieke', 'els', 'marieke',
+  'david', 'michael', 'john', 'james', 'robert', 'chris', 'paul', 'nick',
+  'mike', 'alex', 'max', 'sam', 'ben', 'thomas', 'luke', 'jake', 'ryan'
+]);
+
 // Stop words to always exclude
 const STOP_WORDS = new Set([
   'de', 'het', 'een', 'en', 'van', 'in', 'op', 'is', 'te', 'die', 'dat',
@@ -180,7 +192,7 @@ export function WordCloudCard() {
           .filter(word => {
             if (word.length < 3) return false;
             if (STOP_WORDS.has(word)) return false;
-            // Only include words relevant to brand perception OR frequently occurring
+            if (COMMON_NAMES.has(word)) return false;
             return true;
           });
 
@@ -328,7 +340,10 @@ export function WordCloudCard() {
               if (!bubble) return null;
               return (
                 <div 
-                  className="absolute bg-black/95 border border-primary/50 rounded-lg px-4 py-3 pointer-events-none z-50 shadow-lg"
+                  className="absolute bg-black/95 border border-primary/50 rounded-lg px-4 py-3 z-50 shadow-lg cursor-pointer"
+                  onMouseEnter={() => setHoveredWord(bubble.text)}
+                  onMouseLeave={() => setHoveredWord(null)}
+                  onClick={() => handleBubbleClick(bubble.interviewIds)}
                   style={{
                     left: Math.min(bubble.x + bubble.r + 10, containerWidth - 200),
                     top: Math.max(bubble.y - 40, 10),
@@ -339,7 +354,7 @@ export function WordCloudCard() {
                   <p className="text-white/70 text-xs mt-1">
                     {bubble.value}x genoemd in {bubble.interviewIds.length} interview{bubble.interviewIds.length !== 1 ? 's' : ''}
                   </p>
-                  <p className="text-primary text-xs mt-2 flex items-center gap-1">
+                  <p className="text-primary text-xs mt-2 flex items-center gap-1 hover:underline">
                     <span>→</span> Klik om transcriptie te bekijken
                   </p>
                 </div>
