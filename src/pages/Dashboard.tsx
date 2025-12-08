@@ -357,45 +357,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="max-w-7xl mx-auto mb-8 relative z-10">
-        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <Filter className="w-5 h-5 text-primary" />
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="bg-black/40 border-white/20 text-white max-w-[200px]"
-                placeholder="Filter op datum"
-              />
-              <select
-                value={sentimentFilter}
-                onChange={(e) => setSentimentFilter(e.target.value)}
-                className="bg-black/40 border border-white/20 text-white rounded-md px-4 py-2 max-w-[200px]"
-              >
-                <option value="">Alle sentimenten</option>
-                <option value="positive">Positief</option>
-                <option value="neutral">Neutraal</option>
-                <option value="negative">Negatief</option>
-              </select>
-              {(dateFilter || sentimentFilter) && (
-                <Button
-                  onClick={() => {
-                    setDateFilter("");
-                    setSentimentFilter("");
-                  }}
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
-                  Reset Filters
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* AI Insights */}
       <div className="max-w-7xl mx-auto mb-8 relative z-10">
@@ -551,6 +512,44 @@ export default function Dashboard() {
 
       {/* Interview List */}
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* Filters above interviews */}
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl mb-4">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <Filter className="w-5 h-5 text-primary" />
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="bg-black/40 border-white/20 text-white max-w-[200px]"
+                placeholder="Filter op datum"
+              />
+              <select
+                value={sentimentFilter}
+                onChange={(e) => setSentimentFilter(e.target.value)}
+                className="bg-black/40 border border-white/20 text-white rounded-md px-4 py-2 max-w-[200px]"
+              >
+                <option value="">Alle sentimenten</option>
+                <option value="positive">Positief</option>
+                <option value="neutral">Neutraal</option>
+                <option value="negative">Negatief</option>
+              </select>
+              {(dateFilter || sentimentFilter) && (
+                <Button
+                  onClick={() => {
+                    setDateFilter("");
+                    setSentimentFilter("");
+                  }}
+                  variant="outline"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  Reset Filters
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300">
           <CardHeader className="border-b border-white/10 pb-4">
             <CardTitle className="text-white text-xl font-bold">
