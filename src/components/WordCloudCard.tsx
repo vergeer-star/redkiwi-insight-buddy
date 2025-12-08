@@ -15,35 +15,159 @@ interface BubblePosition {
   r: number;
 }
 
-// Keywords relevant to brand perception research
+// Brand perception keywords - focus on feelings, attitudes, associations, themes
 const BRAND_PERCEPTION_KEYWORDS = new Set([
-  // Positive perceptions
-  'innovatief', 'professioneel', 'betrouwbaar', 'creatief', 'modern', 'vriendelijk',
-  'kwaliteit', 'expertise', 'vertrouwen', 'samenwerking', 'resultaat', 'succesvol',
-  'efficiënt', 'deskundig', 'betrokken', 'persoonlijk', 'flexibel', 'enthousiast',
-  'ambitieus', 'gedreven', 'open', 'transparant', 'eerlijk', 'kundig', 'slim',
+  // Trust & Reliability
+  'vertrouwen', 'betrouwbaar', 'betrouwbaarheid', 'zekerheid', 'stabiliteit', 'consistent',
   
-  // Negative perceptions
-  'duur', 'langzaam', 'onduidelijk', 'afstandelijk', 'star', 'bureaucratisch',
-  'onpersoonlijk', 'traag', 'ingewikkeld', 'complex', 'verwarrend',
+  // Innovation & Technology
+  'innovatie', 'innovatief', 'vernieuwend', 'vooruitstrevend', 'modern', 'technologie',
+  'ai', 'ai-focus', 'digitaal', 'digital', 'tech', 'technisch', 'automatisering',
   
-  // Brand attributes
-  'merk', 'imago', 'reputatie', 'uitstraling', 'identiteit', 'waarden', 'cultuur',
-  'visie', 'missie', 'communicatie', 'service', 'dienstverlening',
+  // Communication & Collaboration
+  'communicatie', 'communiceren', 'samenwerking', 'samenwerken', 'contact', 'bereikbaar',
+  'transparant', 'transparantie', 'open', 'openheid', 'duidelijk', 'helder',
   
-  // Emotions & feelings
-  'gevoel', 'ervaring', 'tevreden', 'blij', 'trots', 'teleurgesteld', 'gefrustreerd',
-  'enthousiast', 'positief', 'negatief', 'neutraal', 'prettig', 'fijn', 'goed',
+  // Professionalism & Expertise
+  'professioneel', 'professionaliteit', 'expertise', 'deskundig', 'deskundigheid', 
+  'kwaliteit', 'vakmanschap', 'kundig', 'slim', 'intelligent',
   
-  // Work-related
-  'werksfeer', 'collega', "collega's", 'team', 'sfeer', 'werkomgeving', 'kantoor',
-  'projecten', 'klanten', 'opdrachten', 'werk', 'baan', 'carrière', 'groei',
-  'ontwikkeling', 'leren', 'training', 'coaching', 'feedback', 'support',
+  // Creativity & Design
+  'creatief', 'creativiteit', 'design', 'ontwerp', 'mooi', 'stijlvol', 'origineel',
   
-  // Company specific
-  'redkiwi', 'bureau', 'agency', 'digitaal', 'digital', 'marketing', 'design',
-  'development', 'strategie', 'concept', 'campagne', 'website', 'app', 'platform'
+  // Customer Focus & Service
+  'service', 'dienstverlening', 'klantgericht', 'persoonlijk', 'betrokken', 'betrokkenheid',
+  'aandacht', 'zorg', 'support', 'hulpvaardig', 'vriendelijk',
+  
+  // Results & Performance
+  'resultaat', 'resultaatgericht', 'succesvol', 'succes', 'effectief', 'efficiënt',
+  'prestatie', 'groei', 'vooruitgang', 'impact',
+  
+  // Culture & Atmosphere
+  'sfeer', 'werksfeer', 'cultuur', 'team', 'teamwork', 'gezellig', 'warm', 'prettig',
+  'positief', 'energiek', 'dynamisch', 'jong', 'fris',
+  
+  // Values & Identity
+  'waarden', 'identiteit', 'visie', 'missie', 'ambitie', 'ambitieus', 'gedreven',
+  'passie', 'enthousiast', 'enthousiasme', 'trots',
+  
+  // Location & Identity
+  'rotterdam', 'rotterdams', 'lokaal', 'regio', 'nederland', 'nederlands',
+  
+  // Negative perceptions (also important for brand research)
+  'duur', 'prijzig', 'langzaam', 'traag', 'onduidelijk', 'verwarrend', 'complex',
+  'afstandelijk', 'onpersoonlijk', 'star', 'bureaucratisch', 'ouderwets',
+  
+  // Emotions & Feelings
+  'tevreden', 'tevredenheid', 'blij', 'positief', 'negatief', 'teleurgesteld',
+  'gefrustreerd', 'vertrouwd', 'veilig', 'comfortabel', 'prettig', 'fijn', 'goed'
 ]);
+
+// Synonym mapping - combine variants into one canonical word
+const SYNONYM_MAP: Record<string, string> = {
+  // Trust variants
+  'betrouwbaar': 'vertrouwen',
+  'betrouwbaarheid': 'vertrouwen',
+  'vertrouwd': 'vertrouwen',
+  'zekerheid': 'vertrouwen',
+  
+  // Innovation variants
+  'innovatief': 'innovatie',
+  'vernieuwend': 'innovatie',
+  'vooruitstrevend': 'innovatie',
+  
+  // Communication variants
+  'communiceren': 'communicatie',
+  'contact': 'communicatie',
+  'bereikbaar': 'communicatie',
+  
+  // Collaboration variants
+  'samenwerken': 'samenwerking',
+  'teamwork': 'samenwerking',
+  
+  // Transparency variants
+  'transparantie': 'transparant',
+  'openheid': 'transparant',
+  'open': 'transparant',
+  'duidelijk': 'transparant',
+  'helder': 'transparant',
+  
+  // Professional variants
+  'professionaliteit': 'professioneel',
+  'deskundigheid': 'professioneel',
+  'deskundig': 'professioneel',
+  'kundig': 'professioneel',
+  'vakmanschap': 'professioneel',
+  'expertise': 'professioneel',
+  
+  // Creative variants
+  'creativiteit': 'creatief',
+  'origineel': 'creatief',
+  
+  // Service variants
+  'dienstverlening': 'service',
+  'hulpvaardig': 'service',
+  'klantgericht': 'service',
+  
+  // Personal variants
+  'betrokkenheid': 'betrokken',
+  'aandacht': 'betrokken',
+  
+  // Result variants
+  'resultaatgericht': 'resultaat',
+  'succesvol': 'resultaat',
+  'succes': 'resultaat',
+  'effectief': 'resultaat',
+  'impact': 'resultaat',
+  
+  // Efficiency variants
+  'efficiënt': 'efficiëntie',
+  
+  // Culture variants
+  'werksfeer': 'sfeer',
+  'gezellig': 'sfeer',
+  'prettig': 'sfeer',
+  
+  // Enthusiasm variants
+  'enthousiasme': 'enthousiast',
+  'passie': 'enthousiast',
+  'gedreven': 'enthousiast',
+  
+  // Ambition variants
+  'ambitieus': 'ambitie',
+  
+  // Technology variants
+  'tech': 'technologie',
+  'technisch': 'technologie',
+  'digitaal': 'technologie',
+  'digital': 'technologie',
+  'automatisering': 'technologie',
+  
+  // Modern variants
+  'fris': 'modern',
+  'jong': 'modern',
+  'dynamisch': 'modern',
+  
+  // Quality variants
+  'mooi': 'kwaliteit',
+  'stijlvol': 'kwaliteit',
+  
+  // Satisfaction variants
+  'tevredenheid': 'tevreden',
+  'blij': 'tevreden',
+  'positief': 'tevreden',
+  'fijn': 'tevreden',
+  'goed': 'tevreden',
+  
+  // Friendly variants
+  'warm': 'vriendelijk',
+  
+  // Rotterdam variants
+  'rotterdams': 'rotterdam',
+  
+  // AI variants
+  'ai-focus': 'ai'
+};
 
 // Common Dutch names to exclude
 const COMMON_NAMES = new Set([
@@ -54,23 +178,65 @@ const COMMON_NAMES = new Set([
   'linda', 'kim', 'jessica', 'jennifer', 'mandy', 'sanne', 'marloes', 'anouk',
   'fleur', 'lotte', 'noor', 'iris', 'roos', 'mieke', 'els', 'marieke',
   'david', 'michael', 'john', 'james', 'robert', 'chris', 'paul', 'nick',
-  'mike', 'alex', 'max', 'sam', 'ben', 'thomas', 'luke', 'jake', 'ryan'
+  'mike', 'alex', 'max', 'sam', 'ben', 'thomas', 'luke', 'jake', 'ryan',
+  'redkiwi' // Also exclude company name itself
 ]);
 
-// Stop words to always exclude
+// Expanded stop words - personal words, greetings, connecting words
 const STOP_WORDS = new Set([
+  // Dutch articles, prepositions, conjunctions
   'de', 'het', 'een', 'en', 'van', 'in', 'op', 'is', 'te', 'die', 'dat',
   'voor', 'met', 'als', 'aan', 'om', 'ook', 'naar', 'er', 'zijn', 'heeft',
   'bij', 'kan', 'meer', 'wel', 'niet', 'worden', 'maar', 'wat', 'zeer',
-  'je', 'ik', 'we', 'ze', 'hij', 'zij', 'me', 'mij', 'ons', 'hun', 'ja',
-  'nee', 'nou', 'dus', 'dan', 'nog', 'toch', 'alleen', 'even', 'heel',
-  'best', 'beetje', 'eigenlijk', 'gewoon', 'echt', 'veel', 'zelf', 'daar',
-  'hier', 'waar', 'wanneer', 'waarom', 'hoe', 'wie', 'welke', 'deze', 'dit',
+  'over', 'omdat', 'moet', 'alles', 'doen', 'door', 'tot', 'uit', 'onder',
+  'tussen', 'tegen', 'binnen', 'buiten', 'sinds', 'tijdens', 'zonder',
+  
+  // Personal pronouns & words
+  'je', 'jij', 'jou', 'jouw', 'ik', 'mij', 'mijn', 'we', 'wij', 'ons', 'onze',
+  'ze', 'zij', 'hun', 'haar', 'hem', 'hij', 'me', 'u', 'uw',
+  
+  // Greetings & filler words
+  'hoi', 'hallo', 'hey', 'hi', 'dag', 'doei', 'tot', 'ziens',
+  'bedankt', 'graag', 'dank', 'prima', 'oké', 'okay', 'oke',
+  'uhm', 'ehm', 'uh', 'ah', 'oh', 'nou', 'zeg', 'hè', 'hoor',
+  'ja', 'nee', 'jawel', 'neen',
+  
+  // Common verbs (non-descriptive)
+  'weet', 'denk', 'vind', 'ga', 'gaan', 'kom', 'komen', 'zie', 'zien',
+  'zou', 'zouden', 'kunnen', 'moeten', 'willen', 'mogen', 'laten',
+  'hebben', 'hadden', 'heb', 'hebt', 'had',
+  'ben', 'bent', 'was', 'waren', 'wordt', 'werden', 'geworden',
+  'zal', 'zullen', 'zou', 'zouden',
+  'doe', 'doet', 'deed', 'deden', 'gedaan',
+  'zeg', 'zegt', 'zei', 'zeiden', 'gezegd',
+  'krijg', 'krijgt', 'kreeg', 'kregen', 'gekregen',
+  'geef', 'geeft', 'gaf', 'gaven', 'gegeven',
+  'maak', 'maakt', 'maakte', 'maakten', 'gemaakt',
+  'neem', 'neemt', 'nam', 'namen', 'genomen',
+  
+  // Adverbs & quantifiers
+  'dus', 'dan', 'nog', 'toch', 'alleen', 'even', 'heel', 'erg',
+  'best', 'beetje', 'eigenlijk', 'gewoon', 'echt', 'veel', 'zelf',
+  'daar', 'hier', 'waar', 'wanneer', 'waarom', 'hoe', 'wie',
+  'welke', 'deze', 'dit', 'die', 'dat', 'zo', 'heel', 'erg',
+  'altijd', 'nooit', 'vaak', 'soms', 'misschien', 'wellicht',
+  'ongeveer', 'bijna', 'helemaal', 'zeker', 'natuurlijk', 'inderdaad',
+  
+  // English stop words
   'the', 'and', 'or', 'of', 'to', 'a', 'is', 'it', 'that', 'was', 'for',
-  'hallo', 'bedankt', 'graag', 'dank', 'prima', 'oké', 'okay', 'uhm', 'ehm',
-  'uh', 'ah', 'oh', 'nou', 'zeg', 'weet', 'denk', 'vind', 'ga', 'gaan',
-  'kom', 'komen', 'zou', 'zouden', 'kunnen', 'moeten', 'willen', 'mogen',
-  'hebben', 'hadden', 'ben', 'bent', 'was', 'waren', 'wordt', 'werden'
+  'on', 'are', 'as', 'with', 'his', 'they', 'at', 'be', 'this', 'have',
+  'from', 'one', 'had', 'by', 'word', 'but', 'not', 'what', 'all', 'were',
+  'we', 'when', 'your', 'can', 'said', 'there', 'use', 'an', 'each', 'which',
+  'she', 'do', 'how', 'their', 'if', 'will', 'up', 'other', 'about', 'out',
+  'many', 'then', 'them', 'these', 'so', 'some', 'her', 'would', 'make',
+  'like', 'him', 'into', 'time', 'has', 'look', 'two', 'more', 'write',
+  'go', 'see', 'number', 'no', 'way', 'could', 'people', 'my', 'than',
+  'first', 'been', 'call', 'who', 'its', 'now', 'find', 'long', 'down',
+  'day', 'did', 'get', 'come', 'made', 'may', 'part', 'yes', 'yeah',
+  
+  // Generic interview words (not brand-specific)
+  'vraag', 'vragen', 'antwoord', 'interview', 'gesprek', 'praten',
+  'vertellen', 'verteld', 'verhaal', 'voorbeeld', 'bijvoorbeeld'
 ]);
 
 // Improved circle packing algorithm with guaranteed no overlap
@@ -196,50 +362,64 @@ export function WordCloudCard() {
       if (interviewError) throw interviewError;
 
       // Process text to create word frequency with interview tracking
+      // Use canonical words after synonym mapping
       const wordFrequency: Record<string, { count: number; interviewIds: Set<string> }> = {};
+
+      // Helper to get canonical word
+      const getCanonicalWord = (word: string): string => {
+        return SYNONYM_MAP[word] || word;
+      };
 
       // Process all user messages - only keep brand perception relevant words
       messages?.forEach(msg => {
         const cleanWords = msg.content
           .toLowerCase()
-          .replace(/[.,!?;:()\[\]{}"']/g, ' ')
+          .replace(/[.,!?;:()\[\]{}"'@#$%^&*+=<>~/\\|`]/g, ' ')
           .split(/\s+/)
           .filter(word => {
-            if (word.length < 3) return false;
+            if (word.length < 2) return false;
             if (STOP_WORDS.has(word)) return false;
             if (COMMON_NAMES.has(word)) return false;
-            return true;
+            // Only include if it's a brand perception keyword
+            const canonical = getCanonicalWord(word);
+            return BRAND_PERCEPTION_KEYWORDS.has(word) || BRAND_PERCEPTION_KEYWORDS.has(canonical);
           });
 
         cleanWords.forEach(word => {
-          if (!wordFrequency[word]) {
-            wordFrequency[word] = { count: 0, interviewIds: new Set() };
+          // Map to canonical word
+          const canonicalWord = getCanonicalWord(word);
+          
+          if (!wordFrequency[canonicalWord]) {
+            wordFrequency[canonicalWord] = { count: 0, interviewIds: new Set() };
           }
-          wordFrequency[word].count++;
-          wordFrequency[word].interviewIds.add(msg.interview_id);
+          wordFrequency[canonicalWord].count++;
+          wordFrequency[canonicalWord].interviewIds.add(msg.interview_id);
         });
       });
 
-      // Add themes with higher weight
+      // Add themes with higher weight (also map to canonical)
       interviews?.forEach(interview => {
         interview.themes?.forEach((theme: string) => {
           const cleanTheme = theme.toLowerCase().trim();
-          if (cleanTheme.length > 2 && !STOP_WORDS.has(cleanTheme)) {
-            if (!wordFrequency[cleanTheme]) {
-              wordFrequency[cleanTheme] = { count: 0, interviewIds: new Set() };
+          if (cleanTheme.length > 2 && !STOP_WORDS.has(cleanTheme) && !COMMON_NAMES.has(cleanTheme)) {
+            const canonicalTheme = getCanonicalWord(cleanTheme);
+            // Only add if it's a relevant brand perception word
+            if (BRAND_PERCEPTION_KEYWORDS.has(cleanTheme) || BRAND_PERCEPTION_KEYWORDS.has(canonicalTheme)) {
+              if (!wordFrequency[canonicalTheme]) {
+                wordFrequency[canonicalTheme] = { count: 0, interviewIds: new Set() };
+              }
+              wordFrequency[canonicalTheme].count += 2; // Weight themes slightly higher
+              wordFrequency[canonicalTheme].interviewIds.add(interview.id);
             }
-            wordFrequency[cleanTheme].count += 3; // Weight themes higher
-            wordFrequency[cleanTheme].interviewIds.add(interview.id);
           }
         });
       });
 
-      // Filter to only brand perception relevant words OR words mentioned 3+ times
+      // Filter to brand perception relevant words only
       const relevantWords = Object.entries(wordFrequency)
         .filter(([word, data]) => {
-          const isRelevant = BRAND_PERCEPTION_KEYWORDS.has(word);
-          const isFrequent = data.count >= 3;
-          return isRelevant || isFrequent;
+          // Must be a brand perception keyword and mentioned at least twice
+          return BRAND_PERCEPTION_KEYWORDS.has(word) && data.count >= 2;
         })
         .map(([text, data]) => ({
           text,
@@ -247,7 +427,7 @@ export function WordCloudCard() {
           interviewIds: Array.from(data.interviewIds)
         }))
         .sort((a, b) => b.value - a.value)
-        .slice(0, 20); // Top 20 words
+        .slice(0, 25); // Top 25 brand perception words
 
       setWords(relevantWords);
     } catch (error) {
