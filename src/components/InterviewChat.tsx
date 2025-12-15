@@ -521,9 +521,14 @@ export const InterviewChat = () => {
       }
     }
 
-    // Stop avatar
+    // Stop avatar (gracefully handle errors if session wasn't started)
     if (avatarRef.current) {
-      await avatarRef.current.stopAvatar();
+      try {
+        await avatarRef.current.stopAvatar();
+      } catch (stopError) {
+        console.log('[HEYGEN SDK] Error stopping avatar (session may not have started):', stopError);
+        // Continue to show thank you page anyway
+      }
     }
     
     // Show thank you page
