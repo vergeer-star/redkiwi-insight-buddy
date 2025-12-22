@@ -4,7 +4,10 @@ project_id = "wlknaavzyvwyqtnpdkfo"
 verify_jwt = false
 
 [functions.analyze-interview]
-verify_jwt = false
+verify_jwt = true
 
 [functions.transcribe-audio]
+verify_jwt = true
+
+[functions.heygen-token]
 verify_jwt = false

@@ -13,6 +13,42 @@ serve(async (req) => {
   }
 
   try {
+    // Validate authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization header required', success: false }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+    // Verify the user's token
+    const authClient = createClient(supabaseUrl, supabaseAnonKey);
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await authClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('Auth error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token', success: false }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify user is a Redkiwi employee
+    if (!user.email?.endsWith('@redkiwi.nl')) {
+      console.error('Access denied: non-Redkiwi email', user.email);
+      return new Response(
+        JSON.stringify({ error: 'Access denied: Redkiwi employees only', success: false }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Authenticated user:', user.email);
+
     const { interviewId, audioUrl, audioData, sessionId, fallbackSessionId } = await req.json();
 
     console.log('Transcribe request:', {
@@ -112,9 +148,8 @@ serve(async (req) => {
       console.log('No audio source provided, attempting to build transcript from messages');
 
       // Fall back to building a text transcript from stored interview messages
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
       const { data: messages, error: messagesError } = await supabase
         .from('interview_messages')
@@ -214,11 +249,10 @@ serve(async (req) => {
     console.log('Transcription result:', transcriptionResult);
 
     // Save transcription to database
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseDb = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { data: transcription, error: dbError } = await supabase
+    const { data: transcription, error: dbError } = await supabaseDb
       .from('interview_transcriptions')
       .insert({
         interview_id: interviewId,
