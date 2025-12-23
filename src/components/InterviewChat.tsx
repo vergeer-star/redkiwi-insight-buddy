@@ -552,27 +552,27 @@ export const InterviewChat = () => {
     setInterviewId("");
   };
   if (showThankYou) {
-    return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
+    return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center p-4">
         {/* Subtle diagonal pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.03)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.03)_1px,transparent_1px)] bg-[size:80px_80px]" />
         
-        <div className="relative z-10 text-center px-8 max-w-2xl flex flex-col items-center">
+        <div className="relative z-10 text-center px-4 md:px-8 max-w-2xl flex flex-col items-center">
           <a 
             href="https://www.redkiwi.com/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-block transition-transform duration-300 hover:scale-110 mb-8"
+            className="inline-block transition-transform duration-300 hover:scale-110 mb-6 md:mb-8"
           >
-            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-24 mx-auto" />
+            <img src={redkiwiLogo} alt="RedKiwi Logo" className="h-16 md:h-24 mx-auto" />
           </a>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6">
             Bedankt voor je deelname!
           </h1>
           
-          <p className="text-xl text-white/80 mb-8">Je hebt succesvol deelgenomen aan een AI-Interview. Jouw antwoorden helpen Redkiwi verbeteren.</p>
+          <p className="text-base md:text-xl text-white/80 mb-6 md:mb-8">Je hebt succesvol deelgenomen aan een AI-Interview. Jouw antwoorden helpen Redkiwi verbeteren.</p>
           
-          <div className="flex flex-col gap-4 items-center">
+          <div className="flex flex-col gap-3 md:gap-4 items-center w-full max-w-xs">
             <Button 
               onClick={() => {
                 navigator.share({ 
@@ -584,15 +584,15 @@ export const InterviewChat = () => {
                   toast({ title: "Link gekopieerd!", description: "De link is naar je klembord gekopieerd." });
                 });
               }}
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-white px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 w-full"
             >
-              <Share2 size={20} />
+              <Share2 size={18} />
               Deel deze website
             </Button>
             <Button 
               onClick={handleReturnToStart} 
               variant="ghost"
-              className="text-white/60 hover:text-white/80 hover:bg-white/5 px-8 py-6 text-lg rounded-lg transition-all duration-300"
+              className="text-white/60 hover:text-white/80 hover:bg-white/5 px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg transition-all duration-300 w-full"
             >
               Terug naar start
             </Button>
@@ -609,58 +609,60 @@ export const InterviewChat = () => {
       
       {/* Loading Screen */}
       {isLoadingAvatar && (
-        <div className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-sm flex items-center justify-center">
+        <div className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="text-center">
-            <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
-            <h2 className="text-2xl font-bold text-white mb-2">Maiya wordt geladen...</h2>
-            <p className="text-white/60">Een moment geduld, het interview start zo</p>
+            <div className="w-16 h-16 md:w-20 md:h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4 md:mb-6"></div>
+            <h2 className="text-xl md:text-2xl font-bold text-white mb-2">Maiya wordt geladen...</h2>
+            <p className="text-white/60 text-sm md:text-base">Een moment geduld, het interview start zo</p>
           </div>
         </div>
       )}
       
       {/* Header Section */}
-      <div className="fixed top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10 py-4">
-        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
-          <button onClick={handleBack} className="px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <div className="fixed top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10 py-2 md:py-4">
+        <div className="max-w-7xl mx-auto px-3 md:px-8 flex items-center justify-between">
+          <button onClick={handleBack} className="px-3 md:px-6 py-2 md:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-lg text-white font-bold text-xs md:text-sm tracking-wide uppercase transition-all duration-300 hover:scale-105 flex items-center gap-1 md:gap-2">
+            <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Terug
+            <span className="hidden sm:inline">Terug</span>
           </button>
           
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <h2 className="text-2xl md:text-3xl font-bold text-white text-center whitespace-nowrap">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white text-center whitespace-nowrap">
               Interview met <span className="text-primary">{AVATAR_NAME}</span>
             </h2>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex gap-2 md:gap-3">
             <Button 
               onClick={handleTogglePause} 
               variant="outline" 
-              className={`border-white/30 ${isPaused ? 'text-green-500 border-green-500/50 hover:bg-green-500/10' : 'text-white hover:bg-white/10'} transition-all duration-300 flex items-center gap-2`}
+              size="sm"
+              className={`border-white/30 ${isPaused ? 'text-green-500 border-green-500/50 hover:bg-green-500/10' : 'text-white hover:bg-white/10'} transition-all duration-300 flex items-center gap-1 md:gap-2 px-2 md:px-4`}
             >
               {isPaused ? (
                 <>
-                  <Play className="w-4 h-4" />
-                  Hervat
+                  <Play className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline text-xs md:text-sm">Hervat</span>
                 </>
               ) : (
                 <>
-                  <Pause className="w-4 h-4" />
-                  Pauzeer
+                  <Pause className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline text-xs md:text-sm">Pauzeer</span>
                 </>
               )}
             </Button>
-            <Button onClick={handleEndInterview} variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary transition-all duration-300">
-              Eindig interview
+            <Button onClick={handleEndInterview} variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary transition-all duration-300 px-2 md:px-4 text-xs md:text-sm">
+              <span className="hidden sm:inline">Eindig interview</span>
+              <span className="sm:hidden">Stop</span>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Tips Sidebar - positioned to the right of avatar */}
-      <div className="fixed left-[calc(50%+420px)] top-1/2 -translate-y-1/2 z-[9990] w-72 bg-gradient-to-br from-black/70 to-black/50 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+      {/* Tips Sidebar - Hide on mobile, show on large screens */}
+      <div className="hidden xl:block fixed left-[calc(50%+420px)] top-1/2 -translate-y-1/2 z-[9990] w-72 bg-gradient-to-br from-black/70 to-black/50 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
         <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
           <h3 className="text-lg font-bold text-white">
             Interview Tips
@@ -695,39 +697,39 @@ export const InterviewChat = () => {
       </div>
 
       {/* Avatar Video */}
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] z-[9995]">
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-[800px] aspect-video z-[9995] mt-6 md:mt-0">
         <video
           ref={mediaStreamRef}
           autoPlay
           playsInline
-          className="w-full h-full rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] object-cover"
+          className="w-full h-full rounded-xl md:rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] object-cover"
         />
         
         {/* Status Indicators */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4 bg-black/70 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+        <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 right-2 md:right-4 flex items-center gap-2 md:gap-4 bg-black/70 backdrop-blur-sm rounded-lg p-2 md:p-3 border border-white/10">
           {isPaused ? (
-            <div className="flex items-center gap-2">
-              <Pause className="w-4 h-4 text-yellow-500 animate-pulse" />
-              <span className="text-sm text-yellow-500 font-medium">Interview gepauzeerd</span>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Pause className="w-3 h-3 md:w-4 md:h-4 text-yellow-500 animate-pulse" />
+              <span className="text-xs md:text-sm text-yellow-500 font-medium">Gepauzeerd</span>
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-sm text-white/80">Opnemen</span>
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-xs md:text-sm text-white/80">Opnemen</span>
               </div>
               
               {isAvatarSpeaking && (
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="text-sm text-primary font-medium">Avatar spreekt...</span>
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-primary rounded-full animate-pulse" />
+                  <span className="text-xs md:text-sm text-primary font-medium">Spreekt...</span>
                 </div>
               )}
               
               {isListening && !isAvatarSpeaking && (
-                <div className="flex items-center gap-2">
-                  <Mic className="w-4 h-4 text-primary animate-pulse" />
-                  <span className="text-sm text-primary font-medium">Aan het luisteren...</span>
+                <div className="flex items-center gap-1.5 md:gap-2">
+                  <Mic className="w-3 h-3 md:w-4 md:h-4 text-primary animate-pulse" />
+                  <span className="text-xs md:text-sm text-primary font-medium">Luisteren...</span>
                 </div>
               )}
             </>
