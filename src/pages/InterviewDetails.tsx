@@ -149,29 +149,29 @@ export default function InterviewDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <Button
             onClick={() => navigate('/dashboard')}
             variant="ghost"
-            className="text-white/70 hover:text-white mb-4"
+            className="text-white/70 hover:text-white mb-3 md:mb-4 -ml-2 px-2"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Terug naar Dashboard
+            <ArrowLeft className="mr-1 md:mr-2 h-4 w-4" />
+            <span className="text-sm md:text-base">Terug</span>
           </Button>
           
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Interview Details</h1>
-              <p className="text-white/70">
+              <h1 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2">Interview Details</h1>
+              <p className="text-white/70 text-sm md:text-base">
                 {new Date(interview.created_at).toLocaleString('nl-NL')}
               </p>
             </div>
             {interview.sentiment && (
               <span 
-                className="px-4 py-2 rounded-lg text-sm font-bold"
+                className="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold self-start sm:self-center"
                 style={{ 
                   backgroundColor: `${SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]}20`,
                   color: SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]
@@ -185,17 +185,17 @@ export default function InterviewDetails() {
         </div>
 
         {/* Avatar Info */}
-        <Card className="bg-white/5 border-white/10 mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
+        <Card className="bg-white/5 border-white/10 mb-4 md:mb-6">
+          <CardContent className="p-4 md:pt-6">
+            <div className="flex items-center gap-3 md:gap-4">
               <img 
                 src={interview.avatar_url} 
                 alt={interview.avatar_name}
-                className="w-16 h-16 rounded-full"
+                className="w-12 h-12 md:w-16 md:h-16 rounded-full"
               />
               <div>
-                <h3 className="text-white font-semibold">{interview.avatar_name}</h3>
-                <p className="text-white/70 text-sm">
+                <h3 className="text-white font-semibold text-sm md:text-base">{interview.avatar_name}</h3>
+                <p className="text-white/70 text-xs md:text-sm">
                   Taal: {interview.language || 'Nederlands'}
                 </p>
               </div>
@@ -205,16 +205,16 @@ export default function InterviewDetails() {
 
         {/* Themes */}
         {interview.themes && interview.themes.length > 0 && (
-          <Card className="bg-white/5 border-white/10 mb-6">
-            <CardHeader>
-              <CardTitle className="text-white">Thema's</CardTitle>
+          <Card className="bg-white/5 border-white/10 mb-4 md:mb-6">
+            <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+              <CardTitle className="text-white text-base md:text-lg">Thema's</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
+            <CardContent className="p-4 md:p-6 pt-0">
+              <div className="flex flex-wrap gap-1.5 md:gap-2">
                 {interview.themes.map((theme, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm"
+                    className="px-2 md:px-3 py-0.5 md:py-1 bg-primary/20 text-primary rounded-full text-xs md:text-sm"
                   >
                     {theme}
                   </span>
@@ -225,24 +225,24 @@ export default function InterviewDetails() {
         )}
 
         {/* Summary */}
-        <Card className="bg-white/5 border-white/10 mb-6">
-          <CardHeader>
-            <CardTitle className="text-white">Samenvatting</CardTitle>
+        <Card className="bg-white/5 border-white/10 mb-4 md:mb-6">
+          <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+            <CardTitle className="text-white text-base md:text-lg">Samenvatting</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 md:p-6 pt-0">
             {interview.summary ? (
-              <p className="text-white/80 leading-relaxed whitespace-pre-line">
+              <p className="text-white/80 leading-relaxed whitespace-pre-line text-sm md:text-base">
                 {interview.summary}
               </p>
             ) : (
-              <p className="text-white/50">Nog geen samenvatting beschikbaar</p>
+              <p className="text-white/50 text-sm md:text-base">Nog geen samenvatting beschikbaar</p>
             )}
           </CardContent>
         </Card>
 
         {/* Transcriptions */}
         {transcriptions.length > 0 && (
-          <div className="mb-6 space-y-6">
+          <div className="mb-4 md:mb-6 space-y-4 md:space-y-6">
             {transcriptions.map((transcription) => (
               <TranscriptionViewer 
                 key={transcription.id} 
@@ -254,40 +254,41 @@ export default function InterviewDetails() {
 
         {/* Full Transcript */}
         <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-white">Volledige Transcriptie</CardTitle>
+          <CardHeader className="p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <CardTitle className="text-white text-base md:text-lg">Volledige Transcriptie</CardTitle>
               <Button
                 onClick={() => setShowFullTranscript(!showFullTranscript)}
                 variant="outline"
-                className="border-white/20 text-white hover:bg-white/10"
+                size="sm"
+                className="border-white/20 text-white hover:bg-white/10 self-start sm:self-center"
               >
-                <FileText className="mr-2 h-4 w-4" />
-                {showFullTranscript ? 'Verberg' : 'Lees volledige transcriptie'}
+                <FileText className="mr-1.5 h-3 w-3 md:h-4 md:w-4" />
+                <span className="text-xs md:text-sm">{showFullTranscript ? 'Verberg' : 'Toon transcriptie'}</span>
               </Button>
             </div>
           </CardHeader>
           {showFullTranscript && (
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-4 md:p-6 pt-0">
+              <div className="space-y-3 md:space-y-4">
                 {messages.map((message) => (
                   <div 
                     key={message.id}
-                    className={`p-4 rounded-lg ${
+                    className={`p-3 md:p-4 rounded-lg ${
                       message.role === 'assistant' 
                         ? 'bg-primary/10 border-l-4 border-primary' 
                         : 'bg-white/5 border-l-4 border-white/20'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-white">
+                    <div className="flex items-center gap-2 mb-1.5 md:mb-2">
+                      <span className="font-semibold text-white text-sm md:text-base">
                         {message.role === 'assistant' ? interview.avatar_name : 'Kandidaat'}
                       </span>
-                      <span className="text-white/50 text-sm">
+                      <span className="text-white/50 text-xs md:text-sm">
                         {new Date(message.timestamp).toLocaleTimeString('nl-NL')}
                       </span>
                     </div>
-                    <p className="text-white/80 whitespace-pre-line">
+                    <p className="text-white/80 whitespace-pre-line text-sm md:text-base">
                       {highlightWord ? (
                         message.content.split(new RegExp(`(${highlightWord})`, 'gi')).map((part, i) => 
                           part.toLowerCase() === highlightWord.toLowerCase() ? (
@@ -301,7 +302,7 @@ export default function InterviewDetails() {
                   </div>
                 ))}
                 {messages.length === 0 && (
-                  <p className="text-white/50 text-center py-8">
+                  <p className="text-white/50 text-center py-6 md:py-8 text-sm md:text-base">
                     Geen berichten beschikbaar
                   </p>
                 )}

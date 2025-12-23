@@ -121,54 +121,54 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <img src={redkiwiLogo} alt="RedKiwi" className="h-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white">{isLogin ? "Inloggen" : "Registreren"}</h1>
-          <p className="text-white/70 mt-2">Alleen voor Redkiwi-medewerkers (@redkiwi.nl)</p>
+        <div className="mb-6 md:mb-8 text-center">
+          <img src={redkiwiLogo} alt="RedKiwi" className="h-12 md:h-16 mx-auto mb-3 md:mb-4" />
+          <h1 className="text-2xl md:text-3xl font-bold text-white">{isLogin ? "Inloggen" : "Registreren"}</h1>
+          <p className="text-white/70 mt-1.5 md:mt-2 text-sm md:text-base">Alleen voor Redkiwi-medewerkers</p>
         </div>
 
         <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white">{isLogin ? "Log in op je account" : "Maak een account aan"}</CardTitle>
-            <CardDescription className="text-white/70">
-              {isLogin ? "Voer je e-mailadres en wachtwoord in" : "Voer je gegevens in om te registreren"}
+          <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+            <CardTitle className="text-white text-base md:text-lg">{isLogin ? "Log in op je account" : "Maak een account aan"}</CardTitle>
+            <CardDescription className="text-white/70 text-sm">
+              {isLogin ? "Voer je gegevens in" : "Vul je gegevens in om te registreren"}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={isLogin ? handleSignIn : handleSignUp} className="space-y-4">
+          <CardContent className="p-4 md:p-6 pt-2 md:pt-4">
+            <form onSubmit={isLogin ? handleSignIn : handleSignUp} className="space-y-3 md:space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
-                  <label className="text-sm text-white/70">Volledige naam</label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <label className="text-xs md:text-sm text-white/70">Volledige naam</label>
                   <Input
                     type="text"
                     placeholder="Jan Jansen"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
-                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm md:text-base"
                   />
                 </div>
               )}
 
-              <div className="space-y-2">
-                <label className="text-sm text-white/70">E-mailadres</label>
+              <div className="space-y-1.5 md:space-y-2">
+                <label className="text-xs md:text-sm text-white/70">E-mailadres</label>
                 <Input
                   type="email"
                   placeholder="naam@redkiwi.nl"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm md:text-base"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm text-white/70">Wachtwoord</label>
+              <div className="space-y-1.5 md:space-y-2">
+                <label className="text-xs md:text-sm text-white/70">Wachtwoord</label>
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -176,11 +176,11 @@ export default function Auth() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm md:text-base"
                 />
               </div>
 
-              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white">
+              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white text-sm md:text-base py-2 md:py-2.5">
                 {loading ? (isLogin ? "Inloggen..." : "Registreren...") : isLogin ? "Inloggen" : "Registreren"}
               </Button>
             </form>
