@@ -34,67 +34,77 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
   const navigate = useNavigate();
 
   return (
-    <div className={`p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border transition-all duration-300 group ${
+    <div className={`p-3 md:p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border transition-all duration-300 group ${
       interview.excluded 
         ? 'border-white/10 opacity-50' 
         : 'border-white/20 hover:border-primary/50 hover:bg-white/15 hover:shadow-[0_10px_40px_rgba(227,6,19,0.2)]'
     }`}>
-      <div className="space-y-3">
+      <div className="space-y-2 md:space-y-3">
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-white/70 group-hover:text-white transition-colors font-medium">
-                {new Date(interview.created_at).toLocaleString('nl-NL')}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 md:gap-3 mb-2">
+              <span className="text-white/70 group-hover:text-white transition-colors font-medium text-xs md:text-base">
+                {new Date(interview.created_at).toLocaleString('nl-NL', {
+                  day: 'numeric',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </span>
               {/* Status badge */}
               <span 
-                className={`px-3 py-1 rounded-full text-xs font-bold ${
+                className={`px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-bold ${
                   interview.status === 'completed' 
                     ? 'bg-green-500/20 text-green-400' 
                     : 'bg-yellow-500/20 text-yellow-400'
                 }`}
               >
-                {interview.status === 'completed' ? 'Voltooid' : 'Niet afgemaakt'}
+                {interview.status === 'completed' ? 'Voltooid' : 'Niet af'}
               </span>
               {interview.sentiment && (
                 <span 
-                  className="px-3 py-1 rounded-full text-xs font-bold"
+                  className="px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[10px] md:text-xs font-bold"
                   style={{ 
                     backgroundColor: `${SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]}20`,
                     color: SENTIMENT_COLORS[interview.sentiment as keyof typeof SENTIMENT_COLORS]
                   }}
                 >
-                  {interview.sentiment === 'positive' ? 'Positief' : 
-                   interview.sentiment === 'neutral' ? 'Neutraal' : 'Negatief'}
+                  {interview.sentiment === 'positive' ? 'Pos' : 
+                   interview.sentiment === 'neutral' ? 'Neu' : 'Neg'}
                 </span>
               )}
             </div>
             
             {/* Themes */}
             {interview.themes && interview.themes.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {interview.themes.map((theme, idx) => (
+              <div className="flex flex-wrap gap-1.5 md:gap-2 mb-2 md:mb-3">
+                {interview.themes.slice(0, 3).map((theme, idx) => (
                   <span 
                     key={idx}
-                    className="px-3 py-1 bg-primary/20 text-primary rounded-lg text-xs font-medium border border-primary/30"
+                    className="px-2 md:px-3 py-0.5 md:py-1 bg-primary/20 text-primary rounded-lg text-[10px] md:text-xs font-medium border border-primary/30"
                   >
                     {theme}
                   </span>
                 ))}
+                {interview.themes.length > 3 && (
+                  <span className="px-2 py-0.5 text-white/50 text-[10px] md:text-xs">
+                    +{interview.themes.length - 3}
+                  </span>
+                )}
               </div>
             )}
             
             {/* Summary */}
             {interview.summary && (
-              <p className="text-white/70 text-sm group-hover:text-white/90 transition-colors leading-relaxed">
+              <p className="text-white/70 text-xs md:text-sm group-hover:text-white/90 transition-colors leading-relaxed line-clamp-2 md:line-clamp-none">
                 {interview.summary}
               </p>
             )}
             
             {!interview.analyzed_at && (
-              <p className="text-yellow-400 text-sm mt-2 flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+              <p className="text-yellow-400 text-xs md:text-sm mt-2 flex items-center gap-2">
+                <span className="w-3 h-3 md:w-4 md:h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
                 Wacht op analyse...
               </p>
             )}
@@ -102,12 +112,12 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="ml-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="ml-2 md:ml-4 p-1.5 md:p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
           >
             {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-white/70" />
+              <ChevronUp className="w-4 h-4 md:w-5 md:h-5 text-white/70" />
             ) : (
-              <ChevronDown className="w-5 h-5 text-white/70" />
+              <ChevronDown className="w-4 h-4 md:w-5 md:h-5 text-white/70" />
             )}
           </button>
         </div>
@@ -162,17 +172,17 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
         )}
 
         {/* Action buttons */}
-        <div className="flex gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2">
           <button
             onClick={() => navigate(`/interview/${interview.id}`)}
-            className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg text-sm font-medium border border-primary/30 hover:border-primary/50 transition-all duration-200"
+            className="px-3 md:px-4 py-1.5 md:py-2 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg text-xs md:text-sm font-medium border border-primary/30 hover:border-primary/50 transition-all duration-200"
           >
-            Details bekijken
+            Details
           </button>
           {onToggleExclude && (
             <button
               onClick={() => onToggleExclude(interview.id, interview.excluded || false)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 flex items-center gap-2 ${
+              className={`px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium border transition-all duration-200 flex items-center gap-1.5 md:gap-2 ${
                 interview.excluded
                   ? 'bg-green-500/20 hover:bg-green-500/30 text-green-400 border-green-500/30 hover:border-green-500/50'
                   : 'bg-white/10 hover:bg-white/20 text-white/70 border-white/20 hover:border-white/40'
@@ -180,13 +190,13 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
             >
               {interview.excluded ? (
                 <>
-                  <Eye className="w-4 h-4" />
-                  Herstellen
+                  <Eye className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline">Herstellen</span>
                 </>
               ) : (
                 <>
-                  <EyeOff className="w-4 h-4" />
-                  Uitsluiten
+                  <EyeOff className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline">Uitsluiten</span>
                 </>
               )}
             </button>
@@ -194,10 +204,10 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
           {onDelete && (
             <button
               onClick={() => onDelete(interview.id)}
-              className="px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 hover:border-red-500/50"
+              className="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium border transition-all duration-200 flex items-center gap-1.5 md:gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/30 hover:border-red-500/50"
             >
-              <Trash2 className="w-4 h-4" />
-              Verwijderen
+              <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Verwijderen</span>
             </button>
           )}
         </div>

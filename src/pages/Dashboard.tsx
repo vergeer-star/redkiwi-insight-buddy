@@ -323,32 +323,33 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white p-4 md:p-8 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
       
       {/* Header - Sticky */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 mb-8">
-        <div className="max-w-7xl mx-auto py-4 px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate('/')}>
-              <img src={redkiwiLogoPng} alt="RedKiwi" className="h-16 transition-transform duration-300 group-hover:scale-105" />
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 mb-6 md:mb-8 -mx-4 md:-mx-8 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto py-3 md:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+            <div className="flex items-center gap-3 md:gap-4 cursor-pointer group" onClick={() => navigate('/')}>
+              <img src={redkiwiLogoPng} alt="RedKiwi" className="h-10 md:h-16 transition-transform duration-300 group-hover:scale-105" />
+              <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 Interview Dashboard
               </h1>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 md:gap-3 w-full sm:w-auto">
               <Button
                 onClick={() => navigate('/')}
                 variant="outline"
-                className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm bg-white/5 px-6"
+                className="border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm bg-white/5 px-3 md:px-6 text-sm md:text-base flex-1 sm:flex-none"
               >
-                Nieuw Interview
+                <span className="hidden sm:inline">Nieuw Interview</span>
+                <span className="sm:hidden">Nieuw</span>
               </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_20px_rgba(227,6,19,0.3)] transition-all duration-300 backdrop-blur-sm bg-primary/5 px-6"
+                className="border-primary/50 text-primary hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_20px_rgba(227,6,19,0.3)] transition-all duration-300 backdrop-blur-sm bg-primary/5 px-3 md:px-6 text-sm md:text-base flex-1 sm:flex-none"
               >
                 Uitloggen
               </Button>
@@ -359,12 +360,12 @@ export default function Dashboard() {
 
 
       {/* AI Insights */}
-      <div className="max-w-7xl mx-auto mb-8 relative z-10">
+      <div className="max-w-7xl mx-auto mb-6 md:mb-8 relative z-10">
         <AIInsights insights={aiInsights} lastUpdated={new Date()} />
       </div>
 
       {/* KPI Tiles */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 relative z-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8 relative z-10">
         <KPITile
           title="Actieve Interviews"
           value={activeInterviews.length}
@@ -391,7 +392,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 relative z-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8 relative z-10">
         {/* Sentiment Progress */}
         <SentimentProgress
           positive={sentimentData.positive || 0}
@@ -403,20 +404,21 @@ export default function Dashboard() {
         {/* Theme Frequency */}
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
           <CardHeader className="border-b border-white/10 pb-4">
-            <CardTitle className="text-white text-xl font-bold">Top 10 Thema's</CardTitle>
+            <CardTitle className="text-white text-lg md:text-xl font-bold">Top 10 Thema's</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 md:p-6">
             {themeChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={themeChartData}>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={themeChartData} margin={{ left: -20, right: 10 }}>
                   <XAxis 
                     dataKey="name" 
                     stroke="#fff" 
                     angle={-45}
                     textAnchor="end"
-                    height={100}
+                    height={80}
+                    tick={{ fontSize: 10 }}
                   />
-                  <YAxis stroke="#fff" />
+                  <YAxis stroke="#fff" tick={{ fontSize: 10 }} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#1f2937', border: 'none' }}
                     labelStyle={{ color: '#fff' }}
@@ -425,7 +427,7 @@ export default function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-white/50">
+              <div className="h-[250px] flex items-center justify-center text-white/50">
                 Geen thema data beschikbaar
               </div>
             )}
@@ -433,24 +435,24 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Word Cloud */}
-      <div className="max-w-7xl mx-auto mb-8 relative z-10">
+      {/* Word Cloud - Hide on mobile */}
+      <div className="max-w-7xl mx-auto mb-6 md:mb-8 relative z-10 hidden md:block">
         <WordCloudCard />
       </div>
 
       {/* Timeline */}
-      <div className="max-w-7xl mx-auto mb-8 relative z-10">
+      <div className="max-w-7xl mx-auto mb-6 md:mb-8 relative z-10">
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300 hover:shadow-[0_20px_60px_rgba(255,255,255,0.1)]">
           <CardHeader className="border-b border-white/10 pb-4">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-6 h-6 text-primary" />
-              <CardTitle className="text-white text-xl font-bold">Sentiment Tijdlijn</CardTitle>
+            <div className="flex items-center gap-2 md:gap-3">
+              <Calendar className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+              <CardTitle className="text-white text-lg md:text-xl font-bold">Sentiment Tijdlijn</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="p-3 md:p-6 pt-4 md:pt-6">
             {timelineArray.length > 0 ? (
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={timelineArray}>
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={timelineArray} margin={{ left: -10, right: 10 }}>
                   <defs>
                     <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#E30613" stopOpacity={0.8}/>
@@ -460,19 +462,22 @@ export default function Dashboard() {
                   <XAxis 
                     dataKey="week" 
                     stroke="#fff"
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: '10px' }}
+                    tick={{ fontSize: 10 }}
                   />
                   <YAxis 
                     stroke="#fff" 
-                    style={{ fontSize: '12px' }}
+                    style={{ fontSize: '10px' }}
                     domain={[0, 100]}
-                    ticks={[0, 25, 50, 75, 100]}
+                    ticks={[0, 50, 100]}
+                    tick={{ fontSize: 10 }}
                     tickFormatter={(value) => {
-                      if (value === 100) return 'Positief';
-                      if (value === 50) return 'Neutraal';
-                      if (value === 0) return 'Negatief';
+                      if (value === 100) return '+';
+                      if (value === 50) return '~';
+                      if (value === 0) return '-';
                       return '';
                     }}
+                    width={25}
                   />
                   <Tooltip 
                     contentStyle={{ 
@@ -490,19 +495,19 @@ export default function Dashboard() {
                       return [value, 'Interviews'];
                     }}
                   />
-                  <ReferenceLine y={50} stroke="#f59e0b" strokeDasharray="5 5" label={{ value: 'Neutraal', fill: '#f59e0b', fontSize: 12 }} />
+                  <ReferenceLine y={50} stroke="#f59e0b" strokeDasharray="5 5" />
                   <Line 
                     type="monotone" 
                     dataKey="score" 
                     stroke="#E30613" 
-                    strokeWidth={3}
-                    dot={{ fill: '#E30613', strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, fill: '#E30613', stroke: '#fff', strokeWidth: 2 }}
+                    strokeWidth={2}
+                    dot={{ fill: '#E30613', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: '#E30613', stroke: '#fff', strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[350px] flex items-center justify-center text-white/50">
+              <div className="h-[280px] flex items-center justify-center text-white/50">
                 Geen tijdlijn data beschikbaar
               </div>
             )}
@@ -514,50 +519,55 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Filters above interviews */}
         <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-xl mb-4">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <Filter className="w-5 h-5 text-primary" />
-              <Input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="bg-black/40 border-white/20 text-white max-w-[200px]"
-                placeholder="Filter op datum"
-              />
-              <select
-                value={sentimentFilter}
-                onChange={(e) => setSentimentFilter(e.target.value)}
-                className="bg-black/40 border border-white/20 text-white rounded-md px-4 py-2 max-w-[200px]"
-              >
-                <option value="">Alle sentimenten</option>
-                <option value="positive">Positief</option>
-                <option value="neutral">Neutraal</option>
-                <option value="negative">Negatief</option>
-              </select>
-              {(dateFilter || sentimentFilter) && (
-                <Button
-                  onClick={() => {
-                    setDateFilter("");
-                    setSentimentFilter("");
-                  }}
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10"
+          <CardContent className="p-3 md:p-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 flex-1">
+                <Filter className="w-5 h-5 text-primary flex-shrink-0" />
+                <Input
+                  type="date"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="bg-black/40 border-white/20 text-white flex-1 sm:max-w-[200px] text-sm"
+                  placeholder="Filter op datum"
+                />
+              </div>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <select
+                  value={sentimentFilter}
+                  onChange={(e) => setSentimentFilter(e.target.value)}
+                  className="bg-black/40 border border-white/20 text-white rounded-md px-3 py-2 flex-1 sm:max-w-[200px] text-sm"
                 >
-                  Reset Filters
-                </Button>
-              )}
+                  <option value="">Alle sentimenten</option>
+                  <option value="positive">Positief</option>
+                  <option value="neutral">Neutraal</option>
+                  <option value="negative">Negatief</option>
+                </select>
+                {(dateFilter || sentimentFilter) && (
+                  <Button
+                    onClick={() => {
+                      setDateFilter("");
+                      setSentimentFilter("");
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="border-white/20 text-white hover:bg-white/10 whitespace-nowrap"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-black/60 to-black/40 border-white/20 backdrop-blur-xl hover:border-white/40 transition-all duration-300">
-          <CardHeader className="border-b border-white/10 pb-4">
-            <CardTitle className="text-white text-xl font-bold">
-              Recente Interviews {filteredInterviews.length !== interviews.length && `(${filteredInterviews.length} van ${interviews.length})`}
+          <CardHeader className="border-b border-white/10 pb-4 p-4 md:p-6">
+            <CardTitle className="text-white text-lg md:text-xl font-bold">
+              Recente Interviews {filteredInterviews.length !== interviews.length && `(${filteredInterviews.length}/${interviews.length})`}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-4">
+          <CardContent className="p-3 md:p-6 pt-4 md:pt-6">
+            <div className="space-y-3 md:space-y-4">
               {filteredInterviews.map((interview) => (
                 <InterviewCard 
                   key={interview.id}
