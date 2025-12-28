@@ -58,6 +58,16 @@ export const StartScreen = ({ onStart }: StartScreenProps) => {
         {/* Background pattern - behind everything */}
         <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(227,6,19,0.02)_1px,transparent_1px),linear-gradient(-45deg,rgba(227,6,19,0.02)_1px,transparent_1px)] bg-[size:80px_80px] z-0" />
 
+        {/* Dev environment check */}
+        {(window.location.hostname.includes('lovable.app') || window.location.hostname.includes('localhost')) && (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="fixed top-4 left-4 z-20 px-3 py-1.5 text-xs bg-amber-500/20 text-amber-400 border border-amber-500/50 rounded-md hover:bg-amber-500/30 transition-colors duration-300"
+          >
+            🔧 Dev: Dashboard
+          </button>
+        )}
+
         {/* Subtle login button in top right corner */}
         <button
           onClick={() => navigate("/auth")}
