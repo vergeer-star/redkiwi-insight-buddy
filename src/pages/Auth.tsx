@@ -19,6 +19,10 @@ export default function Auth() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Check if we're in Lovable preview/builder environment
+  const isDevEnvironment = window.location.hostname.includes('lovable.app') || 
+                           window.location.hostname.includes('localhost');
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const {
@@ -47,6 +51,10 @@ export default function Auth() {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const handleDevBypass = () => {
+    navigate("/dashboard");
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -202,6 +210,18 @@ export default function Auth() {
                 Terug naar home
               </button>
             </div>
+
+            {isDevEnvironment && (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <Button
+                  onClick={handleDevBypass}
+                  variant="outline"
+                  className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10 text-sm"
+                >
+                  🔧 Dev: Skip login (alleen in builder)
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
