@@ -48,7 +48,19 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Check if we're in Lovable preview/builder environment
+  const isDevEnvironment = window.location.hostname.includes('lovable.app') || 
+                           window.location.hostname.includes('localhost');
+
   useEffect(() => {
+    // In dev environment, skip auth check and allow access
+    if (isDevEnvironment) {
+      setIsAuthorized(true);
+      setLoading(false);
+      fetchInterviews();
+      return;
+    }
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
