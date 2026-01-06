@@ -40,34 +40,73 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, interviewId } = await req.json();
+    const { messages, interviewId, sessionId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Validate that sessionId is provided when interviewId is present
+    if (interviewId && !sessionId) {
+      console.error("Missing sessionId for interview:", interviewId);
+      return new Response(
+        JSON.stringify({ error: "Sessie ID is vereist" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Validate session ownership for the interview
+    if (interviewId && sessionId) {
+      const { data: interview, error: fetchError } = await supabase
+        .from('interviews')
+        .select('session_id, status')
+        .eq('id', interviewId)
+        .single();
+      
+      if (fetchError || !interview) {
+        console.error("Interview not found:", interviewId);
+        return new Response(
+          JSON.stringify({ error: "Interview niet gevonden" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (interview.session_id !== sessionId) {
+        console.error("Session mismatch for interview:", interviewId);
+        return new Response(
+          JSON.stringify({ error: "Ongeldige sessie" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (interview.status === 'completed') {
+        console.log("Interview already completed:", interviewId);
+        return new Response(
+          JSON.stringify({ error: "Interview is al afgerond" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     console.log("Processing interview chat with", messages.length, "messages", interviewId ? `for interview ${interviewId}` : "");
     
-    // Initialize Supabase client if we have an interviewId
-    let supabase = null;
-    if (interviewId) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      supabase = createClient(supabaseUrl, supabaseKey);
-      
-      // Save user message if it's the last one
-      if (messages.length > 0) {
-        const lastMessage = messages[messages.length - 1];
-        if (lastMessage.role === 'user') {
-          console.log("Saving user message to database");
-          await supabase.from('interview_messages').insert({
-            interview_id: interviewId,
-            role: 'user',
-            content: lastMessage.content,
-            timestamp: new Date().toISOString()
-          });
-        }
+    // Save user message if it's the last one
+    if (interviewId && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'user') {
+        console.log("Saving user message to database");
+        await supabase.from('interview_messages').insert({
+          interview_id: interviewId,
+          role: 'user',
+          content: lastMessage.content,
+          timestamp: new Date().toISOString()
+        });
       }
     }
 
