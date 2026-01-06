@@ -307,7 +307,8 @@ export const InterviewChat = () => {
         },
         body: JSON.stringify({
           messages: updatedMessages,
-          interviewId: interviewId
+          interviewId: interviewId,
+          sessionId: sessionId
         })
       });
 
