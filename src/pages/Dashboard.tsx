@@ -235,6 +235,61 @@ export default function Dashboard() {
     }
   };
 
+  // Analyze interview manually
+  const handleAnalyze = async (interviewId: string) => {
+    try {
+      // Get current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token && !isDevEnvironment) {
+        toast({
+          title: "Niet ingelogd",
+          description: "Log in om interviews te analyseren",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Analyse gestart",
+        description: "Even geduld, het interview wordt geanalyseerd..."
+      });
+
+      const { data, error } = await supabase.functions.invoke('analyze-interview', {
+        body: { interviewId }
+      });
+
+      if (error) throw error;
+
+      if (data?.analysis) {
+        // Update local state with analysis results
+        setInterviews(prev => prev.map(i => 
+          i.id === interviewId 
+            ? { 
+                ...i, 
+                sentiment: data.analysis.sentiment, 
+                themes: data.analysis.themes, 
+                summary: data.analysis.summary,
+                analyzed_at: new Date().toISOString()
+              } 
+            : i
+        ));
+
+        toast({
+          title: "Analyse voltooid",
+          description: `Sentiment: ${data.analysis.sentiment === 'positive' ? 'Positief' : data.analysis.sentiment === 'neutral' ? 'Neutraal' : 'Negatief'}`
+        });
+      }
+    } catch (error) {
+      console.error('Error analyzing interview:', error);
+      toast({
+        title: "Analyse mislukt",
+        description: error instanceof Error ? error.message : "Kon interview niet analyseren",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Filter out excluded interviews for analytics
   const activeInterviews = interviews.filter(i => !i.excluded);
 
@@ -588,6 +643,7 @@ export default function Dashboard() {
                   transcriptions={interviewTranscriptions[interview.id] || []}
                   onToggleExclude={toggleExclude}
                   onDelete={handleDelete}
+                  onAnalyze={handleAnalyze}
                 />
               ))}
               

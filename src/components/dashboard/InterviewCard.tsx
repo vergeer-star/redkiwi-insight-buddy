@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, MessageSquare, FileAudio, EyeOff, Eye, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquare, FileAudio, EyeOff, Eye, Trash2, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TranscriptionViewer from "@/components/TranscriptionViewer";
 
@@ -20,6 +20,7 @@ interface InterviewCardProps {
   transcriptions?: any[];
   onToggleExclude?: (id: string, excluded: boolean) => void;
   onDelete?: (id: string) => void;
+  onAnalyze?: (id: string) => Promise<void>;
 }
 
 const SENTIMENT_COLORS = {
@@ -28,10 +29,21 @@ const SENTIMENT_COLORS = {
   negative: '#ef4444'
 };
 
-export function InterviewCard({ interview, messages = [], transcriptions = [], onToggleExclude, onDelete }: InterviewCardProps) {
+export function InterviewCard({ interview, messages = [], transcriptions = [], onToggleExclude, onDelete, onAnalyze }: InterviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showTranscriptions, setShowTranscriptions] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
+
+  const handleAnalyze = async () => {
+    if (!onAnalyze || isAnalyzing) return;
+    setIsAnalyzing(true);
+    try {
+      await onAnalyze(interview.id);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   return (
     <div className={`p-3 md:p-5 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border transition-all duration-300 group ${
@@ -103,10 +115,22 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
             )}
             
             {!interview.analyzed_at && (
-              <p className="text-yellow-400 text-xs md:text-sm mt-2 flex items-center gap-2">
-                <span className="w-3 h-3 md:w-4 md:h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
-                Wacht op analyse...
-              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <p className="text-yellow-400 text-xs md:text-sm flex items-center gap-2">
+                  <span className="w-3 h-3 md:w-4 md:h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+                  Wacht op analyse...
+                </p>
+                {onAnalyze && messages.length > 0 && (
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={isAnalyzing}
+                    className="px-2 py-0.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded text-[10px] md:text-xs font-medium border border-yellow-500/30 hover:border-yellow-500/50 transition-all duration-200 flex items-center gap-1 disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isAnalyzing ? 'animate-spin' : ''}`} />
+                    {isAnalyzing ? 'Bezig...' : 'Nu analyseren'}
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
