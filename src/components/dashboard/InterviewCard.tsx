@@ -120,7 +120,7 @@ export function InterviewCard({ interview, messages = [], transcriptions = [], o
                   <span className="w-3 h-3 md:w-4 md:h-4 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
                   Wacht op analyse...
                 </p>
-                {onAnalyze && messages.length > 0 && (
+                {onAnalyze && (
                   <button
                     onClick={handleAnalyze}
                     disabled={isAnalyzing}
