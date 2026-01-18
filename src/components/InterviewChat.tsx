@@ -14,6 +14,7 @@ import StreamingAvatar, {
   VoiceEmotion 
 } from "@heygen/streaming-avatar";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
@@ -558,7 +559,7 @@ export const InterviewChat = () => {
     interviewIdRef.current = "";
     setInterviewId("");
   };
-  };
+
   if (showThankYou) {
     return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center p-4">
         {/* Subtle diagonal pattern */}
