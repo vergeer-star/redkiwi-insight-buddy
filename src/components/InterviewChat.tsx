@@ -17,9 +17,12 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 export const InterviewChat = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
-  const [sessionId, setSessionId] = useState<string>("");
   const [heygenSessionId, setHeygenSessionId] = useState<string>(""); // HeyGen's actual session ID
   const [interviewId, setInterviewId] = useState<string>("");
+  
+  // Use refs for IDs to avoid stale closures in event handlers
+  const sessionIdRef = useRef<string>("");
+  const interviewIdRef = useRef<string>("");
   const [showThankYou, setShowThankYou] = useState(false);
   const [isRedkiwiEmployee, setIsRedkiwiEmployee] = useState(false);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
@@ -308,7 +311,7 @@ export const InterviewChat = () => {
         body: JSON.stringify({
           messages: updatedMessages,
           interviewId: interviewId,
-          sessionId: sessionId
+          sessionId: sessionIdRef.current
         })
       });
 
@@ -391,7 +394,8 @@ export const InterviewChat = () => {
 
     // Set locally so UI and embed can initialize immediately
     setInterviewId(newInterviewId);
-    setSessionId(newSessionId);
+    interviewIdRef.current = newInterviewId;
+    sessionIdRef.current = newSessionId;
     setHasStarted(true);
 
     // Save interview session to the backend without requesting a representation
@@ -469,15 +473,15 @@ export const InterviewChat = () => {
         const processInterview = async () => {
           try {
             console.log("[PROCESS] Starting interview processing");
-            console.log(`[PROCESS] HeyGen session ID: ${heygenSessionId || 'none'}, Fallback: ${sessionId}`);
+            console.log(`[PROCESS] HeyGen session ID: ${heygenSessionId || 'none'}, Fallback: ${sessionIdRef.current}`);
             
             // Call transcribe-audio edge function to fetch HeyGen recording
             console.log("[PROCESS] Attempting to fetch HeyGen recording for transcription");
             const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('transcribe-audio', {
               body: {
                 interviewId,
-                sessionId: heygenSessionId || sessionId,
-                fallbackSessionId: sessionId
+                sessionId: heygenSessionId || sessionIdRef.current,
+                fallbackSessionId: sessionIdRef.current
               }
             });
 
@@ -543,14 +547,17 @@ export const InterviewChat = () => {
     
     // Navigate back to homepage
     setHasStarted(false);
-    setSessionId("");
+    sessionIdRef.current = "";
+    interviewIdRef.current = "";
     setInterviewId("");
   };
   const handleReturnToStart = () => {
     setShowThankYou(false);
     setHasStarted(false);
-    setSessionId("");
+    sessionIdRef.current = "";
+    interviewIdRef.current = "";
     setInterviewId("");
+  };
   };
   if (showThankYou) {
     return <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center p-4">
